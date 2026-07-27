@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# e-Vote Platform
 
-## Getting Started
+![e-Vote System](./1.jpeg)
 
-First, run the development server:
+**e-Vote** is a secure, modern, and verifiable electronic voting platform purpose-built for academic institutions (configured for Cavendish University Uganda). It provides a tamper-proof voting experience with offline resilience and cryptographic verification.
 
+## 🚀 Features
+
+- **End-to-End Encryption:** Ballots are cast securely and tied to specific authenticated student credentials.
+- **Double-Vote Prevention:** Built-in Row Level Security (RLS) ensures that a student can only cast a single vote per election.
+- **Live Dashboard:** Students can view active, upcoming, and closed elections in real-time.
+- **Institutional Authentication:** Powered by Clerk, restricting and managing access securely.
+- **Admin Management:** (In Progress) A dedicated panel for creating elections and registering candidates.
+
+## 🛠️ Tech Stack
+
+- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+- **Database:** [Supabase](https://supabase.com/) (PostgreSQL + RLS)
+- **Authentication:** [Clerk](https://clerk.dev/)
+- **Styling:** Custom CSS Modules & CSS Variables (`globals.css`)
+
+## 💻 Getting Started
+
+### 1. Clone the repository
+```bash
+git clone <your-repo-url>
+cd e-Vote
+```
+
+### 2. Install dependencies
+```bash
+npm install
+```
+
+### 3. Set up environment variables
+Create a `.env.local` file in the root of the project and populate it using the `.env.local.example` template:
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_WEBHOOK_SECRET=whsec_...
+
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+
+NEXT_PUBLIC_SUPABASE_URL=https://...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+```
+
+### 4. Run the Development Server
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🗄️ Database Schema
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The platform relies on four core tables in Supabase:
+1. `voters`: Synchronized automatically with Clerk via Webhooks.
+2. `elections`: Tracks the status of elections (draft, live, closed).
+3. `candidates`: Associates candidates with specific elections.
+4. `votes`: Secure ledger recording encrypted ballot casts with unique constraint checks.
