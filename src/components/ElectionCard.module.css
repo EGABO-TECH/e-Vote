@@ -1,0 +1,75 @@
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.liveBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--green-bg);
+  border: 1px solid var(--green-bdr);
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-dot 1.6s ease infinite;
+  display: inline-block;
+}
+
+.meta {
+  font-size: .72rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+
+.title {
+  font-size: .9375rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  margin-bottom: 5px;
+  color: var(--text-1);
+}
+
+.info {
+  font-size: .775rem;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar {
+  height: 3px;
+  background: var(--surface-3);
+  border-radius: 3px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  width: 62%; /* Can be passed as prop later */
+  background: linear-gradient(90deg, var(--blue), var(--blue-light));
+  border-radius: 3px;
+}

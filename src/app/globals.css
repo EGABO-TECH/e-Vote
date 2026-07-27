@@ -1,0 +1,182 @@
+/* ============================================================
+   e-Vote Design System — Global CSS
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+
+  /* Brand */
+  --navy:        #07102A;
+  --navy-mid:    #0F2167;
+  --blue:        #1D4ED8;
+  --blue-hover:  #1D40B0;
+  --blue-light:  #3B82F6;
+  --blue-glow:   #93C5FD;
+
+  /* Surface */
+  --surface:     #FFFFFF;
+  --surface-2:   #F8FAFF;
+  --surface-3:   #EEF2FF;
+  --border:      #E2E8F0;
+  --border-mid:  #CBD5E1;
+
+  /* Text */
+  --text-1:      #0A0F1E;
+  --text-2:      #3D4761;
+  --text-3:      #7B8BAA;
+
+  /* State */
+  --red:         #DC2626;
+  --red-bg:      #FEF2F2;
+  --green:       #16A34A;
+  --green-bg:    #DCFCE7;
+  --green-bdr:   #BBF7D0;
+
+  /* Tokens */
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --sh-sm:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --sh-md:  0 4px 16px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.04);
+  --sh-lg:  0 20px 48px rgba(7,16,42,.14), 0 4px 12px rgba(7,16,42,.06);
+  --sh-blue: 0 8px 28px rgba(29,78,216,.28);
+  --ease:   cubic-bezier(.4,0,.2,1);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: var(--font-inter);
+  background: var(--surface-2);
+  color: var(--text-1);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* ── Shared utility classes ─────────────────────────────────── */
+
+/* Buttons */
+.btn-p {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; height: 42px;
+  padding: 0 18px;
+  border-radius: var(--r-sm);
+  background: var(--blue); color: #fff;
+  font-size: .875rem; font-weight: 650; letter-spacing: -.01em;
+  border: none; cursor: pointer; font-family: inherit;
+  transition: all .15s var(--ease);
+  box-shadow: var(--sh-blue);
+  position: relative; overflow: hidden;
+}
+.btn-p::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,.1) 0%, transparent 60%);
+}
+.btn-p:hover  { background: var(--blue-hover); transform: translateY(-1px); box-shadow: 0 12px 32px rgba(29,78,216,.38); }
+.btn-p:active { transform: translateY(0); }
+.btn-p:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.btn-g {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; height: 42px;
+  border-radius: var(--r-sm);
+  background: transparent; color: var(--text-2);
+  font-size: .875rem; font-weight: 500;
+  border: 1.5px solid var(--border); cursor: pointer; font-family: inherit;
+  transition: all .15s var(--ease);
+}
+.btn-g:hover { border-color: var(--blue-light); color: var(--blue); background: var(--surface-3); }
+
+/* Form fields */
+.field { margin-bottom: 12px; }
+.f-label {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 5px;
+}
+.f-label label {
+  font-size: .7rem; font-weight: 700; color: var(--text-2);
+  letter-spacing: .05em; text-transform: uppercase;
+}
+.f-wrap { position: relative; }
+.f-wrap input {
+  width: 100%; height: 42px; padding: 0 14px;
+  border-radius: var(--r-sm); border: 1.5px solid var(--border);
+  background: var(--surface); font-size: .875rem; font-family: inherit;
+  color: var(--text-1); outline: none; transition: all .15s var(--ease);
+}
+.f-wrap input::placeholder { color: var(--text-3); }
+.f-wrap input:focus  { border-color: var(--blue-light); box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+.f-wrap input.error  { border-color: var(--red); background: var(--red-bg); }
+.f-wrap input.pad-r  { padding-right: 42px; }
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 17px; height: 17px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  animation: spin .6s linear infinite;
+  flex-shrink: 0;
+}
+
+/* Pulse dot */
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* Pop animation */
+@keyframes pop {
+  0%   { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Clerk component appearance overrides */
+.cl-custom-input {
+  width: 100% !important; height: 42px !important; padding: 0 14px !important;
+  border-radius: var(--r-sm) !important; border: 1.5px solid var(--border) !important;
+  background: var(--surface) !important; font-size: .875rem !important; font-family: inherit !important;
+  color: var(--text-1) !important; outline: none !important; transition: all .15s var(--ease) !important;
+  box-shadow: none !important;
+}
+.cl-custom-input:focus {
+  border-color: var(--blue-light) !important; box-shadow: 0 0 0 3px rgba(59,130,246,.1) !important;
+}
+.cl-custom-label {
+  font-size: .7rem !important; font-weight: 700 !important; color: var(--text-2) !important;
+  letter-spacing: .05em !important; text-transform: uppercase !important;
+}
+.cl-formButtonPrimary {
+  background: var(--blue) !important;
+  border-radius: var(--r-sm) !important;
+  font-family: var(--font-inter) !important;
+  font-weight: 650 !important;
+  height: 42px !important;
+  box-shadow: var(--sh-blue) !important;
+  text-transform: none !important;
+}
+.cl-formButtonPrimary:hover { background: var(--blue-hover) !important; box-shadow: 0 12px 32px rgba(29,78,216,.38) !important; }
+.cl-card {
+  box-shadow: none !important;
+  border: none !important;
+  background: transparent !important;
+}
+.cl-headerTitle    { font-family: var(--font-inter) !important; font-weight: 800 !important; letter-spacing: -.03em !important; }
+.cl-headerSubtitle { font-family: var(--font-inter) !important; color: var(--text-3) !important; }
+.cl-rootBox        { width: 100% !important; }
+.cl-main           { padding: 12px 0 0 0 !important; gap: 16px !important; }
+.cl-internal-b3al4t { display: none !important; } /* Hide the secured by clerk badge */
+.cl-badge          { display: none !important; } /* Hide "Last used" badge that causes overlap */
+
+.cl-socialButtonsBlockButton {
+  height: 42px !important; border-radius: var(--r-sm) !important;
+  border: 1.5px solid var(--border) !important; background: transparent !important;
+  color: var(--text-2) !important; font-family: var(--font-inter) !important; font-weight: 500 !important;
+  transition: all .15s var(--ease) !important;
+}
+.cl-socialButtonsBlockButton:hover { border-color: var(--blue-light) !important; background: var(--surface-3) !important; color: var(--blue) !important; }
+.cl-dividerText { font-family: var(--font-inter) !important; color: var(--text-3) !important; font-size: .75rem !important; }
