@@ -1,0 +1,148 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 72px;
+  background: var(--surface);
+  padding: 0 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menuBtn {
+  display: none; /* hidden on desktop */
+  background: none;
+  border: none;
+  color: var(--text-1);
+  cursor: pointer;
+  padding: 8px;
+  margin-left: -8px;
+}
+
+.greeting {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+}
+
+.greetingName {
+  color: var(--text-1);
+}
+
+.subtext {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iconButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-2);
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  border: 1px solid transparent;
+}
+
+.iconButton:hover {
+  background: var(--surface-3);
+}
+
+.notificationDot {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 1px solid var(--surface-2);
+}
+
+.profileBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 6px 4px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+}
+
+.profileInfoWrapper {
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.profileName {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: 0.05em;
+  display: block;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profileRole {
+  font-size: 0.65rem;
+  color: var(--text-3);
+  display: block;
+}
+
+.noId {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #F59E0B;
+  font-size: 0.75rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+  .header {
+    padding: 0 20px;
+  }
+  .menuBtn {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .greeting {
+    display: none; /* Hide greeting entirely on small mobile to save space */
+  }
+  .profileBadge {
+    padding: 4px;
+    background: transparent;
+    border: none;
+  }
+  .profileInfo {
+    display: none; /* Hide name on small mobile, show only avatar */
+  }
+}

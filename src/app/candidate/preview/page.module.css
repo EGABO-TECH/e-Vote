@@ -1,0 +1,318 @@
+.incompleteAlert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #92400E;
+  font-weight: 500;
+}
+
+.alertLink {
+  color: #3B82F6;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.avatarPlaceholder {
+  width: 100%;
+  height: 100%;
+  background: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyField {
+  font-size: 0.875rem;
+  color: var(--text-3);
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.policyIconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #EFF6FF;
+  color: #3B82F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.pageSubtitle {
+  font-size: 0.9375rem;
+  color: var(--text-3);
+}
+
+.editBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--surface-3);
+  color: var(--text-1);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.editBtn:hover {
+  background: var(--border);
+}
+
+.previewLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Main Profile Card */
+.profileCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.profileCardHeader {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+}
+
+.candidateAvatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--border);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.candidateAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.candidateBasic {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.runningFor {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.candidateName {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-1);
+  line-height: 1.1;
+}
+
+.candidateSlogan {
+  font-size: 1rem;
+  color: var(--text-2);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #10B981;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  width: fit-content;
+  margin-top: 8px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--surface-3);
+  margin: 0;
+}
+
+.statRow {
+  display: flex;
+  gap: 12px;
+}
+
+.statChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statement {
+  font-size: 1rem;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* Policy Card */
+.policiesCard, .goalsCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 20px;
+}
+
+.policiesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.policyChip {
+  display: flex;
+  gap: 14px;
+  padding: 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.policyIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.policyTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.policyBody {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+/* Goals Card */
+.goalsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.goalItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.goalIndex {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #3B82F6;
+  font-family: 'IBM Plex Mono', monospace;
+  background: #EFF6FF;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.goalText {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.disclaimer {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .profileCardHeader { flex-direction: column; }
+  .policiesGrid { grid-template-columns: 1fr; }
+}
+
