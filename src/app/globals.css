@@ -43,7 +43,53 @@
   --sh-lg:  0 20px 48px rgba(7,16,42,.14), 0 4px 12px rgba(7,16,42,.06);
   --sh-blue: 0 8px 28px rgba(29,78,216,.28);
   --ease:   cubic-bezier(.4,0,.2,1);
+
+  /* ── EC Dashboard design tokens ─────────────────────────── */
+  /* Mirrors the ec-dashboard.html CSS variables so all EC pages render */
+  --sidebar:          #0F1220;
+  --sidebar-active:   #2F6FEB;
+  --card:             #FFFFFF;
+  --card-border:      #E5E7EB;
+  --page-bg:          #F4F5FA;
+  --ink:              #0F1220;
+  --muted:            #64748B;
+
+  /* EC badge / pill colours */
+  --badge-blue-bg:    #EFF6FF;
+  --badge-blue-text:  #1D4ED8;
+
+  /* Amber (pending / warning) */
+  --amber:            #D97706;
+  --amber-bg:         #FFFBEB;
+
+  /* EC red alias (already defined above but alias for EC inline styles) */
+  --ec-red:           #DC2626;
+  --ec-red-bg:        #FEF2F2;
 }
+
+[data-theme="dark"] {
+  --surface:     #1E293B;
+  --surface-2:   #0F172A;
+  --surface-3:   #334155;
+  --border:      #334155;
+  --border-mid:  #475569;
+
+  --text-1:      #F8FAFC;
+  --text-2:      #CBD5E1;
+  --text-3:      #94A3B8;
+
+  /* EC tokens — dark overrides */
+  --card:        #1E293B;
+  --card-border: #334155;
+  --page-bg:     #0F172A;
+  --ink:         #F8FAFC;
+  --muted:       #94A3B8;
+  --badge-blue-bg: #1E3A5F;
+  --badge-blue-text: #93C5FD;
+  --amber-bg:    #451A03;
+  --amber:       #FCD34D;
+}
+
 
 html {
   scroll-behavior: smooth;
