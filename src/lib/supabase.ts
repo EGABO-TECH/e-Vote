@@ -20,7 +20,7 @@ export type Voter = {
   student_id: string | null;
   full_name: string | null;
   email: string;
-  role: 'voter' | 'admin' | 'observer';
+  role: 'voter' | 'admin' | 'observer' | 'auditor';
   created_at: string;
 };
 

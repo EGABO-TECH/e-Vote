@@ -6,7 +6,7 @@ import VoteForm from './VoteForm';
 import styles from './page.module.css';
 
 export default async function VotePage({ params }: { params: { id: string } }) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) redirect('/');
 
   // 1. Fetch Election

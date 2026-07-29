@@ -5,7 +5,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 
 export async function castVoteAction(electionId: string, candidateId: string) {
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
     return { error: 'Unauthorized. Please log in.' };
   }

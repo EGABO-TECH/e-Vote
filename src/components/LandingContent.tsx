@@ -92,10 +92,7 @@ export default function LandingContent() {
           <div className={styles.ring} /><div className={styles.ring} />
           <div className={styles.ring} /><div className={styles.ring} /><div className={styles.ring} />
           <div className={styles.ringC}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 11 12 14 22 4"/>
-              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
-            </svg>
+            <img src="/logo.png" alt="e-Vote Logo" style={{ width: 44, height: 44, borderRadius: 12, objectFit: 'contain' }} />
           </div>
         </div>
 

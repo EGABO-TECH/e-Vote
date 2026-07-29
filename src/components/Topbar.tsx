@@ -18,15 +18,9 @@ export default function Topbar() {
   return (
     <header className={styles.topbar}>
       <Link href="/" className={styles.logo}>
-        <div className={styles.mark}><BallotIcon /></div>
+        <img src="/logo.png" alt="e-Vote Logo" style={{ width: 32, height: 32, borderRadius: 8, objectFit: 'contain' }} />
         <span className={styles.brand}>e<b>-</b>Vote</span>
       </Link>
-
-      <nav className={styles.nav}>
-        <Link href="/#how-it-works" className={styles.navLink}>How it works</Link>
-        <Link href="/#security" className={styles.navLink}>Security</Link>
-        <Link href="/about" className={styles.navLink}>About</Link>
-      </nav>
 
       <div className={styles.right}>
         <div className={styles.liveBadge}>
