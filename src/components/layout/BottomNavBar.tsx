@@ -17,14 +17,36 @@ const navConfig = {
     { name: "Receipt", href: "/voter/verification-receipt", icon: "receipt_long" },
     { name: "Help", href: "/voter/help-centre", icon: "help" },
     { name: "Settings", href: "/voter/settings", icon: "settings" },
-    { name: "Rules", href: "/voter/rules", icon: "article" },
+  ],
+  candidate: [
+    { name: "Home", href: "/candidate/dashboard", icon: "dashboard" },
+    { name: "Profile", href: "/candidate/profile", icon: "person" },
+    { name: "Campaign", href: "/candidate/campaign", icon: "campaign" },
+    { name: "Results", href: "/candidate/results", icon: "bar_chart" },
+  ],
+  ec: [
+    { name: "Home", href: "/ec/dashboard", icon: "dashboard" },
+    { name: "Elections", href: "/ec/elections", icon: "how_to_vote" },
+    { name: "Reports", href: "/ec/reports", icon: "bar_chart" },
+    { name: "Support", href: "/ec/support", icon: "help" },
+  ],
+  auditor: [
+    { name: "Dashboard", href: "/auditor", icon: "dashboard" },
+    { name: "Logs", href: "/auditor/logs", icon: "receipt_long" },
+    { name: "Reports", href: "/auditor/reports", icon: "bar_chart" },
+    { name: "Settings", href: "/auditor/settings", icon: "settings" },
   ],
 };
 
-function getRole(pathname: string) {
+type NavRole = keyof typeof navConfig;
+
+function getRole(pathname: string): NavRole | null {
   if (pathname.startsWith("/voter")) return "voter";
   if (pathname.startsWith("/admin")) return "admin";
-  return undefined;
+  if (pathname.startsWith("/candidate")) return "candidate";
+  if (pathname.startsWith("/ec")) return "ec";
+  if (pathname.startsWith("/auditor")) return "auditor";
+  return null;
 }
 
 export default function BottomNavBar() {
@@ -34,38 +56,58 @@ export default function BottomNavBar() {
   const navItems = navConfig[role];
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-outline-variant bg-surface-container-lowest dark:bg-surface-dim shadow-[0_-4px_20px_-10px_rgba(0,0,0,0.15)] lg:hidden overflow-x-auto">
-      <div className="mx-auto flex min-w-max justify-around px-2 py-2 gap-1">
+    <nav style={{
+      position: "fixed",
+      bottom: 0, left: 0, right: 0,
+      zIndex: 50,
+      background: "var(--surface)",
+      borderTop: "1px solid var(--border)",
+      boxShadow: "0 -4px 20px -10px rgba(0,0,0,0.15)",
+      display: "flex",
+      overflowX: "auto",
+    }}>
+      <div style={{
+        display: "flex",
+        justifyContent: "space-around",
+        alignItems: "center",
+        padding: "6px 8px",
+        width: "100%",
+        minWidth: "max-content",
+        gap: "4px",
+      }}>
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all duration-200 whitespace-nowrap min-w-[52px] ${
-                isActive
-                  ? "text-secondary bg-secondary/10"
-                  : "text-on-surface-variant hover:text-secondary hover:bg-surface-container"
-              }`}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "2px",
+                padding: "6px 12px",
+                borderRadius: "12px",
+                textDecoration: "none",
+                minWidth: "52px",
+                color: isActive ? "var(--blue)" : "var(--text-3)",
+                background: isActive ? "var(--surface-3)" : "transparent",
+                fontWeight: isActive ? 700 : 500,
+                transition: "all 0.15s",
+              }}
             >
               <span
-                className={`material-symbols-outlined text-[22px] transition-all ${
-                  isActive ? "text-secondary" : ""
-                }`}
-                style={
-                  isActive
-                    ? { fontVariationSettings: '"FILL" 1' }
-                    : {}
-                }
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: "22px",
+                  fontVariationSettings: isActive ? '"FILL" 1' : '"FILL" 0',
+                }}
               >
                 {item.icon}
               </span>
-              <span className={`text-[10px] font-semibold tracking-wide ${isActive ? "text-secondary" : ""}`}>
+              <span style={{ fontSize: "10px", fontWeight: "inherit", letterSpacing: "0.02em" }}>
                 {item.name}
               </span>
-              {isActive && (
-                <span className="absolute bottom-0 w-8 h-0.5 bg-secondary rounded-t-full" />
-              )}
             </Link>
           );
         })}

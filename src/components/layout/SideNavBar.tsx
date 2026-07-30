@@ -21,10 +21,35 @@ const navConfig = {
     { name: "Settings", href: "/voter/settings", icon: "settings" },
     { name: "Rules", href: "/voter/rules", icon: "article" },
   ],
+  candidate: [
+    { name: "Dashboard", href: "/candidate/dashboard", icon: "dashboard" },
+    { name: "My Profile", href: "/candidate/profile", icon: "person" },
+    { name: "Campaign", href: "/candidate/campaign", icon: "campaign" },
+    { name: "Results", href: "/candidate/results", icon: "bar_chart" },
+    { name: "Settings", href: "/candidate/settings", icon: "settings" },
+  ],
+  ec: [
+    { name: "Dashboard", href: "/ec/dashboard", icon: "dashboard" },
+    { name: "Elections", href: "/ec/elections", icon: "how_to_vote" },
+    { name: "Reports", href: "/ec/reports", icon: "bar_chart" },
+    { name: "Support", href: "/ec/support", icon: "help" },
+    { name: "Settings", href: "/ec/settings", icon: "settings" },
+  ],
+  auditor: [
+    { name: "Dashboard", href: "/auditor", icon: "dashboard" },
+    { name: "Audit Logs", href: "/auditor/logs", icon: "receipt_long" },
+    { name: "Reports", href: "/auditor/reports", icon: "bar_chart" },
+    { name: "Settings", href: "/auditor/settings", icon: "settings" },
+  ],
 };
 
-function getRole(pathname: string): keyof typeof navConfig {
+type NavRole = keyof typeof navConfig;
+
+function getRole(pathname: string): NavRole {
   if (pathname.startsWith("/voter")) return "voter";
+  if (pathname.startsWith("/candidate")) return "candidate";
+  if (pathname.startsWith("/ec")) return "ec";
+  if (pathname.startsWith("/auditor")) return "auditor";
   return "admin";
 }
 
@@ -35,47 +60,96 @@ export default function SideNavBar() {
   const { signOut } = useClerk();
 
   return (
-    <aside className="hidden lg:flex lg:flex-col h-screen w-64 fixed left-0 top-0 bg-primary-container text-on-primary py-8 shadow-xl z-50 overflow-y-auto border-r border-white/5">
+    <aside style={{
+      display: "flex",
+      flexDirection: "column",
+      height: "100vh",
+      width: "256px",
+      position: "fixed",
+      left: 0,
+      top: 0,
+      background: "var(--navy)",
+      color: "#fff",
+      padding: "2rem 0",
+      boxShadow: "var(--sh-lg)",
+      zIndex: 50,
+      overflowY: "auto",
+      borderRight: "1px solid rgba(255,255,255,0.06)",
+    }}>
       {/* Brand Identity */}
-      <div className="px-6 mb-8 flex items-center gap-3">
+      <div style={{ padding: "0 1.5rem", marginBottom: "2rem", display: "flex", alignItems: "center", gap: "12px" }}>
         <img
           alt="eVote Logo"
-          className="h-10 w-auto flex-shrink-0"
+          style={{ height: "40px", width: "auto", flexShrink: 0 }}
           src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeApBuNkcIfWbqQA7kHTE5OLuJNROKAvUiAI_7m7g8njlUAm0Qfxt18G8Q36jvR-a-qaxDaHmyR3b3nnzhX6UzAod5CinulfyYHyFkxP4W49YNca-t4LsCDChlBRhXxOJnMwWksg7KDiaMg4CZtisr97RfzAO2lr0ekF22TGXmKl0HBnH8q1gjQ7xSHgZs2LmdkUDMYZ4tvpZ4ovoBhHsXnZQrXPlTVDKFEwXamomwSdgDAo3rgqSjD4A2aQbxDuFr1JBFtBw3wqI"
         />
         <div>
-          <h1 className="text-headline-md font-bold text-on-primary leading-none">
+          <h1 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1, letterSpacing: "-0.03em" }}>
             e-Vote
           </h1>
-          <p className="text-label-md text-on-primary-container mt-0.5">
+          <p style={{ fontSize: "0.75rem", color: "rgba(255,255,255,0.5)", marginTop: "2px" }}>
             Cavendish
           </p>
         </div>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-grow px-3 space-y-0.5">
+      <nav style={{ flexGrow: 1, padding: "0 0.75rem", display: "flex", flexDirection: "column", gap: "2px" }}>
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/admin" && item.href !== "/voter" && pathname.startsWith(item.href));
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ease-out group ${
-                isActive
-                  ? "bg-secondary-container text-on-secondary-container font-bold shadow-sm"
-                  : "text-primary-fixed-dim hover:bg-white/10 hover:text-white hover:translate-x-1"
-              }`}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                padding: "10px 16px",
+                borderRadius: "var(--r-md)",
+                textDecoration: "none",
+                transition: "all 0.2s var(--ease)",
+                fontWeight: isActive ? 700 : 500,
+                fontSize: "0.875rem",
+                background: isActive ? "var(--blue)" : "transparent",
+                color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
+                boxShadow: isActive ? "var(--sh-blue)" : "none",
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.07)";
+                  (e.currentTarget as HTMLElement).style.color = "#fff";
+                  (e.currentTarget as HTMLElement).style.transform = "translateX(3px)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                  (e.currentTarget as HTMLElement).style.color = "rgba(255,255,255,0.65)";
+                  (e.currentTarget as HTMLElement).style.transform = "translateX(0)";
+                }
+              }}
             >
               <span
-                className="material-symbols-outlined text-[22px] flex-shrink-0 transition-all"
-                style={isActive ? { fontVariationSettings: '"FILL" 1' } : {}}
+                className="material-symbols-outlined"
+                style={{
+                  fontSize: "20px",
+                  flexShrink: 0,
+                  fontVariationSettings: isActive ? '"FILL" 1' : '"FILL" 0',
+                }}
               >
                 {item.icon}
               </span>
-              <span className="text-label-md leading-tight">{item.name}</span>
+              <span style={{ lineHeight: 1.3 }}>{item.name}</span>
               {isActive && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-secondary flex-shrink-0" />
+                <span style={{
+                  marginLeft: "auto",
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  background: "rgba(255,255,255,0.8)",
+                  flexShrink: 0,
+                }} />
               )}
             </Link>
           );
@@ -83,13 +157,36 @@ export default function SideNavBar() {
       </nav>
 
       {/* Sign Out */}
-      <div className="px-3 mt-6 pt-6 border-t border-white/10">
+      <div style={{ padding: "0 0.75rem", marginTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "1.5rem" }}>
         <button
           onClick={() => signOut({ redirectUrl: "/" })}
-          className="w-full flex items-center gap-3 px-4 py-3 text-error rounded-lg hover:bg-error/10 hover:translate-x-1 transition-all duration-200 font-bold"
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "10px 16px",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            borderRadius: "var(--r-md)",
+            color: "var(--red)",
+            fontWeight: 700,
+            fontSize: "0.875rem",
+            fontFamily: "inherit",
+            transition: "all 0.2s var(--ease)",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "rgba(220,38,38,0.1)";
+            (e.currentTarget as HTMLElement).style.transform = "translateX(3px)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+            (e.currentTarget as HTMLElement).style.transform = "translateX(0)";
+          }}
         >
-          <span className="material-symbols-outlined text-[22px]">logout</span>
-          <span className="text-label-md">Sign out</span>
+          <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>logout</span>
+          <span>Sign out</span>
         </button>
       </div>
     </aside>

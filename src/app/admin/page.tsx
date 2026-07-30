@@ -1,202 +1,231 @@
-export default function Dashboard() {
+export default function AdminDashboard() {
+  const stats = [
+    { label: "Active Nodes", value: "124 / 128", sub: "96.8% Uptime", icon: "dns", color: "var(--blue)" },
+    { label: "Throughput", value: "8,420 req/s", sub: "+12% Peak Surge", icon: "speed", color: "var(--green)" },
+    { label: "Sync Queue", value: "42 payloads", sub: "Processing", icon: "cloud_sync", color: "var(--amber)" },
+    { label: "Security", value: "AES-256", sub: "All nodes encrypted", icon: "verified_user", color: "var(--navy-mid)" },
+  ];
+
+  const nodes = [
+    { id: "CU-SI-001", location: "Main Campus", latency: "12ms", lastSync: "Just now", status: "Verified" },
+    { id: "CU-MC-042", location: "Mukono Campus", latency: "24ms", lastSync: "2m ago", status: "Verified" },
+    { id: "CU-KGC-009", location: "Kingsgate Campus", latency: "—", lastSync: "14m ago", status: "Offline" },
+  ];
+
+  const statusColor = (s: string) =>
+    s === "Verified" ? "var(--green)" : s === "Offline" ? "var(--red)" : "var(--amber)";
+  const statusBg = (s: string) =>
+    s === "Verified" ? "var(--green-bg)" : s === "Offline" ? "var(--red-bg)" : "var(--amber-bg)";
+
   return (
-    <div className="flex-grow space-y-6 lg:space-y-8">
+    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 
       {/* Page Header */}
-      <div className="relative bg-gradient-to-br from-primary-container/40 via-surface to-secondary-container/20 rounded-3xl p-6 lg:p-10 border border-outline-variant/30 overflow-hidden shadow-sm mb-2 section-card">
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-64 lg:w-96 h-64 lg:h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="relative z-10 flex flex-col gap-2">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 rounded-lg text-[20px]">
-              monitoring
-            </span>
-            <p className="text-label-md font-bold text-secondary uppercase tracking-widest">
-              Operations Center
-            </p>
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-on-surface leading-tight tracking-tight drop-shadow-sm">
-            Infrastructure Monitor
-          </h1>
-          <p className="text-body-lg lg:text-xl text-on-surface-variant max-w-2xl mt-2 leading-relaxed">
-            Real-time operational oversight for the University Electoral Commission. Ensuring data integrity and terminal uptime across all active nodes.
-          </p>
+      <div style={{
+        background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%)",
+        borderRadius: "var(--r-lg)",
+        padding: "2rem 2.5rem",
+        color: "#fff",
+        boxShadow: "var(--sh-lg)",
+        position: "relative",
+        overflow: "hidden",
+      }}>
+        <div style={{
+          position: "absolute", top: "-60px", right: "-60px",
+          width: "240px", height: "240px",
+          background: "rgba(255,255,255,0.05)",
+          borderRadius: "50%",
+        }} />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+          <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--blue-glow)" }}>monitoring</span>
+          <span style={{ fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--blue-glow)" }}>
+            Operations Center
+          </span>
+        </div>
+        <h1 style={{ fontSize: "2rem", fontWeight: 900, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: "0.5rem" }}>
+          Infrastructure Monitor
+        </h1>
+        <p style={{ fontSize: "0.95rem", color: "rgba(255,255,255,0.65)", maxWidth: "560px", lineHeight: 1.6 }}>
+          Real-time operational oversight for the University Electoral Commission. Ensuring data integrity and terminal uptime across all active nodes.
+        </p>
+        {/* Live badge */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: "8px",
+          marginTop: "1rem", padding: "5px 14px",
+          background: "rgba(22,163,74,0.2)", borderRadius: "999px",
+          border: "1px solid rgba(22,163,74,0.4)",
+        }}>
+          <span style={{ width: "8px", height: "8px", background: "var(--green)", borderRadius: "50%", display: "inline-block", animation: "pulse-dot 1.5s infinite" }} />
+          <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "#fff" }}>Infrastructure Status: ONLINE</span>
         </div>
       </div>
 
-      {/* Hero Section - Bento Inspired */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
-        <div className="lg:col-span-8 bg-surface-container-lowest rounded-xl p-6 lg:p-8 border border-outline-variant shadow-sm relative overflow-hidden group card-hover">
-          {/* Background Decor */}
-          <div className="absolute -right-20 -bottom-20 w-64 lg:w-96 h-64 lg:h-96 bg-secondary/5 rounded-full blur-3xl group-hover:bg-secondary/10 transition-all duration-700 pointer-events-none"></div>
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-on-tertiary-container/10 text-on-tertiary-container rounded-full mb-4">
-              <span className="w-2 h-2 bg-on-tertiary-container rounded-full animate-pulse"></span>
-              <span className="text-label-md font-bold uppercase tracking-wider">
-                Infrastructure Status: ONLINE
+      {/* Stats Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+        {stats.map((s) => (
+          <div key={s.label} style={{
+            background: "var(--surface)",
+            borderRadius: "var(--r-lg)",
+            padding: "1.5rem",
+            border: "1px solid var(--border)",
+            boxShadow: "var(--sh-sm)",
+            display: "flex", flexDirection: "column", gap: "8px",
+            transition: "box-shadow 0.2s",
+          }}>
+            <div style={{
+              width: "44px", height: "44px",
+              borderRadius: "var(--r-md)",
+              background: s.color,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              marginBottom: "4px",
+            }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "22px", color: "#fff", fontVariationSettings: '"FILL" 1' }}>
+                {s.icon}
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl lg:text-display font-display text-primary leading-tight mb-3 uppercase">
-              2026 NODE MONITORING
-            </h2>
-            <p className="text-body-md lg:text-body-lg text-on-surface-variant max-w-lg">
-              Ensuring data integrity, terminal uptime, and secure cryptographic handshakes across all active nodes.
-            </p>
+            <p style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</p>
+            <p style={{ fontSize: "1.6rem", fontWeight: 900, color: "var(--text-1)", letterSpacing: "-0.03em", lineHeight: 1 }}>{s.value}</p>
+            <p style={{ fontSize: "0.8rem", color: "var(--text-2)" }}>{s.sub}</p>
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Secondary Hero Feature */}
-        <div className="lg:col-span-4 bg-primary-container rounded-xl p-6 lg:p-8 border border-outline-variant shadow-sm text-on-primary relative overflow-hidden card-hover">
-          <h4 className="text-label-md font-bold text-secondary-fixed tracking-[0.2em] mb-4 uppercase">
+      {/* Security Protocols + Node Table */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1.5rem" }}>
+
+        {/* Security Panel */}
+        <div style={{
+          background: "linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%)",
+          borderRadius: "var(--r-lg)",
+          padding: "1.75rem",
+          color: "#fff",
+          boxShadow: "var(--sh-md)",
+        }}>
+          <p style={{ fontSize: "0.72rem", fontWeight: 800, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--blue-glow)", marginBottom: "1.25rem" }}>
             Security Protocols
-          </h4>
-          <div className="space-y-4 lg:space-y-6">
-            <div className="flex items-start gap-3 lg:gap-4">
-              <span className="material-symbols-outlined text-secondary-fixed flex-shrink-0">verified_user</span>
-              <div>
-                <p className="font-bold text-body-md lg:text-body-lg">End-to-End Encryption</p>
-                <p className="text-on-primary-container text-body-md">AES-256 active for all transit payloads.</p>
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            {[
+              { icon: "verified_user", title: "End-to-End Encryption", desc: "AES-256 active for all transit payloads." },
+              { icon: "lan", title: "Mesh-Node Validation", desc: "P2P node verification cycles every 120ms." },
+              { icon: "security_update_good", title: "Integrity Checks", desc: "Hash verification on every payload." },
+            ].map((p) => (
+              <div key={p.title} style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                <span className="material-symbols-outlined" style={{ fontSize: "20px", color: "var(--blue-glow)", flexShrink: 0, fontVariationSettings: '"FILL" 1' }}>{p.icon}</span>
+                <div>
+                  <p style={{ fontWeight: 700, fontSize: "0.875rem", lineHeight: 1.3 }}>{p.title}</p>
+                  <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.55)", marginTop: "2px" }}>{p.desc}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start gap-3 lg:gap-4">
-              <span className="material-symbols-outlined text-secondary-fixed flex-shrink-0">lan</span>
-              <div>
-                <p className="font-bold text-body-md lg:text-body-lg">Mesh-Node Validation</p>
-                <p className="text-on-primary-container text-body-md">P2P node verification cycles every 120ms.</p>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t border-white/10">
-              <button className="w-full bg-secondary-container text-on-secondary-container hover:bg-secondary-fixed transition-all py-2.5 rounded-lg font-bold text-label-md active:scale-95">
-                View Security Audit
-              </button>
-            </div>
+            ))}
           </div>
+          <a href="/admin/audit-logs" style={{
+            display: "inline-block", marginTop: "1.5rem",
+            padding: "8px 18px",
+            background: "var(--blue)", color: "#fff",
+            borderRadius: "var(--r-sm)", fontSize: "0.82rem", fontWeight: 700,
+            textDecoration: "none", boxShadow: "var(--sh-blue)",
+          }}>View Security Audit</a>
         </div>
-      </section>
 
-      {/* Metrics Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-        {/* Card 1 */}
-        <div className="bg-surface-container-lowest p-5 lg:p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4 lg:gap-6 hover:border-secondary transition-colors group card-hover">
-          <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform flex-shrink-0">
-            <span className="material-symbols-outlined text-[24px] lg:text-[32px]">dns</span>
+        {/* Node Connectivity Table */}
+        <div style={{
+          background: "var(--surface)",
+          borderRadius: "var(--r-lg)",
+          border: "1px solid var(--border)",
+          boxShadow: "var(--sh-sm)",
+          overflow: "hidden",
+        }}>
+          <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <p style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text-1)" }}>Node Connectivity Status</p>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button style={{ padding: "5px 14px", border: "1.5px solid var(--border)", borderRadius: "var(--r-sm)", background: "transparent", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", color: "var(--text-2)", fontFamily: "inherit" }}>Filter</button>
+              <button style={{ padding: "5px 14px", border: "1.5px solid var(--border)", borderRadius: "var(--r-sm)", background: "transparent", fontSize: "0.8rem", fontWeight: 600, cursor: "pointer", color: "var(--text-2)", fontFamily: "inherit" }}>Export Logs</button>
+            </div>
           </div>
-          <div>
-            <p className="text-label-md text-on-surface-variant uppercase tracking-widest mb-1">Active Nodes</p>
-            <h5 className="text-headline-lg font-bold text-primary">
-              124 <span className="text-outline font-normal text-headline-md">/ 128</span>
-            </h5>
-            <p className="text-[10px] text-on-tertiary-container font-bold mt-1">96.8% Uptime</p>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem" }}>
+              <thead>
+                <tr style={{ background: "var(--surface-2)" }}>
+                  {["Node", "Location", "Latency", "Last Sync", "Status", "Actions"].map((h) => (
+                    <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontWeight: 700, fontSize: "0.72rem", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em", borderBottom: "1px solid var(--border)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {nodes.map((n, i) => (
+                  <tr key={n.id} style={{ background: i % 2 === 0 ? "transparent" : "var(--surface-2)" }}>
+                    <td style={{ padding: "12px 16px", fontWeight: 700, color: "var(--text-1)", fontFamily: "monospace" }}>{n.id}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text-2)" }}>{n.location}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text-2)" }}>{n.latency}</td>
+                    <td style={{ padding: "12px 16px", color: "var(--text-2)" }}>{n.lastSync}</td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: "5px",
+                        padding: "3px 10px", borderRadius: "999px",
+                        fontSize: "0.75rem", fontWeight: 700,
+                        color: statusColor(n.status), background: statusBg(n.status),
+                        border: `1px solid ${statusColor(n.status)}33`,
+                      }}>
+                        <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: statusColor(n.status) }} />
+                        {n.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <button style={{
+                        padding: "4px 12px", fontSize: "0.78rem", fontWeight: 600,
+                        border: "1.5px solid var(--border)", borderRadius: "var(--r-sm)",
+                        background: "transparent", cursor: "pointer", color: "var(--blue)",
+                        fontFamily: "inherit", transition: "all 0.15s",
+                      }}>Diagnostic</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-        {/* Card 2 */}
-        <div className="bg-surface-container-lowest p-5 lg:p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4 lg:gap-6 hover:border-secondary transition-colors group card-hover">
-          <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform flex-shrink-0">
-            <span className="material-symbols-outlined text-[24px] lg:text-[32px]">speed</span>
-          </div>
-          <div>
-            <p className="text-label-md text-on-surface-variant uppercase tracking-widest mb-1">Throughput</p>
-            <h5 className="text-headline-lg font-bold text-primary">
-              8,420 <span className="text-outline font-normal text-headline-md">req/s</span>
-            </h5>
-            <p className="text-[10px] text-secondary font-bold mt-1">+12% Peak Surge</p>
-          </div>
-        </div>
-        {/* Card 3 */}
-        <div className="bg-surface-container-lowest p-5 lg:p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4 lg:gap-6 hover:border-secondary transition-colors group card-hover">
-          <div className="w-12 h-12 lg:w-16 lg:h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform flex-shrink-0">
-            <span className="material-symbols-outlined text-[24px] lg:text-[32px]">cloud_sync</span>
-          </div>
-          <div>
-            <p className="text-label-md text-on-surface-variant uppercase tracking-widest mb-1">Sync Queue</p>
-            <h5 className="text-headline-lg font-bold text-primary">
-              42 <span className="text-outline font-normal text-headline-md">payloads</span>
-            </h5>
-            <p className="text-[10px] text-on-tertiary-container font-bold mt-1">Processing</p>
-          </div>
-        </div>
-      </section>
+      </div>
 
-      {/* Data Table Section */}
-      <section className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden card-hover">
-        <div className="p-4 lg:p-6 border-b border-outline-variant flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center bg-surface-container-low">
-          <h4 className="text-headline-md font-bold text-on-surface">Node Connectivity Status</h4>
-          <div className="flex gap-2 w-full sm:w-auto">
-            <button className="flex-1 sm:flex-none px-4 py-2 text-label-md font-bold bg-surface-container-lowest border border-outline-variant rounded-lg hover:bg-surface-container transition-all text-on-surface">
-              Filter
-            </button>
-            <button className="flex-1 sm:flex-none px-4 py-2 text-label-md font-bold bg-primary text-on-primary rounded-lg hover:opacity-90 transition-all">
-              Export Logs
-            </button>
-          </div>
+      {/* Quick Actions */}
+      <div style={{ background: "var(--surface)", borderRadius: "var(--r-lg)", border: "1px solid var(--border)", padding: "1.5rem", boxShadow: "var(--sh-sm)" }}>
+        <p style={{ fontWeight: 800, fontSize: "1rem", color: "var(--text-1)", marginBottom: "1rem" }}>Quick Actions</p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          {[
+            { label: "Configure Election", icon: "how_to_vote", href: "/admin/election-config" },
+            { label: "Manage Users", icon: "group", href: "/admin/users" },
+            { label: "View Audit Logs", icon: "receipt_long", href: "/admin/audit-logs" },
+            { label: "Offline Sync", icon: "sync_alt", href: "/admin/offline-sync" },
+            { label: "System Settings", icon: "settings", href: "/admin/settings" },
+          ].map((a) => (
+            <a key={a.href} href={a.href} style={{
+              display: "inline-flex", alignItems: "center", gap: "8px",
+              padding: "9px 18px",
+              background: "var(--surface-2)",
+              border: "1.5px solid var(--border)",
+              borderRadius: "var(--r-sm)",
+              fontSize: "0.85rem", fontWeight: 600,
+              color: "var(--text-1)",
+              textDecoration: "none",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--blue-light)";
+              (e.currentTarget as HTMLElement).style.color = "var(--blue)";
+              (e.currentTarget as HTMLElement).style.background = "var(--surface-3)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+              (e.currentTarget as HTMLElement).style.color = "var(--text-1)";
+              (e.currentTarget as HTMLElement).style.background = "var(--surface-2)";
+            }}>
+              <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>{a.icon}</span>
+              {a.label}
+            </a>
+          ))}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[560px]">
-            <thead className="bg-surface-container-low text-label-md text-outline uppercase tracking-wider">
-              <tr>
-                <th className="px-4 lg:px-6 py-4 font-bold">Node</th>
-                <th className="px-4 lg:px-6 py-4 font-bold">Location</th>
-                <th className="px-4 lg:px-6 py-4 font-bold">Latency</th>
-                <th className="px-4 lg:px-6 py-4 font-bold">Last Sync</th>
-                <th className="px-4 lg:px-6 py-4 font-bold">Status</th>
-                <th className="px-4 lg:px-6 py-4 font-bold text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-outline-variant/30">
-              <tr className="hover:bg-surface-container/30 transition-colors">
-                <td className="px-4 lg:px-6 py-4">
-                  <div className="flex items-center gap-2 lg:gap-3">
-                    <div className="w-2 h-2 bg-on-tertiary-container rounded-full flex-shrink-0"></div>
-                    <span className="font-bold text-primary">CU-SI-001</span>
-                  </div>
-                </td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-on-surface">Main Campus</td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-on-tertiary-container">12ms</td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-outline">Just now</td>
-                <td className="px-4 lg:px-6 py-4">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-on-tertiary-container/10 text-on-tertiary-container uppercase">Verified</span>
-                </td>
-                <td className="px-4 lg:px-6 py-4 text-right">
-                  <button className="text-secondary hover:underline text-label-md">Diagnostic</button>
-                </td>
-              </tr>
-              <tr className="hover:bg-surface-container/30 transition-colors">
-                <td className="px-4 lg:px-6 py-4">
-                  <div className="flex items-center gap-2 lg:gap-3">
-                    <div className="w-2 h-2 bg-on-tertiary-container rounded-full flex-shrink-0"></div>
-                    <span className="font-bold text-primary">CU-MC-042</span>
-                  </div>
-                </td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-on-surface">Mukono Campus</td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-on-tertiary-container">24ms</td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-outline">2m ago</td>
-                <td className="px-4 lg:px-6 py-4">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-on-tertiary-container/10 text-on-tertiary-container uppercase">Verified</span>
-                </td>
-                <td className="px-4 lg:px-6 py-4 text-right">
-                  <button className="text-secondary hover:underline text-label-md">Diagnostic</button>
-                </td>
-              </tr>
-              <tr className="hover:bg-surface-container/30 transition-colors">
-                <td className="px-4 lg:px-6 py-4">
-                  <div className="flex items-center gap-2 lg:gap-3">
-                    <div className="w-2 h-2 bg-error rounded-full animate-pulse flex-shrink-0"></div>
-                    <span className="font-bold text-primary">CU-KGC-009</span>
-                  </div>
-                </td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-on-surface">Kingsgate Campus</td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-error">Timeout</td>
-                <td className="px-4 lg:px-6 py-4 text-body-md text-outline">14m ago</td>
-                <td className="px-4 lg:px-6 py-4">
-                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-on-error-container uppercase">Offline</span>
-                </td>
-                <td className="px-4 lg:px-6 py-4 text-right">
-                  <button className="text-secondary hover:underline text-label-md">Diagnostic</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      </div>
+
     </div>
   );
 }

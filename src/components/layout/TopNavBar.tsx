@@ -13,29 +13,24 @@ const ROLE_LABELS: Record<string, string> = {
 export default function TopNavBar() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const { user, isLoaded } = useUser();
-  const { signOut } = useClerk();
 
   useEffect(() => {
-    if (
+    const isDark =
       localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
-      document.documentElement.classList.add("dark");
+      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (isDark) {
+      document.documentElement.setAttribute("data-theme", "dark");
       setTheme("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-      setTheme("light");
     }
   }, []);
 
   const toggleTheme = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
+    if (theme === "dark") {
+      document.documentElement.removeAttribute("data-theme");
       localStorage.theme = "light";
       setTheme("light");
     } else {
-      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
       localStorage.theme = "dark";
       setTheme("dark");
     }
@@ -46,7 +41,6 @@ export default function TopNavBar() {
     : "Loading…";
   const role = (user?.publicMetadata?.role as string | undefined) ?? "";
   const roleLabel = ROLE_LABELS[role] ?? "User";
-
   const avatarUrl = user?.imageUrl;
   const initial = (
     user?.firstName?.[0] ??
@@ -55,76 +49,123 @@ export default function TopNavBar() {
   ).toUpperCase();
 
   return (
-    <header className="flex items-center justify-between gap-3 lg:px-margin-desktop px-4 py-3 w-full bg-surface dark:bg-surface-dim sticky top-0 z-40 border-b border-outline-variant h-20">
+    <header style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: "12px",
+      padding: "0 2rem",
+      width: "100%",
+      height: "72px",
+      background: "var(--surface)",
+      borderBottom: "1px solid var(--border)",
+      position: "sticky",
+      top: 0,
+      zIndex: 40,
+      boxShadow: "var(--sh-sm)",
+    }}>
       {/* Welcome Text */}
-      <div className="hidden sm:block min-w-0">
-        <p className="truncate text-xl md:text-2xl font-extrabold text-primary dark:text-primary-container tracking-tight drop-shadow-sm mb-1">
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <p style={{
+          fontSize: "1.15rem",
+          fontWeight: 800,
+          color: "var(--navy)",
+          letterSpacing: "-0.03em",
+          lineHeight: 1.2,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}>
           Welcome back, {user?.firstName ?? "User"} 👋
         </p>
-        <p className="truncate text-sm md:text-base font-medium text-on-surface-variant">
+        <p style={{
+          fontSize: "0.8rem",
+          fontWeight: 500,
+          color: "var(--text-2)",
+          marginTop: "2px",
+        }}>
           {roleLabel}
         </p>
       </div>
 
-      <div className="flex items-center justify-end gap-2 sm:gap-3 min-w-0 w-full sm:w-auto">
-        {/* Actions Group */}
-        <div className="flex items-center gap-1 sm:gap-2 rounded-3xl bg-surface-container-highest border border-outline-variant px-1.5 sm:px-2 py-1.5 sm:py-2 shadow-sm flex-shrink-0">
-          <button
-            onClick={toggleTheme}
-            className="p-1.5 sm:p-2 rounded-full hover:bg-surface-container-low transition-colors active:opacity-80 flex items-center justify-center"
-            aria-label="Toggle theme"
-          >
-            <span className="material-symbols-outlined text-on-surface-variant text-[20px] sm:text-[24px]">
-              {theme === "dark" ? "light_mode" : "dark_mode"}
-            </span>
-          </button>
-          <button
-            className="p-1.5 sm:p-2 rounded-full hover:bg-surface-container-low transition-colors active:opacity-80 relative flex items-center justify-center"
-            aria-label="Notifications"
-          >
-            <span className="material-symbols-outlined text-on-surface-variant text-[20px] sm:text-[24px]">
-              notifications
-            </span>
-            <span className="absolute top-1 right-1 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-error rounded-full border-2 border-surface animate-pulse"></span>
-          </button>
-        </div>
-
-        {/* Profile Group */}
-        <div className="flex items-center gap-2 sm:gap-3 rounded-3xl bg-surface-container-highest border border-outline-variant px-2 sm:px-3 py-1.5 sm:py-2 shadow-sm min-w-0">
-          <div className="min-w-0 text-right">
-            <p className="truncate font-label-md text-on-surface text-sm sm:text-base">
-              {fullName}
-            </p>
-            <p className="truncate text-xs sm:text-sm text-outline">
-              {roleLabel}
-            </p>
-          </div>
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-primary-container flex items-center justify-center flex-shrink-0 border border-outline-variant">
-            {avatarUrl ? (
-              <img
-                alt={fullName}
-                className="w-full h-full object-cover"
-                src={avatarUrl}
-              />
-            ) : (
-              <span className="text-on-primary-container font-bold text-sm">
-                {initial}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Sign Out */}
+      {/* Right actions */}
+      <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+        {/* Theme toggle */}
         <button
-          onClick={() => signOut({ redirectUrl: "/" })}
-          className="p-1.5 sm:p-2 rounded-full hover:bg-error/10 transition-colors active:opacity-80 flex items-center justify-center"
-          aria-label="Sign out"
-          title="Sign out"
+          onClick={toggleTheme}
+          title="Toggle theme"
+          style={{
+            width: "38px", height: "38px",
+            borderRadius: "50%",
+            border: "1.5px solid var(--border)",
+            background: "var(--surface-2)",
+            cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: "var(--text-2)",
+            transition: "all 0.15s",
+          }}
         >
-          <span className="material-symbols-outlined text-error text-[20px] sm:text-[24px]">
-            logout
+          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>
+            {theme === "dark" ? "light_mode" : "dark_mode"}
           </span>
         </button>
+
+        {/* Notifications */}
+        <button
+          title="Notifications"
+          style={{
+            width: "38px", height: "38px",
+            borderRadius: "50%",
+            border: "1.5px solid var(--border)",
+            background: "var(--surface-2)",
+            cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: "var(--text-2)",
+            position: "relative",
+            transition: "all 0.15s",
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>notifications</span>
+          <span style={{
+            position: "absolute", top: "6px", right: "6px",
+            width: "8px", height: "8px",
+            background: "var(--red)", borderRadius: "50%",
+            border: "2px solid var(--surface)",
+          }} />
+        </button>
+
+        {/* Profile pill */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          padding: "6px 14px 6px 8px",
+          borderRadius: "999px",
+          border: "1.5px solid var(--border)",
+          background: "var(--surface-2)",
+          boxShadow: "var(--sh-sm)",
+        }}>
+          {/* Avatar */}
+          <div style={{
+            width: "34px", height: "34px",
+            borderRadius: "50%",
+            overflow: "hidden",
+            background: "var(--navy)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            flexShrink: 0,
+            border: "2px solid var(--border)",
+          }}>
+            {avatarUrl ? (
+              <img alt={fullName} src={avatarUrl} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>{initial}</span>
+            )}
+          </div>
+          <div style={{ textAlign: "left" }}>
+            <p style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-1)", lineHeight: 1.2 }}>{fullName}</p>
+            <p style={{ fontSize: "0.7rem", color: "var(--text-3)", lineHeight: 1.2 }}>{roleLabel}</p>
+          </div>
+        </div>
       </div>
     </header>
   );

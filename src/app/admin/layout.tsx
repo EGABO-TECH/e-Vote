@@ -5,12 +5,12 @@ import BottomNavBar from '@/components/layout/BottomNavBar';
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-surface">
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--surface-2)' }}>
       <SideNavBar />
-      {/* Main content area — offset by sidebar width on large screens */}
-      <div className="flex flex-col flex-1 lg:ml-64">
+      {/* Main content area — offset by sidebar width */}
+      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, marginLeft: '256px' }}>
         <TopNavBar />
-        <main className="flex-1 px-4 py-6 lg:px-margin-desktop lg:py-8">
+        <main style={{ flex: 1, padding: '2rem 2.5rem' }}>
           {children}
         </main>
         <BottomNavBar />
