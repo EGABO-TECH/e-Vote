@@ -27,7 +27,7 @@ const PROTECTED_PREFIXES: { prefix: string; roles: string[] }[] = [
   { prefix: '/auditor', roles: ['admin', 'auditor'] },
 ];
 
-export const proxy = clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return;
 
   // Protect all non-public routes (redirects to sign-in if not authenticated)
