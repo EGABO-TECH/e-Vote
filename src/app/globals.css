@@ -44,7 +44,7 @@
   --sh-blue: 0 8px 28px rgba(29,78,216,.28);
   --ease:   cubic-bezier(.4,0,.2,1);
 
-  /* ── EC Dashboard design tokens ─────────────────────────── */
+  /* -- EC Dashboard design tokens --------------------------- */
   /* Mirrors the ec-dashboard.html CSS variables so all EC pages render */
   --sidebar:          #0F1220;
   --sidebar-active:   #2F6FEB;
@@ -106,7 +106,7 @@ body {
   line-height: 1.5;
 }
 
-/* ── Shared utility classes ─────────────────────────────────── */
+/* -- Shared utility classes ----------------------------------- */
 
 /* Buttons */
 .btn-p {

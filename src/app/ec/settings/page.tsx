@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { updateEcProfile } from '../actions';
 
-/* ── SVG Icons ── */
+/* -- SVG Icons -- */
 const IconUser = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -72,7 +72,7 @@ export default function EcSettingsPage() {
 
   const meta = user?.publicMetadata as Record<string, string> | undefined;
 
-  /* ── Profile form ── */
+  /* -- Profile form -- */
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -114,7 +114,7 @@ export default function EcSettingsPage() {
     });
   };
 
-  /* ── Notifications ── */
+  /* -- Notifications -- */
   const [notifs, setNotifs] = useState({ newCandidate: true, syncDiscrepancy: true, votingWindow: false, certifyReady: true });
   const [notifSaved, setNotifSaved] = useState(false);
   const handleToggle = (key: keyof typeof notifs) => {
@@ -160,7 +160,7 @@ export default function EcSettingsPage() {
         {/* Tab content */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
 
-          {/* ── PROFILE ── */}
+          {/* -- PROFILE -- */}
           {activeTab === 'profile' && (
             <form onSubmit={handleProfileSave} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               {/* Profile preview card */}
@@ -266,7 +266,7 @@ export default function EcSettingsPage() {
             </form>
           )}
 
-          {/* ── NOTIFICATIONS ── */}
+          {/* -- NOTIFICATIONS -- */}
           {activeTab === 'notifications' && (
             <div style={cardStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -310,7 +310,7 @@ export default function EcSettingsPage() {
             </div>
           )}
 
-          {/* ── SECURITY ── */}
+          {/* -- SECURITY -- */}
           {activeTab === 'security' && (
             <div style={cardStyle}>
               <div style={{ fontSize: '17px', fontWeight: 800, color: 'var(--ink)' }}>Security</div>

@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs';
 import { updateCandidateProfile } from '../actions';
 import styles from './page.module.css';
 
-/* ── tiny SVG helpers ── */
+/* -- tiny SVG helpers -- */
 const IconUser = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -55,7 +55,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'profile' | 'notifications' | 'security'>('profile');
   const [isPending, startTransition] = useTransition();
 
-  /* ── Profile form state ── */
+  /* -- Profile form state -- */
   const meta = user?.publicMetadata as Record<string, string> | undefined;
   const [form, setForm] = useState({
     firstName: '',
@@ -103,7 +103,7 @@ export default function SettingsPage() {
     });
   };
 
-  /* ── Notifications state ── */
+  /* -- Notifications state -- */
   const [notifState, setNotifState] = useState({ ecReview: true, statusChange: true, campaignUpdates: false, emailDigest: true });
   const [notifSaved, setNotifSaved] = useState(false);
   const handleToggle = (key: keyof typeof notifState) => {
@@ -115,7 +115,7 @@ export default function SettingsPage() {
   const email = user?.primaryEmailAddress?.emailAddress ?? '—';
   const candidateId = (meta?.candidateId as string) ?? null;
 
-  /* ── shared input style ── */
+  /* -- shared input style -- */
   const inp: React.CSSProperties = {
     width: '100%', height: '42px', padding: '0 14px',
     borderRadius: 'var(--r-sm)', border: '1.5px solid var(--border)',
@@ -157,7 +157,7 @@ export default function SettingsPage() {
 
         <div className={styles.tabContent}>
 
-          {/* ── PROFILE ── */}
+          {/* -- PROFILE -- */}
           {activeTab === 'profile' && (
             <form onSubmit={handleProfileSave} className={styles.profileTab}>
               <div className={styles.panelCard}>
@@ -276,7 +276,7 @@ export default function SettingsPage() {
             </form>
           )}
 
-          {/* ── NOTIFICATIONS ── */}
+          {/* -- NOTIFICATIONS -- */}
           {activeTab === 'notifications' && (
             <div className={styles.panelCard}>
               <div className={styles.panelHeaderFlex}>
@@ -310,7 +310,7 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* ── SECURITY ── */}
+          {/* -- SECURITY -- */}
           {activeTab === 'security' && (
             <div className={styles.panelCard}>
               <h2 className={styles.panelTitle}>Security Overview</h2>

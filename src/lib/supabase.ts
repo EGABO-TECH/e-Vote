@@ -1,19 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
-// ── Browser client (uses anon key + RLS) ─────────────────────────────────────
+// Browser client (uses anon key + RLS)
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
 );
 
-// ── Server / Admin client (bypasses RLS — server-side only) ──────────────────
+// Server / Admin client (bypasses RLS -- server-side only)
 export const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
   process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder',
   { auth: { autoRefreshToken: false, persistSession: false } }
 );
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// Types
 export type Voter = {
   id: string;
   clerk_id: string;

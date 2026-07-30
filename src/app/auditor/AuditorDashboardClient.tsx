@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import type { AuditorDashboardData, AuditLogEntry, BallotReceipt } from '@/lib/auditor';
 
-/* ─── Types ─────────────────────────────────────────────────── */
+/* --- Types --------------------------------------------------- */
 type NavKey = 'overview' | 'auditTrail' | 'integrity';
 type StatusFilter = 'All' | 'Success' | 'Warning' | 'Failed';
 type ReceiptStatusFilter = 'All' | 'Verified' | 'Pending' | 'Disputed';
@@ -45,7 +45,7 @@ const NAV_ITEMS: { key: NavKey; label: string; icon: React.ElementType; desc: st
 const STATUS_OPTIONS: StatusFilter[] = ['All', 'Success', 'Warning', 'Failed'];
 const RECEIPT_STATUS_OPTIONS: ReceiptStatusFilter[] = ['All', 'Verified', 'Pending', 'Disputed'];
 
-/* ─── Helpers ────────────────────────────────────────────────── */
+/* --- Helpers -------------------------------------------------- */
 function fmt(dateStr: string) {
   return new Date(dateStr).toLocaleString('en-GB', {
     day: 'numeric', month: 'short', year: 'numeric',
@@ -78,7 +78,7 @@ function receiptsToCsv(rows: BallotReceipt[]) {
   return [hdr.join(','), ...body].join('\n');
 }
 
-/* ─── Status Badges ─────────────────────────────────────────── */
+/* --- Status Badges ------------------------------------------- */
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, { bg: string; text: string; border: string; Icon: React.ElementType }> = {
     Success:  { bg: '#f0fdf4', text: '#15803d', border: '#bbf7d0', Icon: CheckCircle2 },
@@ -110,7 +110,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-/* ─── Generic Card ───────────────────────────────────────────── */
+/* --- Generic Card --------------------------------------------- */
 function Card({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
     <div style={{
@@ -126,7 +126,7 @@ function Card({ children, style }: { children: React.ReactNode; style?: React.CS
   );
 }
 
-/* ─── Metric Card ────────────────────────────────────────────── */
+/* --- Metric Card ---------------------------------------------- */
 function MetricCard({ label, value, subText, icon: Icon, bg }: { label: string; value: string | number; subText?: string; icon: React.ElementType; bg: string }) {
   return (
     <Card style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -151,7 +151,7 @@ function MetricCard({ label, value, subText, icon: Icon, bg }: { label: string; 
   );
 }
 
-/* ─── Audit Trail Summary Bar ────────────────────────────────── */
+/* --- Audit Trail Summary Bar ---------------------------------- */
 function LogSummaryBar({ total, warnings, failures, lastSync }: { total: number; warnings: number; failures: number; lastSync: string }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14 }}>
@@ -163,7 +163,7 @@ function LogSummaryBar({ total, warnings, failures, lastSync }: { total: number;
   );
 }
 
-/* ─── Log Detail Side Drawer ─────────────────────────────────── */
+/* --- Log Detail Side Drawer ----------------------------------- */
 function LogDetailDrawer({ log, open, onClose }: { log: AuditLogEntry | null; open: boolean; onClose: () => void }) {
   if (!log) return null;
 
@@ -301,7 +301,7 @@ function LogDetailDrawer({ log, open, onClose }: { log: AuditLogEntry | null; op
   );
 }
 
-/* ─── Cryptographic Proof Logs Item Component ────────────────── */
+/* --- Cryptographic Proof Logs Item Component ------------------ */
 function ProofLogCard({ title, status, desc, timestamp, hash }: { title: string; status: 'PASS' | 'PENDING' | 'WARN'; desc: string; timestamp: string; hash: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', padding: '14px 16px', borderRadius: 12, background: '#f9fafb', border: '1px solid #f3f4f6', flexWrap: 'wrap', gap: 12 }}>
@@ -323,7 +323,7 @@ function ProofLogCard({ title, status, desc, timestamp, hash }: { title: string;
   );
 }
 
-/* ─── Main Component ─────────────────────────────────────────── */
+/* --- Main Component ------------------------------------------- */
 export default function AuditorDashboardClient({ data }: { data: AuditorDashboardData }) {
   const [activeNav, setActiveNav]       = useState<NavKey>('overview');
   const [search, setSearch]             = useState('');
@@ -541,7 +541,7 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
         {/* Scrollable View Content */}
         <div style={{ flex: 1, overflowY: 'auto', padding: 28 }}>
 
-          {/* ── OVERVIEW TAB ── */}
+          {/* -- OVERVIEW TAB -- */}
           {activeNav === 'overview' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <Card>
@@ -607,7 +607,7 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
             </div>
           )}
 
-          {/* ── AUDIT TRAIL TAB ── */}
+          {/* -- AUDIT TRAIL TAB -- */}
           {activeNav === 'auditTrail' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
@@ -795,7 +795,7 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
             </div>
           )}
 
-          {/* ── SYSTEM & INTEGRITY TAB ── */}
+          {/* -- SYSTEM & INTEGRITY TAB -- */}
           {activeNav === 'integrity' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 

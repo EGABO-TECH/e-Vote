@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useClerk } from "@clerk/nextjs";
 
 const navConfig = {
   admin: [
@@ -22,9 +23,8 @@ const navConfig = {
   ],
 };
 
-function getRole(pathname: string) {
+function getRole(pathname: string): keyof typeof navConfig {
   if (pathname.startsWith("/voter")) return "voter";
-  if (pathname.startsWith("/admin")) return "admin";
   return "admin";
 }
 
@@ -32,6 +32,7 @@ export default function SideNavBar() {
   const pathname = usePathname();
   const role = getRole(pathname);
   const navItems = navConfig[role];
+  const { signOut } = useClerk();
 
   return (
     <aside className="hidden lg:flex lg:flex-col h-screen w-64 fixed left-0 top-0 bg-primary-container text-on-primary py-8 shadow-xl z-50 overflow-y-auto border-r border-white/5">
@@ -83,7 +84,10 @@ export default function SideNavBar() {
 
       {/* Sign Out */}
       <div className="px-3 mt-6 pt-6 border-t border-white/10">
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-error rounded-lg hover:bg-error/10 hover:translate-x-1 transition-all duration-200 font-bold">
+        <button
+          onClick={() => signOut({ redirectUrl: "/" })}
+          className="w-full flex items-center gap-3 px-4 py-3 text-error rounded-lg hover:bg-error/10 hover:translate-x-1 transition-all duration-200 font-bold"
+        >
           <span className="material-symbols-outlined text-[22px]">logout</span>
           <span className="text-label-md">Sign out</span>
         </button>
