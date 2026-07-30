@@ -58,7 +58,7 @@ export default clerkMiddleware(async (auth, req) => {
       });
       if (res.ok) {
         const user = await res.json();
-        role = user?.publicMetadata?.role;
+        role = user?.public_metadata?.role;
       }
     } catch (error) {
       console.error('Error fetching user from Clerk API in middleware:', error);
