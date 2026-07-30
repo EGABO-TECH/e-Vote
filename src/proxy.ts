@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher, clerkClient } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -33,15 +33,19 @@ export const proxy = clerkMiddleware(async (auth, req) => {
   // Protect all non-public routes (redirects to sign-in if not authenticated)
   const authObj = await auth.protect();
   
-  const { sessionClaims, orgRole } = authObj;
+  const { userId, orgRole } = authObj;
 
   const pathname = req.nextUrl.pathname;
 
   // Skip role checks for the /dashboard route (it is the role router itself)
   if (pathname.startsWith('/dashboard')) return;
 
+  // Fetch the full user object to reliably read publicMetadata
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+
   // Try to get role from publicMetadata first, fallback to stripping 'org:' from orgRole if present
-  let role = (sessionClaims?.publicMetadata as Record<string, string> | undefined)?.role ?? '';
+  let role = (user?.publicMetadata?.role as string | undefined) ?? '';
   
   if (!role && orgRole && orgRole.startsWith('org:')) {
     role = orgRole.replace('org:', ''); // e.g. org:admin -> admin
