@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher, clerkClient } from '@clerk/nextjs/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -40,13 +40,31 @@ export default clerkMiddleware(async (auth, req) => {
   // Skip role checks for the /dashboard route (it is the role router itself)
   if (pathname.startsWith('/dashboard')) return;
 
-  // Fetch the full user object to reliably read publicMetadata
-  const client = await clerkClient();
-  const user = await client.users.getUser(userId);
+  let role: string | undefined;
 
-  // Try to get role from publicMetadata first, fallback to stripping 'org:' from orgRole if present
-  let role = (user?.publicMetadata?.role as string | undefined);
-  
+  // Try to get role from sessionClaims first (if configured in Clerk dashboard)
+  const sessionClaims = authObj.sessionClaims as any;
+  if (sessionClaims?.publicMetadata?.role || sessionClaims?.metadata?.role) {
+    role = sessionClaims.publicMetadata?.role || sessionClaims.metadata?.role;
+  }
+
+  // Fallback to fetching user via Clerk REST API because clerkClient() isn't supported in Edge Middleware
+  if (!role && process.env.CLERK_SECRET_KEY) {
+    try {
+      const res = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
+        },
+      });
+      if (res.ok) {
+        const user = await res.json();
+        role = user?.publicMetadata?.role;
+      }
+    } catch (error) {
+      console.error('Error fetching user from Clerk API in middleware:', error);
+    }
+  }
+
   if (!role && orgRole && orgRole.startsWith('org:')) {
     role = orgRole.replace('org:', ''); // e.g. org:admin -> admin
   }
