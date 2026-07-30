@@ -24,114 +24,103 @@ export default function Settings() {
   ];
 
   return (
-    <div className="flex-grow max-w-max-width mx-auto w-full space-y-6 lg:space-y-8 pt-2">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
 
       {/* Page Header */}
-      <div className="relative bg-gradient-to-br from-primary-container/40 via-surface to-secondary-container/20 rounded-3xl p-6 lg:p-10 border border-outline-variant/30 overflow-hidden shadow-sm mb-2 section-card">
-        <div className="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-64 lg:w-96 h-64 lg:h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="relative z-10 flex flex-col gap-2">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 rounded-lg text-[20px]">
+      <div style={{
+        position: 'relative',
+        background: 'var(--surface)',
+        borderRadius: 24,
+        padding: '32px 40px',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--sh-md)',
+        overflow: 'hidden'
+      }}>
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="material-symbols-outlined" style={{ color: 'var(--blue)', background: 'var(--surface-3)', padding: 6, borderRadius: 8, fontSize: 20 }}>
               settings_suggest
             </span>
-            <p className="text-label-md font-bold text-secondary uppercase tracking-widest">
+            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.1em', margin: 0 }}>
               Configuration
             </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-extrabold text-on-surface leading-tight tracking-tight drop-shadow-sm">
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-1)', lineHeight: 1.1, margin: 0 }}>
             System Settings
           </h1>
-          <p className="text-body-lg lg:text-xl text-on-surface-variant max-w-2xl mt-2 leading-relaxed">
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-2)', maxWidth: 600, margin: 0 }}>
             Configure institutional branding, cloud infrastructure, and security protocols.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-gutter items-start">
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) 3fr', gap: 24, alignItems: 'flex-start' }}>
 
         {/* Settings Sub-Navigation (Left Column) */}
-        <aside className="col-span-1 lg:col-span-3">
-          {/* Mobile: horizontal scrolling tabs */}
-          <div className="lg:hidden overflow-x-auto">
-            <div className="flex gap-2 pb-2 min-w-max">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg whitespace-nowrap text-label-md font-semibold transition-all ${activeTab === item.id
-                      ? "bg-secondary-container text-on-secondary-container"
-                      : "text-on-surface-variant bg-surface-container-low hover:bg-surface-container"
-                    }`}
-                >
-                  <span className="material-symbols-outlined text-[16px]">{item.icon}</span>
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {/* Desktop: sticky sidebar */}
-          <div className="hidden lg:block bg-surface-container-lowest border border-outline-variant rounded-xl p-2 sticky top-24 shadow-sm card-hover">
-            <nav className="flex flex-col gap-0.5">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${activeTab === item.id
-                      ? "bg-secondary-container text-on-secondary-container"
-                      : "text-on-surface-variant hover:bg-surface-container"
-                    }`}
-                >
-                  <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
-                  <span className="text-body-md font-semibold">{item.label}</span>
-                </button>
-              ))}
-            </nav>
-          </div>
+        <aside style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 12, position: 'sticky', top: 96, boxShadow: 'var(--sh-sm)' }}>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 8, border: 'none', cursor: 'pointer', textAlign: 'left',
+                  background: activeTab === item.id ? 'var(--blue)' : 'transparent',
+                  color: activeTab === item.id ? '#fff' : 'var(--text-2)',
+                  fontWeight: activeTab === item.id ? 700 : 600,
+                  transition: 'all 0.2s'
+                }}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>{item.icon}</span>
+                <span style={{ fontSize: 14 }}>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </aside>
 
         {/* Settings Content (Right Column) */}
-        <div className="col-span-1 lg:col-span-9 space-y-4 lg:space-y-8">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
           {/* Section 1: Institutional Branding */}
-          <section className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm card-hover">
-            <div className="p-4 lg:p-6 border-b border-outline-variant bg-surface-container-low/50">
-              <h3 className="text-headline-md font-bold text-primary">Institutional Branding</h3>
-              <p className="text-body-md text-on-surface-variant">Customize the platform appearance for Cavendish University Uganda.</p>
+          <section style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', background: 'var(--surface-2)' }}>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Institutional Branding</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-3)', margin: '4px 0 0 0' }}>Customize the platform appearance for Cavendish University Uganda.</p>
             </div>
-            <div className="p-4 lg:p-8 space-y-6 lg:space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8">
-                <div className="space-y-3">
-                  <label className="text-label-md text-on-surface-variant uppercase tracking-wider">University Logo</label>
-                  <div className="relative group h-36 lg:h-40 border-2 border-dashed border-outline-variant rounded-xl flex flex-col justify-center items-center bg-surface hover:border-secondary transition-colors cursor-pointer overflow-hidden">
+            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 32 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>University Logo</label>
+                  <div style={{ position: 'relative', height: 160, border: '2px dashed var(--border)', borderRadius: 12, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'var(--surface)', cursor: 'pointer', overflow: 'hidden' }}>
                     <img
-                      className="absolute inset-0 w-full h-full object-contain p-4 opacity-50 group-hover:opacity-80 transition-opacity"
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 16, opacity: 0.5 }}
                       alt="Placeholder Logo"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDO5CEUTPlJfhSdDFCbXmPMpJQWnfwCKUAEBcuHHgrQPInqAQLhouQh5QgwF5XAVmdBlHbVICaA9g5_CRs4EfAaVEHcj0z7UdR3cxqLKGtCD2DDXT_i2vuGqFYkjpENjtJrZhv1TbO3ZOVCRNJUyzCBE-fT-ovzQZvBX25xqI03hHeX5TuJeeiWUPduof0MdfSzDG2FnlkoR49lYg22TEmnOwaIbpdeqny2hAKas21j8qQZ2ei32WJEgkMWV8178wIWa5p2Bs5fCkM"
+                      src="/logo.svg"
                     />
-                    <div className="relative z-10 flex flex-col items-center gap-1.5 bg-surface-container-lowest/80 p-2 rounded-lg backdrop-blur-sm">
-                      <span className="material-symbols-outlined text-on-surface-variant">upload_file</span>
-                      <span className="text-label-md font-bold text-secondary">Change Logo</span>
+                    <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.8)', padding: '8px 16px', borderRadius: 8 }}>
+                      <span className="material-symbols-outlined" style={{ color: 'var(--text-2)' }}>upload_file</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--blue)' }}>Change Logo</span>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4 lg:space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-label-md text-on-surface-variant uppercase tracking-wider">Institution Name</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Institution Name</label>
                     <input
-                      className="w-full px-4 py-2.5 lg:py-3 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent outline-none text-on-surface"
+                      style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, outline: 'none', color: 'var(--text-1)' }}
                       type="text"
                       defaultValue="Cavendish University Uganda"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-label-md text-on-surface-variant uppercase tracking-wider">Brand Accent Color</label>
-                    <div className="flex gap-3 flex-wrap">
-                      <div className="w-10 h-10 rounded-full bg-secondary cursor-pointer ring-2 ring-offset-2 ring-secondary"></div>
-                      <div className="w-10 h-10 rounded-full bg-[#131b2e] cursor-pointer hover:ring-2 hover:ring-offset-2 ring-primary transition-all"></div>
-                      <div className="w-10 h-10 rounded-full bg-error cursor-pointer hover:ring-2 hover:ring-offset-2 ring-error transition-all"></div>
-                      <div className="w-10 h-10 rounded-full bg-tertiary-container cursor-pointer hover:ring-2 hover:ring-offset-2 ring-on-tertiary-container transition-all"></div>
-                      <button className="w-10 h-10 rounded-full border border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
-                        <span className="material-symbols-outlined text-[16px]">add</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Brand Accent Color</label>
+                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--blue)', cursor: 'pointer', border: '2px solid #fff', outline: '2px solid var(--blue)' }}></div>
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#131b2e', cursor: 'pointer' }}></div>
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--red)', cursor: 'pointer' }}></div>
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#64ffda', cursor: 'pointer' }}></div>
+                      <button style={{ width: 40, height: 40, borderRadius: '50%', border: '1px dashed var(--border)', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', cursor: 'pointer' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>add</span>
                       </button>
                     </div>
                   </div>
@@ -141,90 +130,89 @@ export default function Settings() {
           </section>
 
           {/* Section 2: API Endpoints */}
-          <section className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm card-hover">
-            <div className="p-4 lg:p-6 border-b border-outline-variant bg-surface-container-low/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <section style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', background: 'var(--surface-2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div>
-                <h3 className="text-headline-md font-bold text-primary">Cloud Infrastructure &amp; API</h3>
-                <p className="text-body-md text-on-surface-variant">Core integration points for data persistence and external verification.</p>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Cloud Infrastructure &amp; API</h3>
+                <p style={{ fontSize: 14, color: 'var(--text-3)', margin: '4px 0 0 0' }}>Core integration points for data persistence and external verification.</p>
               </div>
-              <span className="px-3 py-1 bg-on-tertiary-container/10 text-on-tertiary-container text-label-md font-bold rounded-full whitespace-nowrap self-start sm:self-center">
+              <span style={{ padding: '6px 16px', background: 'var(--blue)', color: '#fff', fontSize: 12, fontWeight: 700, borderRadius: 99 }}>
                 System Health: Optimal
               </span>
             </div>
-            <div className="p-4 lg:p-8 space-y-6 lg:space-y-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 lg:gap-3 mb-2">
-                  <span className="material-symbols-outlined text-secondary text-[20px]">database</span>
-                  <h4 className="text-body-lg font-bold text-on-surface">Supabase Backend Configuration</h4>
+            <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 32 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 20 }}>database</span>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Supabase Backend Configuration</h4>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-label-md text-on-surface-variant">PROJECT URL</label>
-                  <div className="flex gap-2">
-                    <input className="flex-1 px-3 lg:px-4 py-2.5 lg:py-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-surface-variant font-mono text-sm outline-none min-w-0" readOnly type="text" value="https://evote-cuu-instance.supabase.co" />
-                    <button className="px-3 lg:px-4 py-2 border border-outline-variant rounded-lg hover:bg-surface-container transition-all text-on-surface flex-shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>PROJECT URL</label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input style={{ flex: 1, padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontFamily: 'monospace', fontSize: 14, color: 'var(--text-2)', outline: 'none' }} readOnly type="text" value="https://evote-cuu-instance.supabase.co" />
+                    <button style={{ padding: '12px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>content_copy</span>
                     </button>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-label-md text-on-surface-variant">ANON PUBLIC KEY</label>
-                  <div className="flex gap-2">
-                    <input className="flex-1 px-3 lg:px-4 py-2.5 lg:py-3 bg-surface-container-low border border-outline-variant rounded-lg text-on-surface-variant font-mono text-sm outline-none min-w-0" type="password" defaultValue="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
-                    <button className="px-3 lg:px-4 py-2 border border-outline-variant rounded-lg hover:bg-surface-container transition-all text-on-surface flex-shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">visibility</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)' }}>ANON PUBLIC KEY</label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input style={{ flex: 1, padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontFamily: 'monospace', fontSize: 14, color: 'var(--text-2)', outline: 'none' }} type="password" defaultValue="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." />
+                    <button style={{ padding: '12px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text-2)', cursor: 'pointer' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 18 }}>visibility</span>
                     </button>
                   </div>
                 </div>
               </div>
-              <div className="pt-4 lg:pt-6 border-t border-outline-variant space-y-3">
-                <div className="flex items-center gap-2 lg:gap-3 mb-2">
-                  <span className="material-symbols-outlined text-secondary text-[20px]">account_balance</span>
-                  <h4 className="text-body-lg font-bold text-on-surface">UEC Node Connectivity</h4>
+              <div style={{ paddingTop: 24, borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 20 }}>account_balance</span>
+                  <h4 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>UEC Node Connectivity</h4>
                 </div>
-                <input className="w-full px-3 lg:px-4 py-2.5 lg:py-3 bg-surface-container-low border border-outline-variant rounded-lg outline-none text-on-surface" type="text" defaultValue="https://api.uec.org.ug/v1/auth/verify-institutional" />
+                <input style={{ width: '100%', padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, outline: 'none', color: 'var(--text-1)', fontSize: 14 }} type="text" defaultValue="https://api.uec.org.ug/v1/auth/verify-institutional" />
               </div>
             </div>
           </section>
 
           {/* Section 3: Security Protocols */}
-          <section className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm card-hover">
-            <div className="p-4 lg:p-6 border-b border-outline-variant bg-surface-container-low/50">
-              <h3 className="text-headline-md font-bold text-primary">Security &amp; Access Protocols</h3>
-              <p className="text-body-md text-on-surface-variant">Configure encryption standards and session management.</p>
+          <section style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ padding: '24px 32px', borderBottom: '1px solid var(--border)', background: 'var(--surface-2)' }}>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Security &amp; Access Protocols</h3>
+              <p style={{ fontSize: 14, color: 'var(--text-3)', margin: '4px 0 0 0' }}>Configure encryption standards and session management.</p>
             </div>
-            <div className="p-4 lg:p-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 lg:gap-x-12 gap-y-6 lg:gap-y-8">
+            <div style={{ padding: 32 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
                 {/* Toggle: 2FA */}
-                <div className="flex justify-between items-start gap-4">
-                  <div className="space-y-1">
-                    <p className="text-body-md lg:text-body-lg font-bold text-on-surface">Enforce 2FA for Administrators</p>
-                    <p className="text-body-md text-on-surface-variant text-sm">Require biometric or TOTP for all elevated roles.</p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Enforce 2FA for Administrators</p>
+                    <p style={{ fontSize: 14, color: 'var(--text-3)', margin: 0 }}>Require biometric or TOTP for all elevated roles.</p>
                   </div>
-                  <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 mt-1">
-                    <input defaultChecked className="sr-only peer" type="checkbox" />
-                    <div className="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-                  </label>
+                  <div style={{ width: 44, height: 24, background: 'var(--blue)', borderRadius: 99, position: 'relative', cursor: 'pointer' }}>
+                    <div style={{ width: 20, height: 20, background: '#fff', borderRadius: '50%', position: 'absolute', top: 2, right: 2 }}></div>
+                  </div>
                 </div>
                 {/* Input: Session Timeout */}
-                <div className="space-y-2">
-                  <label className="text-label-md text-on-surface-variant uppercase tracking-wider">Session Timeout (Minutes)</label>
-                  <div className="flex items-center gap-3 lg:gap-4">
-                    <input className="w-24 px-4 py-2.5 bg-surface-container-low border border-outline-variant rounded-lg font-bold outline-none text-center text-on-surface" type="number" defaultValue="15" />
-                    <p className="text-body-md text-on-surface-variant italic text-sm">Auto-logout after inactivity.</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Session Timeout (Minutes)</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <input style={{ width: 96, padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontWeight: 700, textAlign: 'center', color: 'var(--text-1)', fontSize: 14, outline: 'none' }} type="number" defaultValue="15" />
+                    <p style={{ fontSize: 14, color: 'var(--text-3)', fontStyle: 'italic', margin: 0 }}>Auto-logout after inactivity.</p>
                   </div>
                 </div>
                 {/* Encryption Display */}
-                <div className="sm:col-span-2 p-4 lg:p-6 bg-surface-container-low rounded-xl border border-outline-variant flex flex-col sm:flex-row gap-4 sm:items-center">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 bg-surface-container-lowest rounded-lg flex items-center justify-center border border-outline-variant flex-shrink-0">
-                    <span className="material-symbols-outlined text-secondary text-[20px] lg:text-[24px]" style={{ fontVariationSettings: '"FILL" 1' }}>lock</span>
+                <div style={{ gridColumn: '1 / -1', padding: 24, background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 12, display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 48, height: 48, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 24 }}>lock</span>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-body-md lg:text-body-lg font-bold text-on-surface">System-Wide AES-256 GCM</p>
-                    <p className="text-label-md text-on-surface-variant mt-0.5">
-                      Ballots encrypted at rest. Key ID: <span className="font-mono text-secondary">KID-992-U-2026</span>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>System-Wide AES-256 GCM</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-3)', margin: '4px 0 0 0' }}>
+                      Ballots encrypted at rest. Key ID: <span style={{ fontFamily: 'monospace', color: 'var(--blue)' }}>KID-992-U-2026</span>
                     </p>
                   </div>
-                  <button className="px-4 lg:px-6 py-2 bg-primary text-on-primary text-label-md font-bold rounded-lg hover:opacity-90 transition-all active:scale-95 flex-shrink-0 w-full sm:w-auto">
+                  <button style={{ padding: '12px 24px', background: 'var(--text-1)', color: 'var(--surface)', fontWeight: 700, borderRadius: 8, border: 'none', cursor: 'pointer' }}>
                     Rotate Keys
                   </button>
                 </div>
@@ -233,21 +221,21 @@ export default function Settings() {
           </section>
 
           {/* Footer Actions */}
-          <div className="flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-3 pb-4">
-            <button className="px-8 py-2.5 text-on-surface-variant font-bold hover:underline transition-all text-center">
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 16, paddingBottom: 16 }}>
+            <button style={{ padding: '12px 32px', background: 'transparent', color: 'var(--text-3)', fontWeight: 700, border: 'none', cursor: 'pointer' }}>
               Reset to Defaults
             </button>
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className={`px-8 lg:px-10 py-2.5 lg:py-3 font-bold rounded-lg shadow-lg transition-all active:scale-95 ${saved
-                  ? "bg-on-tertiary-container text-white"
-                  : isSaving
-                    ? "bg-secondary text-on-secondary opacity-70 cursor-wait"
-                    : "bg-secondary text-on-secondary hover:shadow-secondary/20"
-                }`}
+              style={{
+                padding: '12px 40px', fontWeight: 700, borderRadius: 8, border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+                background: saved ? 'var(--blue)' : isSaving ? 'var(--text-3)' : 'var(--blue)',
+                color: '#fff',
+                boxShadow: 'var(--sh-sm)'
+              }}
             >
-              {saved ? "Changes Saved ✓" : isSaving ? "Syncing..." : "Save Changes"}
+              {saved ? "Changes Saved" : isSaving ? "Syncing..." : "Save Changes"}
             </button>
           </div>
         </div>

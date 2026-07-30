@@ -64,7 +64,7 @@ export default function VoterDashboard() {
             <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>arrow_forward</span>
           </Link>
         </div>
-        <div style={{ fontSize: "6rem", opacity: 0.15, userSelect: "none", flexShrink: 0 }}>🗳️</div>
+        <span className="material-symbols-outlined" style={{ fontSize: "6rem", opacity: 0.15, userSelect: "none", flexShrink: 0 }}>how_to_vote</span>
       </div>
 
       {/* Stats Row */}

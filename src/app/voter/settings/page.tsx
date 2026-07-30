@@ -1,57 +1,76 @@
-export default function Settings() {
+import { currentUser } from '@clerk/nextjs/server';
+
+export default async function Settings() {
+  const user = await currentUser();
+
+  const fullName =
+    `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Unknown User';
+  const email = user?.emailAddresses?.[0]?.emailAddress ?? '—';
+  const avatarUrl = user?.imageUrl ?? '';
+  const studentId = (user?.publicMetadata?.studentId as string | undefined) ?? '—';
+  const faculty = (user?.publicMetadata?.faculty as string | undefined) ?? '—';
+
   return (
     <>
-      <div className="lg:p-margin-desktop p-4 pb-20 lg:pb-0 max-w-container-max mx-auto">
-        <header className="mb-stack-lg">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-2 tracking-tight drop-shadow-sm">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32, padding: '24px 0 80px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
+        <header style={{ marginBottom: 16 }}>
+          <h1 style={{ fontSize: '3rem', fontWeight: 900, color: 'var(--text-1)', margin: '0 0 8px 0', lineHeight: 1.1 }}>
             Account Settings
           </h1>
-          <p className="text-lg md:text-xl font-medium text-on-surface-variant max-w-2xl">
+          <p style={{ fontSize: 18, color: 'var(--text-2)', maxWidth: 600, margin: 0 }}>
             Manage your student profile, secure your voting credentials, and
             customize your experience.
           </p>
         </header>
-        
-        <div className="bento-grid grid grid-cols-1 md:grid-cols-12 gap-gutter">
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
           {/* Personal Information - Read Only */}
-          <section className="col-span-12 lg:col-span-8 bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-8 soft-shadow">
-            <div className="flex items-center gap-4 mb-stack-md border-b border-outline-variant pb-4">
-              <span className="material-symbols-outlined text-primary text-3xl">
+          <section style={{ gridColumn: '1 / -1', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 32, boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 24 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'var(--blue)' }}>
                 badge
               </span>
-              <h4 className="font-headline-md text-headline-md">
+              <h4 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>
                 Personal Information
               </h4>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
-              <div className="flex flex-col gap-1">
-                <label className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Full Name
                 </label>
-                <div className="p-4 bg-surface-container-low rounded-lg text-on-surface font-medium border border-outline-variant/30">
-                  EGABO AARON
+                <div style={{ padding: 16, background: 'var(--surface-2)', borderRadius: 8, color: 'var(--text-1)', fontWeight: 600, border: '1px solid var(--border)' }}>
+                  {fullName}
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Email Address
+                </label>
+                <div style={{ padding: 16, background: 'var(--surface-2)', borderRadius: 8, color: 'var(--text-1)', fontWeight: 600, border: '1px solid var(--border)' }}>
+                  {email}
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Student Identification Number
                 </label>
-                <div className="p-4 bg-surface-container-low rounded-lg text-on-surface font-medium border border-outline-variant/30">
-                  258-154
+                <div style={{ padding: 16, background: 'var(--surface-2)', borderRadius: 8, color: 'var(--text-1)', fontWeight: 600, border: '1px solid var(--border)' }}>
+                  {studentId}
                 </div>
               </div>
-              <div className="col-span-1 md:col-span-2 flex flex-col gap-1">
-                <label className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Faculty / Department
                 </label>
-                <div className="p-4 bg-surface-container-low rounded-lg text-on-surface font-medium border border-outline-variant/30">
-                  Faculty of Science and Technology - BSc. Software Engineering
+                <div style={{ padding: 16, background: 'var(--surface-2)', borderRadius: 8, color: 'var(--text-1)', fontWeight: 600, border: '1px solid var(--border)' }}>
+                  {faculty}
                 </div>
               </div>
             </div>
-            <div className="mt-stack-md flex items-start gap-4 p-5 bg-secondary-container/10 dark:bg-secondary-container/20 rounded-xl border border-secondary/20 shadow-sm">
-              <span className="material-symbols-outlined text-secondary text-[28px]">info</span>
-              <p className="text-base md:text-lg text-on-surface font-medium leading-relaxed">
+            <div style={{ marginTop: 24, display: 'flex', alignItems: 'flex-start', gap: 16, padding: 20, background: 'rgba(59, 130, 246, 0.1)', borderRadius: 12, border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+              <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 28 }}>info</span>
+              <p style={{ fontSize: 16, color: 'var(--text-1)', margin: 0, lineHeight: 1.5 }}>
                 Your personal details are synced with the University Registry. If
                 any information is incorrect, please contact the Registrar&apos;s
                 Office.
@@ -60,36 +79,37 @@ export default function Settings() {
           </section>
 
           {/* Quick Profile Summary */}
-          <section className="col-span-12 lg:col-span-4 bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden flex flex-col soft-shadow">
-            <div className="h-32 bg-primary-container relative">
-              <div className="absolute -bottom-10 left-1/2 -translate-x-1/2">
-                <img
-                  className="w-24 h-24 rounded-full border-4 border-surface object-cover shadow-md"
-                  alt="Student profile portrait"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDtx28dsdvedUyiNdt0Y7-yEoUyxhm4bhqgiDG1rGE5Vcjr4bcCz8xQK5XKv8oxTqWmovgLMmlGC7wKxIl7oGEL0zWpjVClRhB9Nbb6LufwymC637rVq71S9G3Pqw4VAygf9spDIErpd-7llFsTamyb--J6iFmEsFQGHgx87ZxqYvjRhwwMEryyMDxg6mX0pAT4rPUipkH58oIEPyjbHZsSGn2VecDwDz0bTVbgMIdLTgkbS6vPj3sd314f9qIXChCR-bkIpX9TUrkow"
-                />
+          <section style={{ display: 'flex', flexDirection: 'column', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ height: 128, background: 'var(--blue)', position: 'relative' }}>
+              <div style={{ position: 'absolute', bottom: -40, left: '50%', transform: 'translateX(-50%)' }}>
+                {avatarUrl ? (
+                  <img
+                    style={{ width: 96, height: 96, borderRadius: '50%', border: '4px solid var(--surface)', objectFit: 'cover', boxShadow: 'var(--sh-sm)' }}
+                    alt="Profile avatar"
+                    src={avatarUrl}
+                  />
+                ) : (
+                  <div style={{ width: 96, height: 96, borderRadius: '50%', border: '4px solid var(--surface)', background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 800, color: 'var(--blue)' }}>
+                    {fullName.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="mt-12 p-8 text-center flex-1">
-              <h5 className="font-headline-md text-headline-md mb-1">EGABO AARON</h5>
-              <p className="text-label-md text-secondary mb-6">
+            <div style={{ marginTop: 48, padding: 32, textAlign: 'center', flex: 1 }}>
+              <h5 style={{ fontSize: 20, fontWeight: 800, margin: '0 0 4px 0', color: 'var(--text-1)' }}>{fullName}</h5>
+              <p style={{ fontSize: 14, color: 'var(--blue)', margin: '0 0 24px 0', fontWeight: 600 }}>
                 Verified Student Voter
               </p>
-              <div className="space-y-3">
-                <div className="flex justify-between text-label-md border-b border-outline-variant/20 pb-2">
-                  <span className="text-on-surface-variant">Last Vote</span>
-                  <span className="font-bold">Oct 16, 2026</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                  <span style={{ color: 'var(--text-2)' }}>Email</span>
+                  <span style={{ fontWeight: 700, color: 'var(--text-1)', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '60%' }}>{email}</span>
                 </div>
-                <div className="flex justify-between text-label-md border-b border-outline-variant/20 pb-2">
-                  <span className="text-on-surface-variant">Account Security</span>
-                  <span className="text-green-600 font-bold flex items-center gap-1">
-                    <span
-                      className="material-symbols-outlined text-[16px]"
-                      style={{ fontVariationSettings: '"FILL" 1' }}
-                    >
-                      check_circle
-                    </span>
-                    High
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
+                  <span style={{ color: 'var(--text-2)' }}>Account Security</span>
+                  <span style={{ color: 'var(--green)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span className="material-symbols-outlined" style={{ fontSize: 16 }}>check_circle</span>
+                    Active
                   </span>
                 </div>
               </div>
@@ -97,113 +117,94 @@ export default function Settings() {
           </section>
 
           {/* Account Security */}
-          <section className="col-span-12 lg:col-span-6 bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-8 soft-shadow">
-            <div className="flex items-center gap-4 mb-stack-md border-b border-outline-variant pb-4">
-              <span className="material-symbols-outlined text-primary text-3xl">
+          <section style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 32, boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 24 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'var(--blue)' }}>
                 security
               </span>
-              <h4 className="font-headline-md text-headline-md">Account Security</h4>
+              <h4 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>Account Security</h4>
             </div>
-            <div className="space-y-stack-md">
-              <div className="flex flex-col gap-stack-sm">
-                <label className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Voting PIN
                 </label>
-                <p className="text-label-md text-on-surface-variant mb-2">
+                <p style={{ fontSize: 14, color: 'var(--text-2)', margin: '0 0 8px 0' }}>
                   Used to authorize your ballot submission.
                 </p>
-                <button className="w-full py-3 bg-primary text-on-primary rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-primary-container transition-all active:scale-95">
-                  <span className="material-symbols-outlined text-[20px]">
-                    password
-                  </span>
+                <button style={{ width: '100%', padding: '12px', background: 'var(--text-1)', color: 'var(--surface)', borderRadius: 12, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, border: 'none', cursor: 'pointer' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>password</span>
                   Change Voting PIN
                 </button>
               </div>
-              <div className="h-[1px] bg-outline-variant my-6"></div>
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex flex-col">
-                  <span className="font-bold text-on-surface">
-                    Two-Factor Authentication
-                  </span>
-                  <span className="text-label-md text-on-surface-variant">
-                    Requires a code sent to your university email.
-                  </span>
+              <div style={{ height: 1, background: 'var(--border)', margin: '8px 0' }}></div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--text-1)' }}>Two-Factor Authentication</span>
+                  <span style={{ fontSize: 14, color: 'var(--text-2)' }}>Requires a code sent to your university email.</span>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input defaultChecked className="sr-only peer" type="checkbox" />
-                  <div className="w-14 h-7 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-secondary"></div>
-                </label>
+                <div style={{ width: 48, height: 24, background: 'var(--blue)', borderRadius: 99, position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+                  <div style={{ width: 20, height: 20, background: '#fff', borderRadius: '50%', position: 'absolute', top: 2, right: 2 }}></div>
+                </div>
               </div>
             </div>
           </section>
 
           {/* Preferences */}
-          <section className="col-span-12 lg:col-span-6 bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-8 soft-shadow">
-            <div className="flex items-center gap-4 mb-stack-md border-b border-outline-variant pb-4">
-              <span className="material-symbols-outlined text-primary text-3xl">
+          <section style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, padding: 32, boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 24 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 32, color: 'var(--blue)' }}>
                 settings_accessibility
               </span>
-              <h4 className="font-headline-md text-headline-md">Preferences</h4>
+              <h4 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>Preferences</h4>
             </div>
-            <div className="space-y-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   System Language
                 </label>
-                <select className="w-full p-3 border border-outline-variant rounded-xl bg-surface appearance-none focus:border-secondary transition-all text-on-surface">
+                <select style={{ width: '100%', padding: '12px', border: '1px solid var(--border)', borderRadius: 12, background: 'var(--surface-2)', color: 'var(--text-1)', outline: 'none' }}>
                   <option>English (United Kingdom)</option>
                   <option>Swahili</option>
                   <option>French</option>
                 </select>
               </div>
-              <div className="flex items-center justify-between py-2">
-                <div className="flex flex-col">
-                  <span className="font-bold text-on-surface">
-                    Push Notifications
-                  </span>
-                  <span className="text-label-md text-on-surface-variant">
-                    Election start and end alerts.
-                  </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--text-1)' }}>Push Notifications</span>
+                  <span style={{ fontSize: 14, color: 'var(--text-2)' }}>Election start and end alerts.</span>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input defaultChecked className="sr-only peer" type="checkbox" />
-                  <div className="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-                </label>
+                <div style={{ width: 44, height: 24, background: 'var(--blue)', borderRadius: 99, position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+                  <div style={{ width: 20, height: 20, background: '#fff', borderRadius: '50%', position: 'absolute', top: 2, right: 2 }}></div>
+                </div>
               </div>
-              <div className="flex items-center justify-between py-2">
-                <div className="flex flex-col">
-                  <span className="font-bold text-on-surface">Dark Mode</span>
-                  <span className="text-label-md text-on-surface-variant">
-                    Switch to the dark visual theme.
-                  </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontWeight: 700, color: 'var(--text-1)' }}>Dark Mode</span>
+                  <span style={{ fontSize: 14, color: 'var(--text-2)' }}>Switch to the dark visual theme.</span>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    className="sr-only peer"
-                    id="dark-mode-toggle-main"
-                    type="checkbox"
-                  />
-                  <div className="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
-                </label>
+                <div style={{ width: 44, height: 24, background: 'var(--surface-3)', borderRadius: 99, position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+                  <div style={{ width: 20, height: 20, background: '#fff', borderRadius: '50%', position: 'absolute', top: 2, left: 2 }}></div>
+                </div>
               </div>
             </div>
           </section>
 
           {/* Danger Zone */}
-          <section className="col-span-12 bg-red-50/50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30 rounded-xl p-8 soft-shadow">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <h4 className="font-headline-md text-headline-md text-error flex items-center gap-2 mb-1">
+          <section style={{ gridColumn: '1 / -1', background: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 16, padding: 32, boxShadow: 'var(--sh-sm)' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 24 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <h4 style={{ fontSize: 24, fontWeight: 800, color: 'var(--red)', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
                   <span className="material-symbols-outlined">warning</span>
                   Deactivate Voting Session
                 </h4>
-                <p className="text-body-md text-on-surface-variant max-w-2xl">
+                <p style={{ fontSize: 14, color: 'var(--text-2)', maxWidth: 600, margin: 0 }}>
                   If you suspect your account has been compromised, you can
                   temporarily suspend your voting ability. This action requires
                   immediate re-verification at the ICT office.
                 </p>
               </div>
-              <button className="px-6 py-3 border-2 border-error text-error font-bold rounded-xl hover:bg-error hover:text-on-error transition-all active:scale-95 whitespace-nowrap">
+              <button style={{ padding: '12px 24px', border: '2px solid var(--red)', color: 'var(--red)', background: 'transparent', fontWeight: 700, borderRadius: 12, cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 Suspend Voting Rights
               </button>
             </div>

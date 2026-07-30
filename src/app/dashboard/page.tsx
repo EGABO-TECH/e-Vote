@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation';
 // Role → portal redirect map
 const ROLE_REDIRECT: Record<string, string> = {
   voter: '/voter',
-  candidate: '/candidate/dashboard',
-  ec: '/ec/dashboard',
+  candidate: '/candidate',
+  ec: '/ec',
   admin: '/admin',
   auditor: '/auditor',
 };
@@ -22,6 +22,11 @@ export default async function DashboardPage() {
   let role = (user?.publicMetadata?.role as string | undefined) ?? '';
   if (!role && orgRole && orgRole.startsWith('org:')) {
     role = orgRole.replace('org:', '');
+  }
+  
+  // Default to 'voter' if still no role set (fresh signup)
+  if (!role) {
+    role = 'voter';
   }
 
   // Redirect to the correct portal based on role

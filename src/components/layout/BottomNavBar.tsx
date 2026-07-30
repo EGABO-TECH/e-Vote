@@ -19,13 +19,13 @@ const navConfig = {
     { name: "Settings", href: "/voter/settings", icon: "settings" },
   ],
   candidate: [
-    { name: "Home", href: "/candidate/dashboard", icon: "dashboard" },
+    { name: "Home", href: "/candidate", icon: "dashboard" },
     { name: "Profile", href: "/candidate/profile", icon: "person" },
     { name: "Campaign", href: "/candidate/campaign", icon: "campaign" },
     { name: "Results", href: "/candidate/results", icon: "bar_chart" },
   ],
   ec: [
-    { name: "Home", href: "/ec/dashboard", icon: "dashboard" },
+    { name: "Home", href: "/ec", icon: "dashboard" },
     { name: "Elections", href: "/ec/elections", icon: "how_to_vote" },
     { name: "Reports", href: "/ec/reports", icon: "bar_chart" },
     { name: "Support", href: "/ec/support", icon: "help" },
@@ -56,7 +56,7 @@ export default function BottomNavBar() {
   const navItems = navConfig[role];
 
   return (
-    <nav style={{
+    <nav className="mobile-only" style={{
       position: "fixed",
       bottom: 0, left: 0, right: 0,
       zIndex: 50,

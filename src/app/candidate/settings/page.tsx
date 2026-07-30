@@ -179,7 +179,7 @@ export default function SettingsPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div>
                     <label style={lbl}>First Name <span style={{ color: 'var(--red)' }}>*</span></label>
-                    <input style={inp} value={form.firstName} onChange={e => setForm(p => ({ ...p, firstName: e.target.value }))} placeholder="e.g. Niwasiima" required />
+                    <input style={inp} value={form.firstName} onChange={e => setForm(p => ({ ...p, firstName: e.target.value }))} placeholder="First Name" required />
                   </div>
                   <div>
                     <label style={lbl}>Last Name <span style={{ color: 'var(--red)' }}>*</span></label>

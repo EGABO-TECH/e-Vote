@@ -21,6 +21,28 @@
   font-feature-settings: 'liga';
 }
 
+/* Responsive utilities */
+/* Sidebar: visible on tablet (≥768px) and desktop */
+.desktop-only { display: flex; }
+/* Bottom nav: hidden on tablet/desktop */
+.mobile-only  { display: none !important; }
+
+/* Main content offset — matches sidebar width on tablet/desktop */
+.main-offset { margin-left: 256px; }
+
+@media (max-width: 767px) {
+  /* On mobile: hide sidebar, show bottom nav */
+  .desktop-only { display: none !important; }
+  .mobile-only  { display: flex !important; }
+
+  /* Push main content to full width on mobile (no sidebar) */
+  .main-offset { margin-left: 0 !important; }
+
+  /* Add bottom padding so content isn't hidden behind fixed bottom nav */
+  .main-content { padding-bottom: 80px !important; }
+}
+
+
 
 :root {
   --font-inter: 'Inter', system-ui, sans-serif;

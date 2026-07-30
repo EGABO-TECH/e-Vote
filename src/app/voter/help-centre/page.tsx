@@ -57,34 +57,32 @@ export default function HelpCentre() {
 
   return (
     <>
-      <div className="max-w-container-max mx-auto space-y-stack-lg">
-        {/* Hero Search Section — redesigned with deep dark gradient */}
-        <section className="relative rounded-2xl overflow-hidden text-center shadow-2xl"
-          style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)" }}>
-          {/* Decorative glow blobs */}
-          <div className="absolute top-0 left-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 32, padding: '24px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
+        {/* Hero Search Section */}
+        <section style={{ position: 'relative', borderRadius: 24, overflow: 'hidden', textAlign: 'center', boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)' }}>
+          <div style={{ position: 'absolute', top: 0, left: '25%', width: 256, height: 256, background: 'rgba(59, 130, 246, 0.1)', borderRadius: '50%', filter: 'blur(48px)', pointerEvents: 'none' }} />
+          <div style={{ position: 'absolute', bottom: 0, right: '25%', width: 256, height: 256, background: 'rgba(99, 102, 241, 0.1)', borderRadius: '50%', filter: 'blur(48px)', pointerEvents: 'none' }} />
 
-          <div className="relative z-10 py-16 px-6 md:px-12 space-y-6 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 text-sm font-semibold uppercase tracking-wider mb-2">
-              <span className="material-symbols-outlined text-[16px]">support_agent</span>
+          <div style={{ position: 'relative', zIndex: 10, padding: '64px 24px', display: 'flex', flexDirection: 'column', gap: 24, maxWidth: 800, margin: '0 auto' }}>
+            <div style={{ alignSelf: 'center', display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px', borderRadius: 99, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)', fontSize: 14, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>support_agent</span>
               Help Centre
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight drop-shadow-lg">
+            <h1 style={{ fontSize: '3rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1, margin: 0, textShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
               How can we help<br />you today?
             </h1>
-            <p className="text-lg md:text-xl text-white/70 max-w-xl mx-auto leading-relaxed">
+            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.7)', maxWidth: 600, margin: '0 auto', lineHeight: 1.6 }}>
               Access 24/7 support resources and guides to ensure your voice is
               heard during the e-Vote process.
             </p>
             {/* Search Bar */}
-            <div className="relative mt-4 max-w-2xl mx-auto group">
-              <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-[22px] pointer-events-none">
+            <div style={{ position: 'relative', marginTop: 16, maxWidth: 600, margin: '16px auto 0 auto', width: '100%' }}>
+              <span className="material-symbols-outlined" style={{ position: 'absolute', left: 20, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', fontSize: 22, pointerEvents: 'none' }}>
                 search
               </span>
               <input
-                className="w-full pl-14 pr-6 py-4 rounded-2xl bg-white/10 backdrop-blur-sm text-white placeholder-white/40 border border-white/20 focus:border-white/50 focus:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all shadow-lg text-base font-medium"
-                placeholder="Search: 'How to vote', 'Forgot PIN', 'System Security'..."
+                style={{ width: '100%', padding: '16px 48px 16px 56px', borderRadius: 16, background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)', outline: 'none', fontSize: 16, fontWeight: 500, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }}
+                placeholder="Search: 'How to vote', 'Forgot PIN'..."
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -92,20 +90,20 @@ export default function HelpCentre() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                  style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
-                  <span className="material-symbols-outlined text-[20px]">close</span>
+                  <span className="material-symbols-outlined" style={{ fontSize: 20 }}>close</span>
                 </button>
               )}
             </div>
             {/* Quick suggestion chips */}
             {!searchQuery && (
-              <div className="flex flex-wrap justify-center gap-2 pt-2">
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8, paddingTop: 8 }}>
                 {["Forgot PIN", "Eligibility", "Anonymous vote", "Receipt"].map((chip) => (
                   <button
                     key={chip}
                     onClick={() => setSearchQuery(chip)}
-                    className="px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white/70 text-sm hover:bg-white/20 hover:text-white transition-all"
+                    style={{ padding: '4px 12px', borderRadius: 99, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)', fontSize: 14, cursor: 'pointer', transition: 'all 0.2s' }}
                   >
                     {chip}
                   </button>
@@ -116,200 +114,152 @@ export default function HelpCentre() {
         </section>
 
         {/* Support Grid */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
           {/* Video Guides */}
-          <div className="lg:col-span-2 space-y-stack-md">
-            <div className="flex justify-between items-end">
-              <h3 className="font-headline-md text-headline-md">
+          <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>
                 Instructional Videos
               </h3>
-              <a className="text-secondary font-label-md hover:underline" href="#">
+              <a href="#" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
                 View all videos
               </a>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bento-card bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/30 transition-all hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="aspect-video bg-surface-container relative group cursor-pointer">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
+              <div style={{ background: 'var(--surface)', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--sh-sm)' }}>
+                <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', position: 'relative', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <img
-                    className="w-full h-full object-cover"
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     alt="A Beginner's Guide to e-Voting thumbnail"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRN2Hq4wlwg5IGgwGzncm8n24U4cxN8vebejdZDkP29Lqv7sbp2f9BCF34dXPEPIQaG2InDSb7tEnRynEmEEnDvqKMlbl7jx5wky7hrqWknTy6gsRcbMsZfk-_d9205lZwmUeJpdb6ZEvUr20BMfWo0BAQhCtu85HwiWOu8HGuXY22cKSTjjsA2ObzmijZP7iNntWZ2F2CtsF9bCuxv1UOroi8nVeI6p_VlXwlxXjN6guiK9JTpDnwcGbr2SMb8XBfqoOJ4A9aHYo"
+                    src="/logo.svg"
                   />
-                  <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="material-symbols-outlined text-on-primary text-5xl">
-                      play_circle
-                    </span>
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+                    <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
                   </div>
-                  <span className="absolute bottom-2 right-2 bg-primary/80 text-on-primary px-2 py-1 rounded text-label-sm">
-                    2:45
-                  </span>
+                  <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.8)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontSize: 12 }}>2:45</span>
                 </div>
-                <div className="p-4">
-                  <p className="font-bold text-body-md">
-                    A Beginner&apos;s Guide to e-Voting
-                  </p>
-                  <p className="text-on-surface-variant text-label-sm">
-                    Step-by-step walkthrough for first-time voters.
-                  </p>
+                <div style={{ padding: 16 }}>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>A Beginner's Guide to e-Voting</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-2)', margin: 0 }}>Step-by-step walkthrough for first-time voters.</p>
                 </div>
               </div>
-              <div className="bento-card bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/30 transition-all hover:-translate-y-0.5 hover:shadow-lg">
-                <div className="aspect-video bg-surface-container relative group cursor-pointer">
+              <div style={{ background: 'var(--surface)', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--sh-sm)' }}>
+                <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', position: 'relative', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                   <img
-                    className="w-full h-full object-cover"
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     alt="Ensuring Your Vote is Secure thumbnail"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAEz_SmmIHzHXqwhglKv5Z2_uNwzxqidQED4cSoa5LNYaw8NRtU3Taz2TgR4DhnrUJ5i4mDpecVhViWUgFC5kK_FXZqPrtjqdTDkfB1PUxBSA8McLwT9Xqj0gAC456mcVsafxtS0IDwXAzFE8PsC41pMvnRfi8D5kytjkUIMYaaBe6eJvGG9etX9ru1EqR3d2SWHR-gvYe_ZpcoR9WetSv0UzmOH_v_qSXKq0Jsat05CLXbC1IIGCoYU6z7Cl_rzz9GszwnBzSzweg"
+                    src="/logo.svg"
                   />
-                  <div className="absolute inset-0 bg-primary/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="material-symbols-outlined text-on-primary text-5xl">
-                      play_circle
-                    </span>
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+                    <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
                   </div>
-                  <span className="absolute bottom-2 right-2 bg-primary/80 text-on-primary px-2 py-1 rounded text-label-sm">
-                    1:20
-                  </span>
+                  <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.8)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontSize: 12 }}>1:20</span>
                 </div>
-                <div className="p-4">
-                  <p className="font-bold text-body-md">
-                    Ensuring Your Vote is Secure
-                  </p>
-                  <p className="text-on-surface-variant text-label-sm">
-                    Understanding Supabase verification and security.
-                  </p>
+                <div style={{ padding: 16 }}>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>Ensuring Your Vote is Secure</p>
+                  <p style={{ fontSize: 12, color: 'var(--text-2)', margin: 0 }}>Understanding Supabase verification and security.</p>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Contact & UEC Details */}
-          <div className="space-y-stack-md">
-            <h3 className="font-headline-md text-headline-md">Contact Support</h3>
-            <div className="bento-card bg-white dark:bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/30 space-y-4">
-              <div className="flex items-center gap-4 p-4 bg-secondary/5 rounded-lg border border-secondary/10">
-                <span className="material-symbols-outlined text-secondary text-3xl">
-                  support_agent
-                </span>
-                <div>
-                  <p className="font-bold text-label-md">Live Chat Support</p>
-                  <p className="text-label-sm text-on-surface-variant">
-                    Available: 8AM - 6PM
-                  </p>
-                </div>
-                <button className="ml-auto bg-secondary text-on-secondary px-4 py-2 rounded-full font-label-sm active:scale-95 transition-all">
-                  Chat
-                </button>
-              </div>
-              <div className="space-y-3">
-                <p className="font-label-md text-on-surface-variant uppercase tracking-wider">
-                  UEC Official Contacts
-                </p>
-                <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-outline">mail</span>
-                  <p className="text-body-md">uec@cavendish.ac.ug</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-outline">call</span>
-                  <p className="text-body-md">+256 (0) 414 123 456</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="material-symbols-outlined text-outline">location_on</span>
-                  <p className="text-body-md">Student Affairs Office, Ggaba Rd</p>
-                </div>
-              </div>
-              <hr className="border-outline-variant/30" />
-              <button className="w-full py-3 bg-primary text-on-primary rounded-lg font-bold font-label-md hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined">description</span>
-                Submit Support Ticket
-              </button>
             </div>
           </div>
         </section>
 
+        {/* Contact & UEC Details */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>Contact Support</h3>
+          <div style={{ background: 'var(--surface)', padding: 24, borderRadius: 16, border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: 16, background: 'rgba(59, 130, 246, 0.05)', borderRadius: 8, border: '1px solid rgba(59, 130, 246, 0.1)' }}>
+              <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 32 }}>support_agent</span>
+              <div>
+                <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Live Chat Support</p>
+                <p style={{ fontSize: 12, color: 'var(--text-3)', margin: 0 }}>Available: 8AM - 6PM</p>
+              </div>
+              <button style={{ marginLeft: 'auto', background: 'var(--blue)', color: '#fff', padding: '8px 16px', borderRadius: 99, fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}>
+                Chat
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>UEC Official Contacts</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span className="material-symbols-outlined" style={{ color: 'var(--text-3)' }}>mail</span>
+                <p style={{ fontSize: 14, color: 'var(--text-1)', margin: 0 }}>support@university.edu</p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span className="material-symbols-outlined" style={{ color: 'var(--text-3)' }}>call</span>
+                <p style={{ fontSize: 14, color: 'var(--text-1)', margin: 0 }}>+256 (0) 414 123 456</p>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span className="material-symbols-outlined" style={{ color: 'var(--text-3)' }}>location_on</span>
+                <p style={{ fontSize: 14, color: 'var(--text-1)', margin: 0 }}>Student Affairs Office, Ggaba Rd</p>
+              </div>
+            </div>
+            <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: 0 }} />
+            <button style={{ width: '100%', padding: '12px', background: 'var(--text-1)', color: 'var(--surface)', borderRadius: 8, fontWeight: 700, fontSize: 14, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}>
+              <span className="material-symbols-outlined">description</span>
+              Submit Support Ticket
+            </button>
+          </div>
+        </div>
+
         {/* FAQ Section */}
-        <section className="space-y-stack-md pb-20">
-          <div className="flex items-center justify-between">
-            <h3 className="font-headline-md text-headline-md">
-              Frequently Asked Questions
-            </h3>
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 24, paddingBottom: 80 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>Frequently Asked Questions</h3>
             {searchQuery && (
-              <p className="text-label-md text-on-surface-variant">
-                {filteredFaqs.length} result{filteredFaqs.length !== 1 ? "s" : ""} for &quot;{searchQuery}&quot;
+              <p style={{ fontSize: 14, color: 'var(--text-3)', margin: 0 }}>
+                {filteredFaqs.length} result{filteredFaqs.length !== 1 ? "s" : ""} for "{searchQuery}"
               </p>
             )}
           </div>
 
           {filteredFaqs.length === 0 ? (
-            <div className="text-center py-16 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl">
-              <span className="material-symbols-outlined text-[64px] text-outline mb-4 block">
-                search_off
-              </span>
-              <h4 className="font-headline-sm text-headline-sm text-on-surface mb-2">
-                No results found
-              </h4>
-              <p className="text-on-surface-variant text-body-md max-w-sm mx-auto">
-                No FAQs match &quot;{searchQuery}&quot;. Try different keywords or{" "}
-                <button onClick={() => setSearchQuery("")} className="text-secondary font-bold hover:underline">
+            <div style={{ textAlign: 'center', padding: '64px 0', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 64, color: 'var(--text-3)', marginBottom: 16 }}>search_off</span>
+              <h4 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 8px 0' }}>No results found</h4>
+              <p style={{ fontSize: 14, color: 'var(--text-2)', maxWidth: 400, margin: '0 auto' }}>
+                No FAQs match "{searchQuery}". Try different keywords or{" "}
+                <button onClick={() => setSearchQuery("")} style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>
                   clear your search
                 </button>
                 .
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 16 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {filteredFaqs.slice(0, Math.ceil(filteredFaqs.length / 2)).map((item, idx) => (
-                  <details
-                    key={idx}
-                    className="faq-item group bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden [&[open]_summary_.expand-icon]:rotate-180"
-                  >
-                    <summary className="flex justify-between items-center p-5 cursor-pointer list-none hover:bg-surface-container-low transition-colors gap-4">
-                      <span className="font-bold text-body-md text-on-surface">
-                        {item.question}
-                      </span>
-                      <span className="material-symbols-outlined expand-icon transition-transform flex-shrink-0 text-outline">
-                        expand_more
-                      </span>
+                  <details key={idx} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
+                    <summary style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 20, cursor: 'pointer', listStyle: 'none' }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)' }}>{item.question}</span>
+                      <span className="material-symbols-outlined" style={{ color: 'var(--text-3)' }}>expand_more</span>
                     </summary>
-                    <div className="px-5 pb-5 text-on-surface text-body-md border-t border-outline-variant/20 pt-4 leading-relaxed">
-                      {item.answer}
+                    <div style={{ padding: '0 20px 20px 20px', fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6, borderTop: '1px solid var(--border)' }}>
+                      <div style={{ marginTop: 16 }}>{item.answer}</div>
                     </div>
                   </details>
                 ))}
               </div>
-              <div className="space-y-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {filteredFaqs.slice(Math.ceil(filteredFaqs.length / 2)).map((item, idx) => (
-                  <details
-                    key={idx}
-                    className="faq-item group bg-surface-container-lowest border border-outline-variant/30 rounded-xl overflow-hidden [&[open]_summary_.expand-icon]:rotate-180"
-                  >
-                    <summary className="flex justify-between items-center p-5 cursor-pointer list-none hover:bg-surface-container-low transition-colors gap-4">
-                      <span className="font-bold text-body-md text-on-surface">
-                        {item.question}
-                      </span>
-                      <span className="material-symbols-outlined expand-icon transition-transform flex-shrink-0 text-outline">
-                        expand_more
-                      </span>
+                  <details key={idx} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
+                    <summary style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 20, cursor: 'pointer', listStyle: 'none' }}>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)' }}>{item.question}</span>
+                      <span className="material-symbols-outlined" style={{ color: 'var(--text-3)' }}>expand_more</span>
                     </summary>
-                    <div className="px-5 pb-5 text-on-surface text-body-md border-t border-outline-variant/20 pt-4 leading-relaxed">
-                      {item.answer}
+                    <div style={{ padding: '0 20px 20px 20px', fontSize: 14, color: 'var(--text-2)', lineHeight: 1.6, borderTop: '1px solid var(--border)' }}>
+                      <div style={{ marginTop: 16 }}>{item.answer}</div>
                     </div>
                   </details>
                 ))}
                 {/* Didn't find what you need card */}
                 {!searchQuery && (
-                  <div className="p-5 bg-secondary/5 border border-secondary/10 rounded-xl flex items-center gap-4 transition-all hover:bg-secondary/10">
-                    <span className="material-symbols-outlined text-secondary text-3xl">
-                      support_agent
-                    </span>
-                    <div className="text-left">
-                      <h4 className="font-bold text-body-md text-on-surface">
-                        Didn&apos;t find what you need?
-                      </h4>
-                      <button className="text-secondary font-bold hover:underline text-label-sm flex items-center gap-1 mt-1">
+                  <div style={{ padding: 20, background: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', borderRadius: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 32 }}>support_agent</span>
+                    <div>
+                      <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>Didn't find what you need?</h4>
+                      <button style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
                         Contact the Help Desk directly
-                        <span className="material-symbols-outlined text-[16px]">
-                          arrow_forward
-                        </span>
+                        <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
                       </button>
                     </div>
                   </div>

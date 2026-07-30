@@ -1,3 +1,5 @@
+"use client";
+
 export default function AdminDashboard() {
   const stats = [
     { label: "Active Nodes", value: "124 / 128", sub: "96.8% Uptime", icon: "dns", color: "var(--blue)" },

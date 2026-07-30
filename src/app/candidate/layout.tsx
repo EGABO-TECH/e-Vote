@@ -1,29 +1,19 @@
-'use client';
-
-import { useState } from 'react';
-import CandidateSidebar from '@/components/CandidateSidebar';
-import CandidateHeader from '@/components/CandidateHeader';
 import { ReactNode } from 'react';
-import styles from './layout.module.css';
+import SideNavBar from '@/components/layout/SideNavBar';
+import TopNavBar from '@/components/layout/TopNavBar';
+import BottomNavBar from '@/components/layout/BottomNavBar';
 
 export default function CandidateLayout({ children }: { children: ReactNode }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
-    <div className={styles.layout}>
-      {/* Mobile overlay */}
-      <div 
-        className={`${styles.overlay} ${mobileMenuOpen ? styles.overlayOpen : ''}`} 
-        onClick={() => setMobileMenuOpen(false)}
-      />
-
-      <CandidateSidebar mobileOpen={mobileMenuOpen} setMobileOpen={setMobileMenuOpen} />
-      
-      <div className={styles.mainContent}>
-        <CandidateHeader onMenuClick={() => setMobileMenuOpen(true)} />
-        <main className={styles.pageContainer}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--surface-2)' }}>
+      <SideNavBar />
+      {/* .main-offset handles the 256px margin on tablet/desktop and 0 on mobile via CSS */}
+      <div className="main-offset" style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
+        <TopNavBar />
+        <main className="main-content" style={{ flex: 1, padding: '2rem 2.5rem' }}>
           {children}
         </main>
+        <BottomNavBar />
       </div>
     </div>
   );

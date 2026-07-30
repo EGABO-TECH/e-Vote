@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import styles from '../dashboard/page.module.css';
+import styles from '../shared.module.css';
 
 export default function ResultsPage() {
   const [certifyOpen, setCertifyOpen] = useState(false);

@@ -76,7 +76,7 @@ export default function TopNavBar() {
           overflow: "hidden",
           textOverflow: "ellipsis",
         }}>
-          Welcome back, {user?.firstName ?? "User"} 👋
+          Welcome back, {user?.firstName ?? "User"}
         </p>
         <p style={{
           fontSize: "0.8rem",

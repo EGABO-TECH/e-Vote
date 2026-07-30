@@ -724,7 +724,7 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
                       }}
                     >
                       <RefreshCw size={14} style={{ animation: isVerifying ? 'spin .7s linear infinite' : 'none' }} />
-                      {isVerifying ? 'Verifying…' : chainVerified ? '✓ Chain Verified & Immutable' : 'Verify Chain Integrity'}
+                      {isVerifying ? 'Verifying…' : chainVerified ? 'Chain Verified & Immutable' : 'Verify Chain Integrity'}
                     </button>
 
                     {/* Exports */}
@@ -750,7 +750,7 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
                   <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>
                     Showing <span style={{ color: '#2563eb', fontWeight: 700 }}>{filteredLogs.length}</span> of {data.auditLog.length} entries
                   </p>
-                  <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>💡 Click any row to inspect full log details & raw payload</p>
+                  <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}><span className="material-symbols-outlined" style={{ fontSize: 12, verticalAlign: 'text-bottom', marginRight: 4 }}>info</span> Click any row to inspect full log details & raw payload</p>
                 </div>
                 <div style={{ overflowX: 'auto' }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>

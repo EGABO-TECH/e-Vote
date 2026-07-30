@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import styles from '../dashboard/page.module.css';
+import styles from '../shared.module.css';
 
 type Candidate = {
   id: string;
@@ -13,7 +13,7 @@ type Candidate = {
 };
 
 const INITIAL_PENDING: Candidate[] = [
-  { id: '1', name: 'Niwasiima Ashelycole', position: 'Guild President', time: 'Submitted 2 days ago', initials: 'NA', status: 'Pending' },
+  { id: '1', name: 'Student Name', position: 'Guild President', time: 'Submitted 2 days ago', initials: 'SN', status: 'Pending' },
   { id: '2', name: 'Joseph Kato', position: 'Speaker', time: 'Submitted 1 day ago', initials: 'JK', status: 'Pending' },
   { id: '3', name: 'Ruth Nabirye', position: 'Faculty Rep, Business', time: 'Submitted 5 hours ago', initials: 'RN', status: 'Pending' },
 ];
@@ -161,7 +161,7 @@ export default function CandidatesPage() {
           )}
           {reviewAction === 'changes' && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '8px', color: '#92400E', fontWeight: 600, fontSize: '14px', marginBottom: '16px' }}>
-              ✉ Change request sent to {reviewCandidate.name}.
+              <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 4, verticalAlign: 'text-bottom' }}>mail</span> Change request sent to {reviewCandidate.name}.
             </div>
           )}
 

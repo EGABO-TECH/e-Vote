@@ -22,14 +22,14 @@ const navConfig = {
     { name: "Rules", href: "/voter/rules", icon: "article" },
   ],
   candidate: [
-    { name: "Dashboard", href: "/candidate/dashboard", icon: "dashboard" },
+    { name: "Dashboard", href: "/candidate", icon: "dashboard" },
     { name: "My Profile", href: "/candidate/profile", icon: "person" },
     { name: "Campaign", href: "/candidate/campaign", icon: "campaign" },
     { name: "Results", href: "/candidate/results", icon: "bar_chart" },
     { name: "Settings", href: "/candidate/settings", icon: "settings" },
   ],
   ec: [
-    { name: "Dashboard", href: "/ec/dashboard", icon: "dashboard" },
+    { name: "Dashboard", href: "/ec", icon: "dashboard" },
     { name: "Elections", href: "/ec/elections", icon: "how_to_vote" },
     { name: "Reports", href: "/ec/reports", icon: "bar_chart" },
     { name: "Support", href: "/ec/support", icon: "help" },
@@ -60,7 +60,7 @@ export default function SideNavBar() {
   const { signOut } = useClerk();
 
   return (
-    <aside style={{
+    <aside className="desktop-only" style={{
       display: "flex",
       flexDirection: "column",
       height: "100vh",
@@ -81,7 +81,7 @@ export default function SideNavBar() {
         <img
           alt="eVote Logo"
           style={{ height: "40px", width: "auto", flexShrink: 0 }}
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeApBuNkcIfWbqQA7kHTE5OLuJNROKAvUiAI_7m7g8njlUAm0Qfxt18G8Q36jvR-a-qaxDaHmyR3b3nnzhX6UzAod5CinulfyYHyFkxP4W49YNca-t4LsCDChlBRhXxOJnMwWksg7KDiaMg4CZtisr97RfzAO2lr0ekF22TGXmKl0HBnH8q1gjQ7xSHgZs2LmdkUDMYZ4tvpZ4ovoBhHsXnZQrXPlTVDKFEwXamomwSdgDAo3rgqSjD4A2aQbxDuFr1JBFtBw3wqI"
+          src="/logo.svg"
         />
         <div>
           <h1 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1, letterSpacing: "-0.03em" }}>

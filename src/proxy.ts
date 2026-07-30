@@ -45,10 +45,15 @@ export const proxy = clerkMiddleware(async (auth, req) => {
   const user = await client.users.getUser(userId);
 
   // Try to get role from publicMetadata first, fallback to stripping 'org:' from orgRole if present
-  let role = (user?.publicMetadata?.role as string | undefined) ?? '';
+  let role = (user?.publicMetadata?.role as string | undefined);
   
   if (!role && orgRole && orgRole.startsWith('org:')) {
     role = orgRole.replace('org:', ''); // e.g. org:admin -> admin
+  }
+  
+  // Default fresh accounts to 'voter' if they have no role
+  if (!role) {
+    role = 'voter';
   }
 
   // Check if the user is trying to access a portal they don't belong to

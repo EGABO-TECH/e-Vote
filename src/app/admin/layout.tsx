@@ -7,10 +7,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--surface-2)' }}>
       <SideNavBar />
-      {/* Main content area — offset by sidebar width */}
-      <div style={{ display: 'flex', flexDirection: 'column', flex: 1, marginLeft: '256px' }}>
+      {/* .main-offset handles the 256px margin on tablet/desktop and 0 on mobile via CSS */}
+      <div className="main-offset" style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
         <TopNavBar />
-        <main style={{ flex: 1, padding: '2rem 2.5rem' }}>
+        <main className="main-content" style={{ flex: 1, padding: '2rem 2.5rem' }}>
           {children}
         </main>
         <BottomNavBar />

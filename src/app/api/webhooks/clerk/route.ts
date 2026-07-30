@@ -1,6 +1,6 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
-import { WebhookEvent } from '@clerk/nextjs/server';
+import { WebhookEvent, clerkClient } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export async function POST(req: Request) {
@@ -67,6 +67,19 @@ export async function POST(req: Request) {
     if (error) {
       console.error('Error inserting user to Supabase:', error);
       return new Response('Error inserting user', { status: 500 });
+    }
+    
+    // Set default role to 'voter' in Clerk publicMetadata
+    // This ensures every new self-signup gets the voter role automatically.
+    try {
+      const client = await clerkClient();
+      await client.users.updateUser(id, {
+        publicMetadata: { role: 'voter' },
+      });
+      console.log(`User ${id} assigned default role: voter`);
+    } catch (roleErr) {
+      // Non-fatal: middleware fallback also defaults to voter
+      console.error('Failed to assign default role to user:', roleErr);
     }
     
     console.log(`User ${id} successfully synced to Supabase`);
