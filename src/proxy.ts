@@ -31,16 +31,21 @@ export const proxy = clerkMiddleware(async (auth, req) => {
   if (isPublicRoute(req)) return;
 
   // Protect all non-public routes (redirects to sign-in if not authenticated)
-  const { sessionClaims } = await auth.protect();
+  const authObj = await auth.protect();
+  
+  const { sessionClaims, orgRole } = authObj;
 
   const pathname = req.nextUrl.pathname;
 
   // Skip role checks for the /dashboard route (it is the role router itself)
   if (pathname.startsWith('/dashboard')) return;
 
-  const role =
-    (sessionClaims?.publicMetadata as Record<string, string> | undefined)
-      ?.role ?? '';
+  // Try to get role from publicMetadata first, fallback to stripping 'org:' from orgRole if present
+  let role = (sessionClaims?.publicMetadata as Record<string, string> | undefined)?.role ?? '';
+  
+  if (!role && orgRole && orgRole.startsWith('org:')) {
+    role = orgRole.replace('org:', ''); // e.g. org:admin -> admin
+  }
 
   // Check if the user is trying to access a portal they don't belong to
   const matched = PROTECTED_PREFIXES.find(({ prefix }) =>
