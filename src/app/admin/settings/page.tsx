@@ -95,7 +95,7 @@ export default function Settings() {
                     <img
                       style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: 16, opacity: 0.5 }}
                       alt="Placeholder Logo"
-                      src="/logo.svg"
+                      src="/logo.jpeg"
                     />
                     <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.8)', padding: '8px 16px', borderRadius: 8 }}>
                       <span className="material-symbols-outlined" style={{ color: 'var(--text-2)' }}>upload_file</span>

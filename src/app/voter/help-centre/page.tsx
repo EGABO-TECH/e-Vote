@@ -131,7 +131,7 @@ export default function HelpCentre() {
                   <img
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     alt="A Beginner's Guide to e-Voting thumbnail"
-                    src="/logo.svg"
+                    src="/logo.jpeg"
                   />
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
                     <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
@@ -148,7 +148,7 @@ export default function HelpCentre() {
                   <img
                     style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     alt="Ensuring Your Vote is Secure thumbnail"
-                    src="/logo.svg"
+                    src="/logo.jpeg"
                   />
                   <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
                     <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>

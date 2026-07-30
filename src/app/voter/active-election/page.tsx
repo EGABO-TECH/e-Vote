@@ -14,8 +14,8 @@ const SECONDARY_ELECTIONS = [
     description: "Electing the student representatives for the Faculty Board for the 2026/27 session.",
     action: "view-candidates",
     candidateImgs: [
-      "/logo.svg",
-      "/logo.svg",
+      "/logo.jpeg",
+      "/logo.jpeg",
     ],
     extraCandidates: "+4",
     progress: null,
@@ -128,7 +128,7 @@ export default function ActiveElection() {
               <img
                 style={{ width: 96, height: 96, objectFit: 'contain' }}
                 alt="Student Guild Presidential Election Icon"
-                src="/logo.svg"
+                src="/logo.jpeg"
               />
             </div>
             <h4 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-1)', marginBottom: 24, maxWidth: 800, lineHeight: 1.1 }}>

@@ -81,7 +81,7 @@ export default function SideNavBar() {
         <img
           alt="eVote Logo"
           style={{ height: "40px", width: "auto", flexShrink: 0 }}
-          src="/logo.svg"
+          src="/logo.jpeg"
         />
         <div>
           <h1 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#fff", lineHeight: 1, letterSpacing: "-0.03em" }}>
