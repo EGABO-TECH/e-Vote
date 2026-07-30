@@ -11,13 +11,18 @@ const ROLE_REDIRECT: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
+  const { userId, orgRole } = await auth();
   if (!userId) {
     redirect('/sign-in');
   }
 
   const user = await currentUser();
-  const role = (user?.publicMetadata?.role as string | undefined) ?? '';
+  
+  // Get role from publicMetadata, fallback to stripping 'org:' from orgRole
+  let role = (user?.publicMetadata?.role as string | undefined) ?? '';
+  if (!role && orgRole && orgRole.startsWith('org:')) {
+    role = orgRole.replace('org:', '');
+  }
 
   // Redirect to the correct portal based on role
   if (role && ROLE_REDIRECT[role]) {
