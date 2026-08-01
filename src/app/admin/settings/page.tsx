@@ -24,7 +24,7 @@ export default function Settings() {
   ];
 
   return (
-    <div className="settings-shell" style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
 
       {/* Page Header */}
       <div style={{
@@ -79,7 +79,7 @@ export default function Settings() {
         </aside>
 
         {/* Settings Content (Right Column) */}
-        <div className="settings-content" style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
 
           {/* Section 1: Institutional Branding */}
           <section style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
@@ -88,7 +88,7 @@ export default function Settings() {
               <p style={{ fontSize: 14, color: 'var(--text-3)', margin: '4px 0 0 0' }}>Customize the platform appearance for Cavendish University Uganda.</p>
             </div>
             <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 32 }}>
-              <div className="branding-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>University Logo</label>
                   <div style={{ position: 'relative', height: 160, border: '2px dashed var(--border)', borderRadius: 12, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', background: 'var(--surface)', cursor: 'pointer', overflow: 'hidden' }}>
@@ -182,7 +182,7 @@ export default function Settings() {
               <p style={{ fontSize: 14, color: 'var(--text-3)', margin: '4px 0 0 0' }}>Configure encryption standards and session management.</p>
             </div>
             <div style={{ padding: 32 }}>
-              <div className="security-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
                 {/* Toggle: 2FA */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
