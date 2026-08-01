@@ -1,0 +1,48 @@
+.page {
+  min-height: 100vh;
+  padding-top: 80px; /* Account for topbar + spacing */
+  padding-bottom: 60px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.header {
+  margin-bottom: 32px;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--text-1);
+  margin-bottom: 8px;
+}
+
+.sub {
+  font-size: .9375rem;
+  color: var(--text-3);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.empty {
+  padding: 40px;
+  text-align: center;
+  border: 1px dashed var(--border-mid);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  color: var(--text-3);
+  font-size: .9rem;
+}
+
+@media (max-width: 600px) {
+  .container { padding: 0 20px; }
+}

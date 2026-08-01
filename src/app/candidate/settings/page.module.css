@@ -1,0 +1,338 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pageHeader {}
+
+.pageTitle {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.pageSubtitle {
+  font-size: 0.9375rem;
+  color: var(--text-3);
+}
+
+.settingsLayout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.tabList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.tabButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  width: 100%;
+  font-family: inherit;
+}
+
+.tabButton:hover {
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+
+.activeTab {
+  background: #EFF6FF !important;
+  color: #3B82F6 !important;
+  font-weight: 600;
+}
+
+.tabContent {}
+
+.clerkWrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 16px;
+}
+
+/* Profile Tab Ext */
+.profileTab {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.idFormGroup {
+  margin-top: 16px;
+  max-width: 400px;
+}
+
+.fLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 8px;
+  display: block;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.idInputWrapper {
+  display: flex;
+  gap: 12px;
+}
+
+.idInput {
+  flex: 1;
+  height: 42px;
+  padding: 0 14px;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-1);
+  outline: none;
+  transition: all 0.15s var(--ease);
+}
+
+.idInput:focus {
+  border-color: var(--blue-light);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.saveBtn {
+  height: 42px;
+  padding: 0 20px;
+  border-radius: var(--r-sm);
+  background: var(--blue);
+  color: var(--surface);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.saveBtn:hover:not(:disabled) {
+  background: var(--blue-hover);
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.successMsg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.8125rem;
+  color: var(--green);
+  font-weight: 500;
+}
+
+.errorMsg {
+  margin-top: 12px;
+  font-size: 0.8125rem;
+  color: var(--red);
+  font-weight: 500;
+}
+
+.panelHeaderFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.savedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--green-bg);
+  color: var(--green);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Notifications Panel */
+.panelCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.panelTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+
+.panelSubtitle {
+  font-size: 0.9rem;
+  color: var(--text-3);
+}
+
+.toggleList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--surface-3);
+  gap: 20px;
+}
+
+.toggleRow:last-child { border-bottom: none; }
+
+.toggleInfo { flex: 1; }
+
+.toggleLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.toggleDesc {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  background: var(--border);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggleOn {
+  background: #3B82F6;
+}
+
+.toggleKnob {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--surface);
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.toggleOn .toggleKnob {
+  transform: translateX(20px);
+}
+
+/* Security */
+.securityList {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.securityItem {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--surface-3);
+}
+
+.securityItem:last-child { border-bottom: none; }
+
+.securityIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.securityContent { flex: 1; }
+
+.securityLabel {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  margin-bottom: 2px;
+}
+
+.securityStatus {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.securityDesc {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+
+.infoBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  color: #1E40AF;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .settingsLayout { grid-template-columns: 1fr; }
+  .tabList { flex-direction: row; flex-wrap: wrap; }
+}
+
