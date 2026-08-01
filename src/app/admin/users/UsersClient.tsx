@@ -97,7 +97,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: UserData[]
   const adminCount = users.filter(u => u.role === 'admin' || u.role === 'super_admin').length;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
+    <div className="users-shell" style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 0', width: '100%', maxWidth: 1200, margin: '0 auto', flex: 1 }}>
 
       {/* Page Header */}
       <div style={{
@@ -158,7 +158,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: UserData[]
       </div>
 
       {/* Action Bar */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
+      <div className="users-toolbar" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 16 }}>
         <div style={{ position: 'relative', flex: '1 1 300px', maxWidth: 400 }}>
           <span className="material-symbols-outlined" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)', fontSize: 18, pointerEvents: 'none' }}>search</span>
           <input 
@@ -181,13 +181,13 @@ export default function UsersClient({ initialUsers }: { initialUsers: UserData[]
       </div>
 
       {/* User List Table */}
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
+      <div className="users-table-card" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', boxShadow: 'var(--sh-sm)' }}>
         <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface-2)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h4 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>System Users</h4>
           <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{filteredUsers.length} users</span>
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: 600 }}>
+        <div className="users-table-wrap" style={{ overflowX: 'auto' }}>
+          <table className="users-table" style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: 620 }}>
             <thead style={{ background: 'var(--surface-2)' }}>
               <tr>
                 <th style={{ padding: '16px 24px', fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase' }}>User Details</th>
