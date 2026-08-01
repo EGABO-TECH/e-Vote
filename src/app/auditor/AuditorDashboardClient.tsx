@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { useClerk, useUser } from '@clerk/nextjs';
 import {
   LayoutDashboard,
   ScrollText,
   Database,
-  ArrowLeft,
+  LogOut,
   ShieldCheck,
   Download,
   FileJson,
@@ -28,6 +28,9 @@ import {
   ChevronDown,
   ChevronUp,
   FileText,
+  Bell,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import type { AuditorDashboardData, AuditLogEntry, BallotReceipt } from '@/lib/auditor';
 
@@ -324,9 +327,38 @@ function ProofLogCard({ title, status, desc, timestamp, hash }: { title: string;
 }
 
 /* --- Main Component ------------------------------------------- */
+const ROLE_LABELS: Record<string, string> = {
+  voter: 'Student Voter',
+  candidate: 'Candidate',
+  ec: 'Electoral Commission',
+  admin: 'System Administrator',
+  auditor: 'Auditor',
+};
+
 export default function AuditorDashboardClient({ data }: { data: AuditorDashboardData }) {
   const [activeNav, setActiveNav]       = useState<NavKey>('overview');
   const [search, setSearch]             = useState('');
+  const [theme, setTheme]               = useState<'light' | 'dark'>('light');
+  const { signOut } = useClerk();
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('theme');
+    if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setTheme('dark');
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : '');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const fullName = isLoaded ? `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim() || 'Auditor' : 'Loading…';
+  const role = (user?.publicMetadata?.role as string | undefined) ?? 'auditor';
+  const roleLabel = ROLE_LABELS[role] ?? 'Auditor';
+  const avatarUrl = user?.imageUrl;
+  const initial = (user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? 'A').toUpperCase();
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('All');
   const [actorFilter, setActorFilter]   = useState('All');
   const [selectedLog, setSelectedLog]   = useState<AuditLogEntry | null>(null);
@@ -510,10 +542,19 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
             <ShieldCheck size={13} color="#fbbf24" />
             <span style={{ color: '#fbbf24', fontSize: 11, fontWeight: 700 }}>Auditor Mode (Read-Only)</span>
           </div>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px', borderRadius: 10, background: 'rgba(255, 255, 255, 0.05)', color: 'rgba(255, 255, 255, 0.5)', fontSize: 13, fontWeight: 500, textDecoration: 'none' }}>
-            <ArrowLeft size={14} />
-            Back to Home
-          </Link>
+          <button
+            onClick={() => signOut({ redirectUrl: '/' })}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '9px 12px', borderRadius: 10,
+              background: 'rgba(220, 38, 38, 0.1)', border: '1px solid rgba(220, 38, 38, 0.2)',
+              color: '#f87171', fontSize: 13, fontWeight: 700,
+              cursor: 'pointer', fontFamily: 'inherit', width: '100%',
+            }}
+          >
+            <LogOut size={14} />
+            Sign Out
+          </button>
         </div>
       </aside>
 
@@ -521,20 +562,49 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
 
         {/* Top Header */}
-        <header style={{ background: '#ffffff', borderBottom: '1px solid #e5e7eb', padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, boxShadow: '0 1px 3px rgba(0,0,0,.04)' }}>
-          <div>
-            <p style={{ fontSize: 10, fontWeight: 700, color: '#2563eb', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 3, margin: 0 }}>
-              {NAV_ITEMS.find(n => n.key === activeNav)?.label}
+        <header style={{ background: 'var(--surface, #ffffff)', borderBottom: '1px solid var(--border, #e5e7eb)', padding: '0 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, minHeight: 72, boxShadow: '0 1px 3px rgba(0,0,0,.04)', gap: 12 }}>
+          {/* Welcome */}
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <p style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--navy, #07102A)', letterSpacing: '-0.03em', lineHeight: 1.2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>
+              Welcome back, {user?.firstName ?? 'Auditor'}
             </p>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: '#111827', letterSpacing: '-0.02em', margin: 0 }}>
-              {activeNav === 'overview'   && 'Election Overview & Metrics'}
-              {activeNav === 'auditTrail' && 'Real-Time Audit Trail'}
-              {activeNav === 'integrity'  && 'Cryptographic Verification Suite'}
-            </h1>
+            <p style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-2, #6b7280)', marginTop: 2, margin: 0 }}>
+              {roleLabel}
+            </p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '7px 14px', borderRadius: 99, background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10b981', display: 'block' }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#065f46' }}>Live Monitoring</span>
+
+          {/* Right actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+            {/* Theme toggle */}
+            <button
+              onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
+              title="Toggle theme"
+              style={{ width: 38, height: 38, borderRadius: '50%', border: '1.5px solid var(--border, #e5e7eb)', background: 'var(--surface-2, #f9fafb)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-2, #6b7280)', transition: 'all 0.15s' }}
+            >
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            {/* Notifications */}
+            <button
+              title="Notifications"
+              style={{ width: 38, height: 38, borderRadius: '50%', border: '1.5px solid var(--border, #e5e7eb)', background: 'var(--surface-2, #f9fafb)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-2, #6b7280)', position: 'relative', transition: 'all 0.15s' }}
+            >
+              <Bell size={18} />
+              <span style={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, background: '#ef4444', borderRadius: '50%', border: '2px solid var(--surface, #fff)' }} />
+            </button>
+
+            {/* Profile pill */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 14px 6px 8px', borderRadius: 999, border: '1.5px solid var(--border, #e5e7eb)', background: 'var(--surface-2, #f9fafb)', boxShadow: '0 1px 4px rgba(0,0,0,.06)' }}>
+              <div style={{ width: 34, height: 34, borderRadius: '50%', overflow: 'hidden', background: '#07102A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid var(--border, #e5e7eb)' }}>
+                {avatarUrl
+                  ? <img alt={fullName} src={avatarUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <span style={{ color: '#fff', fontWeight: 700, fontSize: '0.85rem' }}>{initial}</span>}
+              </div>
+              <div style={{ textAlign: 'left' }}>
+                <p style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-1, #111827)', lineHeight: 1.2, margin: 0 }}>{fullName}</p>
+                <p style={{ fontSize: '0.7rem', color: 'var(--text-3, #9ca3af)', lineHeight: 1.2, margin: 0 }}>{roleLabel}</p>
+              </div>
+            </div>
           </div>
         </header>
 
