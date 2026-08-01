@@ -25,7 +25,7 @@ create table if not exists elections (
   description  text,
   starts_at    timestamptz not null,
   ends_at      timestamptz not null,
-  status       text default 'draft' check (status in ('draft', 'live', 'closed')),
+  status       text default 'draft' check (status in ('draft', 'active', 'live', 'closed')),
   created_by   uuid references voters(id) on delete set null,
   created_at   timestamptz default now()
 );
@@ -51,11 +51,33 @@ create table if not exists votes (
   unique(election_id, voter_id)
 );
 
+-- ── receipts ──────────────────────────────────────────────────────────────────
+create table if not exists receipts (
+  id           uuid primary key default gen_random_uuid(),
+  receipt_hash text unique not null,
+  voter_id     uuid not null references voters(id) on delete cascade,
+  election_id  uuid not null references elections(id) on delete cascade,
+  created_at   timestamptz default now(),
+  unique(voter_id, election_id)
+);
+
+-- ── voter registry ───────────────────────────────────────────────────────────
+create table if not exists voter_registry (
+  id           uuid primary key default gen_random_uuid(),
+  voter_id     uuid not null references voters(id) on delete cascade,
+  election_id  uuid not null references elections(id) on delete cascade,
+  has_voted    boolean default false not null,
+  voted_at     timestamptz,
+  unique(voter_id, election_id)
+);
+
 -- ── Row Level Security ────────────────────────────────────────────────────────
 alter table voters     enable row level security;
 alter table elections  enable row level security;
 alter table candidates enable row level security;
 alter table votes      enable row level security;
+alter table receipts   enable row level security;
+alter table voter_registry enable row level security;
 
 -- voters: each user can only read/update their own row
 create policy "voters_select_own" on voters
@@ -64,16 +86,16 @@ create policy "voters_select_own" on voters
 create policy "voters_update_own" on voters
   for update using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
--- elections: anyone authenticated can read live elections; admins can do all
-create policy "elections_read_live" on elections
-  for select using (status = 'live');
+-- elections: anyone authenticated can read open and live elections; admins can do all
+create policy "elections_read_open" on elections
+  for select using (status in ('active', 'live'));
 
--- candidates: readable on live elections
-create policy "candidates_read_live" on candidates
+-- candidates: readable on open or live elections
+create policy "candidates_read_open" on candidates
   for select using (
     exists (
       select 1 from elections e
-      where e.id = candidates.election_id and e.status = 'live'
+      where e.id = candidates.election_id and e.status in ('active', 'live')
     )
   );
 
@@ -95,13 +117,40 @@ create policy "votes_select_own" on votes
     )
   );
 
--- ── Seed: example live election ───────────────────────────────────────────────
--- Uncomment to pre-populate a test election
--- insert into elections (title, description, starts_at, ends_at, status)
--- values (
---   'Student Guild Presidential Election 2026',
---   'Vote for your preferred candidate for the 2026 Student Guild Presidency.',
---   now(),
---   now() + interval '7 days',
---   'live'
--- );
+-- receipts: voters can read their own receipts
+create policy "receipts_select_own" on receipts
+  for select using (
+    voter_id = (
+      select id from voters
+      where clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub')
+    )
+  );
+
+-- receipts: voters can insert their own receipt record
+create policy "receipts_insert_own" on receipts
+  for insert with check (
+    voter_id = (
+      select id from voters
+      where clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub')
+    )
+  );
+
+-- voter registry: voters can read their own registry status
+create policy "voter_registry_select_own" on voter_registry
+  for select using (
+    voter_id = (
+      select id from voters
+      where clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub')
+    )
+  );
+
+-- voter registry: voters can insert or update their own registry status
+create policy "voter_registry_upsert_own" on voter_registry
+  for insert with check (
+    voter_id = (
+      select id from voters
+      where clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub')
+    )
+  );
+
+
