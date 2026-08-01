@@ -469,7 +469,7 @@ export default function AuditorDashboardClient({ data }: { data: AuditorDashboar
         {/* Brand */}
         <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
-            <img src="/logo.png" alt="e-Vote Logo" style={{ width: 38, height: 38, borderRadius: 10, objectFit: 'cover' }} />
+            <img src="/logo.jpeg" alt="e-Vote Logo" style={{ width: 38, height: 38, borderRadius: 10, objectFit: 'cover' }} />
             <div>
               <p style={{ color: '#ffffff', fontWeight: 700, fontSize: 15, lineHeight: 1, margin: 0 }}>e<span style={{ color: '#60a5fa' }}>-</span>Vote</p>
               <p style={{ color: 'rgba(147, 197, 253, 0.5)', fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 3, margin: 0 }}>Audit Portal</p>
