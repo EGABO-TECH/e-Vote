@@ -177,24 +177,6 @@ body {
 }
 
 @media (max-width: 1024px) {
-  .main-content {
-    padding: 1.5rem 1.25rem !important;
-  }
-
-  .topbar-header {
-    padding: 0 1rem !important;
-  }
-
-  .topbar-profile-meta {
-    display: none !important;
-  }
-
-  .topbar-signout {
-    display: flex !important;
-  }
-}
-
-@media (max-width: 767px) {
   .desktop-only {
     display: none !important;
   }
@@ -208,12 +190,36 @@ body {
   }
 
   .main-content {
-    padding: 1rem 0.9rem 88px !important;
+    padding: 1.5rem 1rem 88px !important;
   }
 
   .topbar-header {
     padding: 0.75rem 0.875rem !important;
+  }
+
+  .topbar-profile-meta {
+    display: none !important;
+  }
+
+  .topbar-signout {
+    display: flex !important;
+  }
+
+  .topbar-notifications {
+    display: none !important;
+  }
+
+  .topbar-title {
+    white-space: normal !important;
+    line-height: 1.2 !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .topbar-header {
+    padding: 0.75rem 0.875rem !important;
     min-height: 68px !important;
+    gap: 8px !important;
   }
 
   .topbar-actions {
@@ -222,6 +228,7 @@ body {
 
   .topbar-title {
     font-size: 0.98rem !important;
+    line-height: 1.2 !important;
   }
 
   .topbar-role {
@@ -231,5 +238,14 @@ body {
   .topbar-signout {
     padding: 7px 10px !important;
     font-size: 0.72rem !important;
+  }
+
+  .topbar-profile-pill {
+    padding: 4px 8px 4px 6px !important;
+  }
+
+  .topbar-profile-pill > div:first-child {
+    width: 28px !important;
+    height: 28px !important;
   }
 }

@@ -90,6 +90,7 @@ export default function TopNavBar() {
       <div className="topbar-actions" style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
         {/* Theme toggle */}
         <button
+          className="topbar-theme-toggle"
           onClick={toggleTheme}
           title="Toggle theme"
           style={{
@@ -110,6 +111,7 @@ export default function TopNavBar() {
 
         {/* Notifications */}
         <button
+          className="topbar-notifications"
           title="Notifications"
           style={{
             width: "38px", height: "38px",
