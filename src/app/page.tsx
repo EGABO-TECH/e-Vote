@@ -1,7 +1,13 @@
 import { auth } from '@clerk/nextjs/server';
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import Topbar from '@/components/Topbar';
-import LandingContent from '@/components/LandingContent';
+import LandingPage from '@/components/LandingPage';
+
+export const metadata: Metadata = {
+  title: 'e-Vote | Secure & Transparent Electronic Voting',
+  description:
+    'An offline-first electronic voting platform for academic and institutional elections at Cavendish University Uganda.',
+};
 
 export default async function Home() {
   const { userId } = await auth();
@@ -10,10 +16,5 @@ export default async function Home() {
     redirect('/dashboard');
   }
 
-  return (
-    <>
-      <Topbar />
-      <LandingContent />
-    </>
-  );
+  return <LandingPage />;
 }
