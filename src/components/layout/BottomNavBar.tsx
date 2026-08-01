@@ -4,37 +4,37 @@ import { usePathname } from "next/navigation";
 
 const navConfig = {
   admin: [
-    { name: "Dashboard", href: "/admin", icon: "dashboard" },
-    { name: "Election", href: "/admin/election-config", icon: "how_to_vote" },
-    { name: "Sync", href: "/admin/offline-sync", icon: "sync_alt" },
-    { name: "Logs", href: "/admin/audit-logs", icon: "receipt_long" },
-    { name: "Users", href: "/admin/users", icon: "group" },
-    { name: "Settings", href: "/admin/settings", icon: "settings" },
+    { name: "Dashboard", shortLabel: "Home", href: "/admin", icon: "dashboard" },
+    { name: "Election", shortLabel: "Election", href: "/admin/election-config", icon: "how_to_vote" },
+    { name: "Sync", shortLabel: "Sync", href: "/admin/offline-sync", icon: "sync_alt" },
+    { name: "Logs", shortLabel: "Logs", href: "/admin/audit-logs", icon: "receipt_long" },
+    { name: "Users", shortLabel: "Users", href: "/admin/users", icon: "group" },
+    { name: "Settings", shortLabel: "Settings", href: "/admin/settings", icon: "settings" },
   ],
   voter: [
-    { name: "Dashboard", href: "/voter", icon: "dashboard" },
-    { name: "Vote", href: "/voter/active-election", icon: "how_to_vote" },
-    { name: "Receipt", href: "/voter/verification-receipt", icon: "receipt_long" },
-    { name: "Help", href: "/voter/help-centre", icon: "help" },
-    { name: "Settings", href: "/voter/settings", icon: "settings" },
+    { name: "Dashboard", shortLabel: "Home", href: "/voter", icon: "dashboard" },
+    { name: "Vote", shortLabel: "Vote", href: "/voter/active-election", icon: "how_to_vote" },
+    { name: "Receipt", shortLabel: "Receipt", href: "/voter/verification-receipt", icon: "receipt_long" },
+    { name: "Help", shortLabel: "Help", href: "/voter/help-centre", icon: "help" },
+    { name: "Settings", shortLabel: "Settings", href: "/voter/settings", icon: "settings" },
   ],
   candidate: [
-    { name: "Home", href: "/candidate", icon: "dashboard" },
-    { name: "Profile", href: "/candidate/profile", icon: "person" },
-    { name: "Campaign", href: "/candidate/campaign", icon: "campaign" },
-    { name: "Results", href: "/candidate/results", icon: "bar_chart" },
+    { name: "Home", shortLabel: "Home", href: "/candidate", icon: "dashboard" },
+    { name: "Profile", shortLabel: "Profile", href: "/candidate/profile", icon: "person" },
+    { name: "Campaign", shortLabel: "Campaign", href: "/candidate/campaign", icon: "campaign" },
+    { name: "Results", shortLabel: "Results", href: "/candidate/results", icon: "bar_chart" },
   ],
   ec: [
-    { name: "Home", href: "/ec", icon: "dashboard" },
-    { name: "Elections", href: "/ec/elections", icon: "how_to_vote" },
-    { name: "Reports", href: "/ec/reports", icon: "bar_chart" },
-    { name: "Support", href: "/ec/support", icon: "help" },
+    { name: "Home", shortLabel: "Home", href: "/ec", icon: "dashboard" },
+    { name: "Elections", shortLabel: "Elections", href: "/ec/elections", icon: "how_to_vote" },
+    { name: "Reports", shortLabel: "Reports", href: "/ec/reports", icon: "bar_chart" },
+    { name: "Support", shortLabel: "Support", href: "/ec/support", icon: "help" },
   ],
   auditor: [
-    { name: "Dashboard", href: "/auditor", icon: "dashboard" },
-    { name: "Logs", href: "/auditor/logs", icon: "receipt_long" },
-    { name: "Reports", href: "/auditor/reports", icon: "bar_chart" },
-    { name: "Settings", href: "/auditor/settings", icon: "settings" },
+    { name: "Dashboard", shortLabel: "Home", href: "/auditor", icon: "dashboard" },
+    { name: "Logs", shortLabel: "Logs", href: "/auditor/logs", icon: "receipt_long" },
+    { name: "Reports", shortLabel: "Reports", href: "/auditor/reports", icon: "bar_chart" },
+    { name: "Settings", shortLabel: "Settings", href: "/auditor/settings", icon: "settings" },
   ],
 };
 
@@ -64,19 +64,19 @@ export default function BottomNavBar() {
       borderTop: "1px solid var(--border)",
       boxShadow: "0 -4px 20px -10px rgba(0,0,0,0.15)",
       display: "flex",
-      overflowX: "auto",
+      paddingBottom: "max(10px, env(safe-area-inset-bottom))",
     }}>
       <div style={{
-        display: "flex",
-        justifyContent: "space-around",
-        alignItems: "center",
-        padding: "6px 8px",
+        display: "grid",
+        gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))`,
         width: "100%",
-        minWidth: "max-content",
+        padding: "8px 10px 6px",
         gap: "4px",
+        alignItems: "stretch",
       }}>
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const label = item.shortLabel ?? item.name;
           return (
             <Link
               key={item.href}
@@ -85,11 +85,12 @@ export default function BottomNavBar() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: "2px",
-                padding: "6px 12px",
+                justifyContent: "center",
+                gap: "3px",
+                padding: "6px 4px 5px",
                 borderRadius: "12px",
                 textDecoration: "none",
-                minWidth: "52px",
+                minHeight: "52px",
                 color: isActive ? "var(--blue)" : "var(--text-3)",
                 background: isActive ? "var(--surface-3)" : "transparent",
                 fontWeight: isActive ? 700 : 500,
@@ -99,14 +100,24 @@ export default function BottomNavBar() {
               <span
                 className="material-symbols-outlined"
                 style={{
-                  fontSize: "22px",
+                  fontSize: "20px",
+                  lineHeight: 1,
                   fontVariationSettings: isActive ? '"FILL" 1' : '"FILL" 0',
                 }}
               >
                 {item.icon}
               </span>
-              <span style={{ fontSize: "10px", fontWeight: "inherit", letterSpacing: "0.02em" }}>
-                {item.name}
+              <span style={{
+                fontSize: "9px",
+                lineHeight: 1.2,
+                fontWeight: "inherit",
+                letterSpacing: "0.01em",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100%",
+              }}>
+                {label}
               </span>
             </Link>
           );

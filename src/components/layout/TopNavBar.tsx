@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 
 const ROLE_LABELS: Record<string, string> = {
   voter: "Student Voter",
@@ -19,6 +19,7 @@ export default function TopNavBar() {
       : "light";
   });
   const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -46,14 +47,14 @@ export default function TopNavBar() {
   ).toUpperCase();
 
   return (
-    <header style={{
+    <header className="topbar-header" style={{
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       gap: "12px",
       padding: "0 2rem",
       width: "100%",
-      height: "72px",
+      minHeight: "72px",
       background: "var(--surface)",
       borderBottom: "1px solid var(--border)",
       position: "sticky",
@@ -63,7 +64,7 @@ export default function TopNavBar() {
     }}>
       {/* Welcome Text */}
       <div style={{ minWidth: 0, flex: 1 }}>
-        <p style={{
+        <p className="topbar-title" style={{
           fontSize: "1.15rem",
           fontWeight: 800,
           color: "var(--navy)",
@@ -75,7 +76,7 @@ export default function TopNavBar() {
         }}>
           Welcome back, {user?.firstName ?? "User"}
         </p>
-        <p style={{
+        <p className="topbar-role" style={{
           fontSize: "0.8rem",
           fontWeight: 500,
           color: "var(--text-2)",
@@ -86,7 +87,7 @@ export default function TopNavBar() {
       </div>
 
       {/* Right actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+      <div className="topbar-actions" style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
@@ -131,8 +132,31 @@ export default function TopNavBar() {
           }} />
         </button>
 
+        <button
+          type="button"
+          className="topbar-signout"
+          onClick={() => signOut({ redirectUrl: "/" })}
+          style={{
+            display: "none",
+            alignItems: "center",
+            gap: "8px",
+            padding: "8px 12px",
+            borderRadius: "999px",
+            border: "1px solid rgba(220, 38, 38, 0.18)",
+            background: "rgba(220, 38, 38, 0.06)",
+            color: "var(--red)",
+            cursor: "pointer",
+            fontWeight: 700,
+            fontSize: "0.78rem",
+            fontFamily: "inherit",
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>logout</span>
+          <span>Sign out</span>
+        </button>
+
         {/* Profile pill */}
-        <div style={{
+        <div className="topbar-profile-pill" style={{
           display: "flex",
           alignItems: "center",
           gap: "10px",
@@ -158,7 +182,7 @@ export default function TopNavBar() {
               <span style={{ color: "#fff", fontWeight: 700, fontSize: "0.85rem" }}>{initial}</span>
             )}
           </div>
-          <div style={{ textAlign: "left" }}>
+          <div className="topbar-profile-meta" style={{ textAlign: "left" }}>
             <p style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-1)", lineHeight: 1.2 }}>{fullName}</p>
             <p style={{ fontSize: "0.7rem", color: "var(--text-3)", lineHeight: 1.2 }}>{roleLabel}</p>
           </div>

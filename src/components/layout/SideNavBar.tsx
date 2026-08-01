@@ -65,7 +65,7 @@ export default function SideNavBar() {
       display: "flex",
       flexDirection: "column",
       height: "100vh",
-      width: "256px",
+      width: "var(--sidebar-width)",
       position: "fixed",
       left: 0,
       top: 0,
