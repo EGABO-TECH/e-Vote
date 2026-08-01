@@ -1,11 +1,7 @@
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import AuditorDashboardClient from './AuditorDashboardClient';
-import {
-  ALLOWED_AUDITOR_ROLES,
-  getAuditorDashboardData,
-  getAuditorRoleByClerkId,
-} from '@/lib/auditor';
+import { ALLOWED_AUDITOR_ROLES, getAuditorDashboardData } from '@/lib/auditor';
 
 export const metadata = {
   title: 'Auditor Dashboard | e-Vote',
@@ -28,8 +24,23 @@ export default async function AuditorPage(props: {
     if (!userId) {
       redirect('/sign-in');
     }
-    const userRole = await getAuditorRoleByClerkId(userId);
-    if (userRole && ALLOWED_AUDITOR_ROLES.some((role) => role === userRole.role)) {
+
+    // Use Clerk REST API as the source of truth for roles (same as middleware)
+    let role: string | undefined;
+    try {
+      const res = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
+        headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
+        cache: 'no-store',
+      });
+      if (res.ok) {
+        const user = await res.json();
+        role = user?.public_metadata?.role;
+      }
+    } catch {
+      // fallback: deny access on error
+    }
+
+    if (role && ALLOWED_AUDITOR_ROLES.some((r) => r === role)) {
       hasAccess = true;
     }
   }

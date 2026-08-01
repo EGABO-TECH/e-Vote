@@ -38,8 +38,8 @@ const navConfig = {
   ],
   auditor: [
     { name: "Dashboard", href: "/auditor", icon: "dashboard" },
-    { name: "Audit Logs", href: "/auditor/logs", icon: "receipt_long" },
-    { name: "Reports", href: "/auditor/reports", icon: "bar_chart" },
+    { name: "Audit Trail", href: "/auditor", icon: "receipt_long" },
+    { name: "Integrity", href: "/auditor", icon: "verified_user" },
     { name: "Settings", href: "/auditor/settings", icon: "settings" },
   ],
 };
