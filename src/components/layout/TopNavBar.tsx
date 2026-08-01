@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 
 const ROLE_LABELS: Record<string, string> = {
   voter: "Student Voter",
@@ -11,29 +11,26 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 export default function TopNavBar() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === "undefined") return "light";
+    return localStorage.theme === "dark" ||
+      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      ? "dark"
+      : "light";
+  });
   const { user, isLoaded } = useUser();
 
   useEffect(() => {
-    const isDark =
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    if (isDark) {
+    if (theme === "dark") {
       document.documentElement.setAttribute("data-theme", "dark");
-      setTheme("dark");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
     }
-  }, []);
+    localStorage.theme = theme;
+  }, [theme]);
 
   const toggleTheme = () => {
-    if (theme === "dark") {
-      document.documentElement.removeAttribute("data-theme");
-      localStorage.theme = "light";
-      setTheme("light");
-    } else {
-      document.documentElement.setAttribute("data-theme", "dark");
-      localStorage.theme = "dark";
-      setTheme("dark");
-    }
+    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
   };
 
   const fullName = isLoaded
