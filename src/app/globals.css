@@ -13,6 +13,7 @@
 :root {
   color-scheme: light;
   --font-inter: 'Inter', system-ui, sans-serif;
+  --sidebar-width: clamp(210px, 22vw, 256px);
 
   /* Brand */
   --navy: #07102a;
@@ -115,11 +116,24 @@ body {
 }
 
 .main-offset {
-  margin-left: 256px;
+  margin-left: var(--sidebar-width);
 }
 
 .main-content {
   min-width: 0;
+}
+
+.topbar-header {
+  transition: padding 0.2s ease;
+}
+
+.topbar-signout {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.topbar-signout:hover {
+  background: rgba(220, 38, 38, 0.12);
+  transform: translateY(-1px);
 }
 
 .material-symbols-outlined,
@@ -162,6 +176,24 @@ body {
   font-size: 0.75rem !important;
 }
 
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 1.5rem 1.25rem !important;
+  }
+
+  .topbar-header {
+    padding: 0 1rem !important;
+  }
+
+  .topbar-profile-meta {
+    display: none !important;
+  }
+
+  .topbar-signout {
+    display: flex !important;
+  }
+}
+
 @media (max-width: 767px) {
   .desktop-only {
     display: none !important;
@@ -176,6 +208,28 @@ body {
   }
 
   .main-content {
-    padding-bottom: 80px !important;
+    padding: 1rem 0.9rem 88px !important;
+  }
+
+  .topbar-header {
+    padding: 0.75rem 0.875rem !important;
+    min-height: 68px !important;
+  }
+
+  .topbar-actions {
+    gap: 8px !important;
+  }
+
+  .topbar-title {
+    font-size: 0.98rem !important;
+  }
+
+  .topbar-role {
+    font-size: 0.72rem !important;
+  }
+
+  .topbar-signout {
+    padding: 7px 10px !important;
+    font-size: 0.72rem !important;
   }
 }
