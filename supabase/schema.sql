@@ -8,6 +8,7 @@ create extension if not exists "pgcrypto";
 
 -- ── voters ────────────────────────────────────────────────────────────────────
 -- Synced from Clerk via webhook on user.created
+drop table if exists voters cascade;
 create table if not exists voters (
   id           uuid primary key default gen_random_uuid(),
   clerk_id     text unique not null,
@@ -27,6 +28,7 @@ create table if not exists voters (
 );
 
 -- ── elections ─────────────────────────────────────────────────────────────────
+drop table if exists elections cascade;
 create table if not exists elections (
   id           uuid primary key default gen_random_uuid(),
   title        text not null,
@@ -43,6 +45,7 @@ create table if not exists elections (
 );
 
 -- ── candidates ────────────────────────────────────────────────────────────────
+drop table if exists candidates cascade;
 create table if not exists candidates (
   id           uuid primary key default gen_random_uuid(),
   clerk_id     text unique, -- To link to the user creating the candidate profile
@@ -60,6 +63,7 @@ create table if not exists candidates (
 
 -- ── votes ─────────────────────────────────────────────────────────────────────
 -- One vote per voter per election — enforced by unique constraint
+drop table if exists votes cascade;
 create table if not exists votes (
   id           uuid primary key default gen_random_uuid(),
   election_id  uuid not null references elections(id) on delete cascade,
@@ -70,6 +74,7 @@ create table if not exists votes (
 );
 
 -- ── receipts ──────────────────────────────────────────────────────────────────
+drop table if exists receipts cascade;
 create table if not exists receipts (
   id           uuid primary key default gen_random_uuid(),
   receipt_hash text unique not null,
@@ -80,6 +85,7 @@ create table if not exists receipts (
 );
 
 -- ── voter registry ───────────────────────────────────────────────────────────
+drop table if exists voter_registry cascade;
 create table if not exists voter_registry (
   id           uuid primary key default gen_random_uuid(),
   voter_id     uuid not null references voters(id) on delete cascade,
@@ -98,17 +104,21 @@ alter table receipts   enable row level security;
 alter table voter_registry enable row level security;
 
 -- voters: each user can only read/update their own row
+drop policy if exists "voters_select_own" on voters;
 create policy "voters_select_own" on voters
   for select using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
+drop policy if exists "voters_update_own" on voters;
 create policy "voters_update_own" on voters
   for update using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
 -- elections: anyone authenticated can read open and live elections; admins can do all
+drop policy if exists "elections_read_open" on elections;
 create policy "elections_read_open" on elections
   for select using (status in ('active', 'live'));
 
 -- candidates: readable on open or live elections
+drop policy if exists "candidates_read_open" on candidates;
 create policy "candidates_read_open" on candidates
   for select using (
     exists (
@@ -117,16 +127,20 @@ create policy "candidates_read_open" on candidates
     )
   );
 
+drop policy if exists "candidates_select_own" on candidates;
 create policy "candidates_select_own" on candidates
   for select using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
+drop policy if exists "candidates_update_own" on candidates;
 create policy "candidates_update_own" on candidates
   for update using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
+drop policy if exists "candidates_insert_own" on candidates;
 create policy "candidates_insert_own" on candidates
   for insert with check (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
 -- votes: voters can insert their own vote
+drop policy if exists "votes_insert_own" on votes;
 create policy "votes_insert_own" on votes
   for insert with check (
     voter_id = (
@@ -136,6 +150,7 @@ create policy "votes_insert_own" on votes
   );
 
 -- votes: voters can only see their own vote
+drop policy if exists "votes_select_own" on votes;
 create policy "votes_select_own" on votes
   for select using (
     voter_id = (
@@ -145,6 +160,7 @@ create policy "votes_select_own" on votes
   );
 
 -- receipts: voters can read their own receipts
+drop policy if exists "receipts_select_own" on receipts;
 create policy "receipts_select_own" on receipts
   for select using (
     voter_id = (
@@ -154,6 +170,7 @@ create policy "receipts_select_own" on receipts
   );
 
 -- receipts: voters can insert their own receipt record
+drop policy if exists "receipts_insert_own" on receipts;
 create policy "receipts_insert_own" on receipts
   for insert with check (
     voter_id = (
@@ -163,6 +180,7 @@ create policy "receipts_insert_own" on receipts
   );
 
 -- voter registry: voters can read their own registry status
+drop policy if exists "voter_registry_select_own" on voter_registry;
 create policy "voter_registry_select_own" on voter_registry
   for select using (
     voter_id = (
@@ -172,6 +190,7 @@ create policy "voter_registry_select_own" on voter_registry
   );
 
 -- voter registry: voters can insert or update their own registry status
+drop policy if exists "voter_registry_upsert_own" on voter_registry;
 create policy "voter_registry_upsert_own" on voter_registry
   for insert with check (
     voter_id = (
@@ -182,6 +201,7 @@ create policy "voter_registry_upsert_own" on voter_registry
 
 
 -- ── support tickets ────────────────────────────────────────────────────────
+drop table if exists support_tickets cascade;
 create table if not exists support_tickets (
   id           uuid primary key default gen_random_uuid(),
   clerk_id     text not null,
@@ -194,15 +214,18 @@ create table if not exists support_tickets (
 
 alter table support_tickets enable row level security;
 
+drop policy if exists "support_tickets_insert_own" on support_tickets;
 create policy "support_tickets_insert_own" on support_tickets
   for insert with check (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
+drop policy if exists "support_tickets_select_own" on support_tickets;
 create policy "support_tickets_select_own" on support_tickets
   for select using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 8. SYSTEM SETTINGS
 -- ─────────────────────────────────────────────────────────────────────────────
+drop table if exists system_settings cascade;
 create table if not exists system_settings (
   id             integer primary key default 1 check (id = 1), -- Ensure single row
   institution    text default 'Cavendish University Uganda',
@@ -218,11 +241,11 @@ insert into system_settings (id) values (1) on conflict do nothing;
 -- RLS POLICIES FOR SETTINGS
 -- ─────────────────────────────────────────────────────────────────────────────
 alter table system_settings enable row level security;
-create policy "Anyone can read system settings"
-  on system_settings for select
+drop policy if exists "Anyone can read system settings" on system_settings;
+create policy "Anyone can read system settings" on system_settings for select
   using (true);
-create policy "Only admins can update system settings"
-  on system_settings for update
+drop policy if exists "Only admins can update system settings" on system_settings;
+create policy "Only admins can update system settings" on system_settings for update
   using (
     (select raw_user_meta_data->>'role' from auth.users where id = auth.uid()) = 'admin'
   );
@@ -231,6 +254,7 @@ create policy "Only admins can update system settings"
 -- 9. AUDIT LOGS
 -- ─────────────────────────────────────────────────────────────────────────────
 -- ── audit_logs ────────────────────────────────────────────────────────
+drop table if exists audit_logs cascade;
 create table if not exists audit_logs (
   id           uuid primary key default gen_random_uuid(),
   action       text not null,
@@ -243,6 +267,7 @@ create table if not exists audit_logs (
 );
 
 -- ── system_settings ────────────────────────────────────────────────────────
+drop table if exists system_settings cascade;
 create table if not exists system_settings (
   id integer primary key default 1 check (id = 1),
   institution text default 'Cavendish University Uganda',
@@ -259,8 +284,8 @@ insert into system_settings (id) values (1) on conflict (id) do nothing;
 
 -- RLS for audit_logs
 alter table audit_logs enable row level security;
-create policy "Auditors can read audit logs"
-  on audit_logs for select
+drop policy if exists "Auditors can read audit logs" on audit_logs;
+create policy "Auditors can read audit logs" on audit_logs for select
   using (
     (select raw_user_meta_data->>'role' from auth.users where id = auth.uid()) in ('auditor', 'admin')
   );
