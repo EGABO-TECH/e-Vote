@@ -1,10 +1,13 @@
 'use server';
 
-import { clerkClient } from '@clerk/nextjs/server';
+import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import crypto from 'crypto';
 
 export async function updateUserRole(userId: string, role: string) {
+  const user = await currentUser();
+  if (!user || user.publicMetadata.role !== 'admin') throw new Error("Unauthorized");
+
   const client = await clerkClient();
   await client.users.updateUser(userId, {
     publicMetadata: { role }
@@ -15,6 +18,9 @@ export async function updateUserRole(userId: string, role: string) {
 }
 
 export async function createUser(firstName: string, lastName: string, email: string, role: string) {
+  const user = await currentUser();
+  if (!user || user.publicMetadata.role !== 'admin') throw new Error("Unauthorized");
+
   const client = await clerkClient();
   
   // Generate a random temporary password

@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     return new Response('Error occurred', { status: 400 });
   }
 
-  if (evt.type !== 'user.created') {
+  if (evt.type !== 'user.created' && evt.type !== 'user.updated') {
     return new Response('', { status: 200 });
   }
 

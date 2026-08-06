@@ -21,11 +21,18 @@ export default function SupportPage() {
     ? faqs.filter(f => f.q.toLowerCase().includes(query.toLowerCase()) || f.a.toLowerCase().includes(query.toLowerCase()))
     : faqs;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 4000);
-    setTicketForm({ subject: '', message: '' });
+    try {
+      const { submitSupportTicket } = await import('./actions');
+      await submitSupportTicket(ticketForm);
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 4000);
+      setTicketForm({ subject: '', message: '' });
+    } catch (err) {
+      alert('Failed to submit ticket');
+      console.error(err);
+    }
   };
 
   return (

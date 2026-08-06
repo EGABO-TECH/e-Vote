@@ -93,7 +93,22 @@ export function ReceiptList({ receipts }: { receipts: ReceiptListRow[] }) {
             </div>
           </div>
 
-          <div style={{ paddingTop: 26, borderTop: '1px solid var(--border)', marginTop: 24, display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ paddingTop: 26, borderTop: '1px solid var(--border)', marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+            <button
+              onClick={() => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(receipt, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `e-Vote-Receipt-${receipt.id}.json`);
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 22px', border: '1px solid var(--border)', borderRadius: 12, background: 'transparent', color: 'var(--text-1)', fontWeight: 800, cursor: 'pointer' }}
+            >
+              <span className="material-symbols-outlined">data_object</span>
+              Download JSON
+            </button>
             <button
               onClick={() => downloadPdf(receipt)}
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 22px', border: 'none', borderRadius: 12, background: 'var(--blue)', color: '#fff', fontWeight: 800, cursor: 'pointer' }}

@@ -14,7 +14,15 @@ create table if not exists voters (
   student_id   text,
   full_name    text,
   email        text unique not null,
-  role         text default 'voter' check (role in ('voter', 'admin', 'observer')),
+  role         text default 'voter' check (role in ('voter', 'admin', 'observer', 'candidate', 'ec', 'auditor')),
+  
+  -- Voter Portal Phase 1 additions
+  voting_pin   text, -- Stored securely (hashed)
+  voting_suspended boolean default false,
+  two_factor_enabled boolean default false,
+  push_notifications_enabled boolean default false,
+  dark_mode_enabled boolean default false,
+  
   created_at   timestamptz default now()
 );
 
@@ -23,6 +31,10 @@ create table if not exists elections (
   id           uuid primary key default gen_random_uuid(),
   title        text not null,
   description  text,
+  scope        text,
+  eligibility  text,
+  biometric    boolean default false,
+  categories   text[],
   starts_at    timestamptz not null,
   ends_at      timestamptz not null,
   status       text default 'draft' check (status in ('draft', 'active', 'live', 'closed')),
@@ -33,10 +45,16 @@ create table if not exists elections (
 -- ── candidates ────────────────────────────────────────────────────────────────
 create table if not exists candidates (
   id           uuid primary key default gen_random_uuid(),
-  election_id  uuid not null references elections(id) on delete cascade,
+  clerk_id     text unique, -- To link to the user creating the candidate profile
+  election_id  uuid references elections(id) on delete cascade, -- Made optional
   name         text not null,
+  category     text, -- Position (e.g. President)
+  slogan       text,
+  statement    text,
   manifesto    text,
+  goals        text,
   photo_url    text,
+  status       text default 'pending' check (status in ('pending', 'approved', 'rejected')),
   created_at   timestamptz default now()
 );
 
@@ -99,6 +117,15 @@ create policy "candidates_read_open" on candidates
     )
   );
 
+create policy "candidates_select_own" on candidates
+  for select using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
+create policy "candidates_update_own" on candidates
+  for update using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
+create policy "candidates_insert_own" on candidates
+  for insert with check (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
 -- votes: voters can insert their own vote
 create policy "votes_insert_own" on votes
   for insert with check (
@@ -151,6 +178,75 @@ create policy "voter_registry_upsert_own" on voter_registry
       select id from voters
       where clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub')
     )
+  );
+
+
+-- ── support tickets ────────────────────────────────────────────────────────
+create table if not exists support_tickets (
+  id           uuid primary key default gen_random_uuid(),
+  clerk_id     text not null,
+  subject      text not null,
+  message      text not null,
+  category     text,
+  status       text default 'open' check (status in ('open', 'in_progress', 'resolved', 'closed')),
+  created_at   timestamptz default now()
+);
+
+alter table support_tickets enable row level security;
+
+create policy "support_tickets_insert_own" on support_tickets
+  for insert with check (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
+create policy "support_tickets_select_own" on support_tickets
+  for select using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- 8. SYSTEM SETTINGS
+-- ─────────────────────────────────────────────────────────────────────────────
+create table if not exists system_settings (
+  id             integer primary key default 1 check (id = 1), -- Ensure single row
+  institution    text default 'Cavendish University Uganda',
+  enforce_2fa    boolean default false,
+  session_timeout integer default 15,
+  updated_at     timestamptz default now()
+);
+
+-- Insert initial row if empty
+insert into system_settings (id) values (1) on conflict do nothing;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- RLS POLICIES FOR SETTINGS
+-- ─────────────────────────────────────────────────────────────────────────────
+alter table system_settings enable row level security;
+create policy "Anyone can read system settings"
+  on system_settings for select
+  using (true);
+create policy "Only admins can update system settings"
+  on system_settings for update
+  using (
+    (select raw_user_meta_data->>'role' from auth.users where id = auth.uid()) = 'admin'
+  );
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- 9. AUDIT LOGS
+-- ─────────────────────────────────────────────────────────────────────────────
+create table if not exists audit_logs (
+  id           uuid primary key default gen_random_uuid(),
+  timestamp    timestamptz default now(),
+  action       text not null,
+  actor_role   text not null,
+  ip_address   text,
+  status       text not null,
+  details      text,
+  severity     text default 'info'
+);
+
+-- RLS for audit_logs
+alter table audit_logs enable row level security;
+create policy "Auditors can read audit logs"
+  on audit_logs for select
+  using (
+    (select raw_user_meta_data->>'role' from auth.users where id = auth.uid()) in ('auditor', 'admin')
   );
 
 
