@@ -5,6 +5,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 
 export async function saveManifesto(data: {
+  election_id: string;
   category: string;
   slogan: string;
   statement: string;
@@ -32,6 +33,7 @@ export async function saveManifesto(data: {
   const { error } = await supabaseAdmin
     .from('candidates')
     .update({
+      election_id: data.election_id,
       category: data.category,
       slogan: data.slogan,
       statement: data.statement,

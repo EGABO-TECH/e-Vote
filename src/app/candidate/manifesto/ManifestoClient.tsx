@@ -6,7 +6,7 @@ import { saveManifesto } from './actions';
 
 const categories = ['President', 'Vice President', 'Secretary General', 'Treasurer', 'Guild Representative'];
 
-export function ManifestoClient({ initialProfile }: { initialProfile: any }) {
+export function ManifestoClient({ initialProfile, openElections }: { initialProfile: any, openElections: any[] }) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -15,6 +15,7 @@ export function ManifestoClient({ initialProfile }: { initialProfile: any }) {
     statement: initialProfile?.statement || '',
     manifesto: initialProfile?.manifesto || '',
     goals: initialProfile?.goals || '',
+    election_id: initialProfile?.election_id || '',
   });
 
   const handleChange = (field: string, value: string) => {
@@ -56,6 +57,19 @@ export function ManifestoClient({ initialProfile }: { initialProfile: any }) {
 
       <div className={styles.formGrid}>
         <div className={styles.formMain}>
+          {/* Election */}
+          <div className={styles.fieldCard}>
+            <label className={styles.fieldLabel}>Election</label>
+            <select
+              className={styles.select}
+              value={form.election_id}
+              onChange={e => handleChange('election_id', e.target.value)}
+            >
+              <option value="">-- Select an election --</option>
+              {openElections.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
+            </select>
+          </div>
+
           {/* Category */}
           <div className={styles.fieldCard}>
             <label className={styles.fieldLabel}>Running For Position</label>
