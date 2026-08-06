@@ -146,6 +146,19 @@ export async function castVoteAction(electionId: string, candidateId: string) {
     return { error: 'Failed to issue verification receipt.' };
   }
 
+  // Audit Log for Vote Casting
+  await supabaseAdmin
+    .from('audit_logs')
+    .insert([
+      {
+        action: 'Vote Cast',
+        actor_role: 'voter',
+        status: 'success',
+        severity: 'info',
+        details: `Voter ${voterId} cast a ballot in election ${electionId}`,
+      },
+    ]);
+
   revalidatePath(`/election/${electionId}/vote`);
   revalidatePath('/voter');
   revalidatePath('/voter/active-election');
