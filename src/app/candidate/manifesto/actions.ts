@@ -25,36 +25,22 @@ export async function saveManifesto(data: {
     throw fetchError;
   }
 
-  if (candidate) {
-    const { error } = await supabaseAdmin
-      .from('candidates')
-      .update({
-        category: data.category,
-        slogan: data.slogan,
-        statement: data.statement,
-        manifesto: data.manifesto,
-        goals: data.goals,
-      })
-      .eq('clerk_id', user.id);
-
-    if (error) throw error;
-  } else {
-    // We would insert, but candidate needs an election_id in the current schema
-    // Assuming we insert with a dummy election for now or handle it elsewhere
-    const { error } = await supabaseAdmin
-      .from('candidates')
-      .insert({
-        clerk_id: user.id,
-        name: `${user.firstName} ${user.lastName}`,
-        category: data.category,
-        slogan: data.slogan,
-        statement: data.statement,
-        manifesto: data.manifesto,
-        goals: data.goals,
-      });
-
-    if (error) throw error;
+  if (!candidate) {
+    throw new Error('You must apply for candidacy first before editing your manifesto.');
   }
+
+  const { error } = await supabaseAdmin
+    .from('candidates')
+    .update({
+      category: data.category,
+      slogan: data.slogan,
+      statement: data.statement,
+      manifesto: data.manifesto,
+      goals: data.goals,
+    })
+    .eq('clerk_id', user.id);
+
+  if (error) throw error;
 
   revalidatePath('/candidate/manifesto');
   return { success: true };

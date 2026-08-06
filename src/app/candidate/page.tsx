@@ -4,6 +4,7 @@ import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { supabaseAdmin } from '@/lib/supabase';
+import ApplyElectionClient from './ApplyElectionClient';
 
 export default async function CandidateDashboardPage() {
   const user = await currentUser();
@@ -83,18 +84,31 @@ export default async function CandidateDashboardPage() {
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
             Candidate status: {candidate ? (candidate.status || 'Pending Review').toUpperCase() : 'Not Registered'}
           </p>
-          <Link href="/candidate/manifesto" style={{
-            display: 'inline-flex', alignItems: 'center', gap: '10px',
-            padding: '14px 28px',
-            background: 'var(--blue)', color: '#fff',
-            borderRadius: 'var(--r-md)', fontWeight: 800, fontSize: '1rem',
-            textDecoration: 'none', letterSpacing: '0.02em',
-            boxShadow: 'var(--sh-blue)',
-            transition: 'all 0.2s',
-          }}>
-            Edit Manifesto
-            <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit_document</span>
-          </Link>
+          {candidate ? (
+            <Link href="/candidate/manifesto" style={{
+              display: 'inline-flex', alignItems: 'center', gap: '10px',
+              padding: '14px 28px',
+              background: 'var(--blue)', color: '#fff',
+              borderRadius: 'var(--r-md)', fontWeight: 800, fontSize: '1rem',
+              textDecoration: 'none', letterSpacing: '0.02em',
+              boxShadow: 'var(--sh-blue)',
+              transition: 'all 0.2s',
+            }}>
+              Edit Manifesto
+              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>edit_document</span>
+            </Link>
+          ) : (
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: '10px',
+              padding: '14px 28px',
+              background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)',
+              borderRadius: 'var(--r-md)', fontWeight: 800, fontSize: '1rem',
+              textDecoration: 'none', letterSpacing: '0.02em', cursor: 'not-allowed'
+            }}>
+              Apply First to Edit Manifesto
+              <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>lock</span>
+            </div>
+          )}
         </div>
         <span className="material-symbols-outlined" style={{ fontSize: '6rem', opacity: 0.15, userSelect: 'none', flexShrink: 0 }}>campaign</span>
       </div>
@@ -135,50 +149,60 @@ export default async function CandidateDashboardPage() {
       {/* Two columns: Your Manifesto + Support */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
 
-        <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', border: '1px solid var(--border)', boxShadow: 'var(--sh-sm)', overflow: 'hidden' }}>
-          <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-1)' }}>Your Manifesto</p>
-            <Link href="/candidate/preview" style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none' }}>
-              Preview Public Profile
-            </Link>
-          </div>
-          <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'var(--surface-2)', borderRadius: '8px' }}>
-              {candidate?.photo_url || avatarUrl ? (
-                <img src={candidate?.photo_url || avatarUrl} alt={fullName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
-              ) : (
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-3)', color: 'var(--blue)', fontWeight: 'bold' }}>
-                  {fullName[0] || 'C'}
-                </div>
-              )}
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-1)' }}>{candidate?.name || fullName || 'Your Name'}</div>
-                <div style={{ fontSize: '0.8125rem', color: 'var(--text-3)' }}>{candidate?.category || 'Candidate'}</div>
-              </div>
-              {candidate?.status && (
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: candidate.status === 'approved' ? 'var(--green)' : 'var(--blue)', padding: '6px 12px', background: '#EFF6FF', borderRadius: '6px' }}>
-                  {candidate.status.toUpperCase()}
-                </div>
-              )}
-            </div>
-            
-            <div style={{ fontSize: '0.9375rem', color: 'var(--text-2)', lineHeight: 1.6, padding: '16px', borderLeft: '2px solid var(--border)', marginLeft: '20px', fontStyle: 'italic' }}>
-              {candidate?.statement || 'Your manifesto excerpt will appear here after you fill in your personal statement in the Manifesto section.'}
-            </div>
-            
-            <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
-              <Link href="/candidate/manifesto" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                padding: '10px 20px', background: 'var(--navy)', color: 'var(--surface)',
-                borderRadius: 'var(--r-sm)', fontSize: '0.875rem', fontWeight: 600,
-                textDecoration: 'none'
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
-                Edit Manifesto
+        {candidate ? (
+          <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', border: '1px solid var(--border)', boxShadow: 'var(--sh-sm)', overflow: 'hidden' }}>
+            <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <p style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-1)' }}>Your Manifesto</p>
+              <Link href="/candidate/preview" style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.06em', textDecoration: 'none' }}>
+                Preview Public Profile
               </Link>
             </div>
+            <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'var(--surface-2)', borderRadius: '8px' }}>
+                {candidate?.photo_url || avatarUrl ? (
+                  <img src={candidate?.photo_url || avatarUrl} alt={fullName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-3)', color: 'var(--blue)', fontWeight: 'bold' }}>
+                    {fullName[0] || 'C'}
+                  </div>
+                )}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-1)' }}>{candidate?.name || fullName || 'Your Name'}</div>
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--text-3)' }}>{candidate?.category || 'Candidate'}</div>
+                </div>
+                {candidate?.status && (
+                  <div style={{ fontSize: '0.75rem', fontWeight: 700, color: candidate.status === 'approved' ? 'var(--green)' : 'var(--blue)', padding: '6px 12px', background: '#EFF6FF', borderRadius: '6px' }}>
+                    {candidate.status.toUpperCase()}
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ fontSize: '0.9375rem', color: 'var(--text-2)', lineHeight: 1.6, padding: '16px', borderLeft: '2px solid var(--border)', marginLeft: '20px', fontStyle: 'italic' }}>
+                {candidate?.statement || 'Your manifesto excerpt will appear here after you fill in your personal statement in the Manifesto section.'}
+              </div>
+              
+              <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                <Link href="/candidate/manifesto" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  padding: '10px 20px', background: 'var(--navy)', color: 'var(--surface)',
+                  borderRadius: 'var(--r-sm)', fontSize: '0.875rem', fontWeight: 600,
+                  textDecoration: 'none'
+                }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
+                  Edit Manifesto
+                </Link>
+              </div>
+            </div>
           </div>
-        </div>
+        ) : activeElection ? (
+          <ApplyElectionClient electionId={activeElection.id} electionName={activeElection.title} />
+        ) : (
+          <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', border: '1px solid var(--border)', padding: '2rem', textAlign: 'center' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'var(--text-3)', marginBottom: '1rem' }}>event_busy</span>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-1)', marginBottom: '0.5rem' }}>No Active Election</h3>
+            <p style={{ color: 'var(--text-2)', fontSize: '0.9375rem' }}>There are currently no active elections available to apply for.</p>
+          </div>
+        )}
 
         <div style={{
           background: 'var(--navy)', border: '1px solid var(--navy-mid)',

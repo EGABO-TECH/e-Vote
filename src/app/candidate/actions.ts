@@ -44,3 +44,42 @@ export async function updateCandidateProfile(profile: {
 
   return { success: true };
 }
+
+export async function applyForElection(electionId: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error('Not authenticated');
+  
+  const client = await clerkClient();
+  const user = await client.users.getUser(userId);
+  const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim() || 'Candidate';
+
+  const { supabaseAdmin } = await import('@/lib/supabase');
+  
+  // Check if they already applied
+  const { data: existing } = await supabaseAdmin
+    .from('candidates')
+    .select('id')
+    .eq('clerk_id', userId)
+    .single();
+    
+  if (existing) {
+    throw new Error('You have already applied or registered as a candidate.');
+  }
+
+  const { error } = await supabaseAdmin
+    .from('candidates')
+    .insert({
+      clerk_id: userId,
+      election_id: electionId,
+      name: fullName,
+      status: 'pending',
+      photo_url: user.imageUrl || null
+    });
+
+  if (error) {
+    console.error('Failed to apply for election', error);
+    throw new Error('Failed to submit application');
+  }
+
+  return { success: true };
+}

@@ -35,7 +35,8 @@ export async function GET() {
   const { data: candidatesData, error: candidatesError } = await supabaseAdmin
     .from('candidates')
     .select('id, election_id, name, manifesto, photo_url')
-    .in('election_id', electionIds);
+    .in('election_id', electionIds)
+    .eq('status', 'approved');
 
   if (candidatesError) {
     return NextResponse.json({ error: 'Unable to load candidates.' }, { status: 500 });

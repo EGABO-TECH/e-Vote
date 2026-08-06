@@ -45,26 +45,28 @@ export default async function CandidatePreviewPage() {
   const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
   const avatarUrl = user.imageUrl;
 
-  // These would come from Supabase in production — empty until the candidate fills manifesto
+  const { supabaseAdmin } = await import('@/lib/supabase');
+  const { data: candidate } = await supabaseAdmin
+    .from('candidates')
+    .select('*')
+    .eq('clerk_id', user.id)
+    .single();
   const candidateInfo = {
-    category: 'Candidate', // Will be set from manifesto form
-    slogan: '',            // Will be set from manifesto form
-    statement: '',         // Will be set from manifesto form
+    category: candidate?.category || 'Candidate',
+    slogan: candidate?.slogan || '',
+    statement: candidate?.statement || '',
     policies: [
-      { type: 'academic',        title: 'Academic Excellence',    body: 'Your academic policy will appear here after you edit your manifesto.' },
-      { type: 'welfare',         title: 'Student Welfare',        body: 'Your student welfare policy will appear here after you edit your manifesto.' },
-      { type: 'digital',         title: 'Digital Innovation',     body: 'Your digital innovation policy will appear here after you edit your manifesto.' },
-      { type: 'infrastructure',  title: 'Campus Infrastructure',  body: 'Your infrastructure policy will appear here after you edit your manifesto.' },
+      { type: 'academic',        title: 'Core Manifesto & Policies',    body: candidate?.manifesto || 'Your main manifesto policies will appear here after you edit your manifesto.' },
     ],
-    goals: [
+    goals: candidate?.goals ? candidate.goals.split('\n').filter(Boolean) : [
       'Goal 1 will appear here after you edit your manifesto.',
       'Goal 2 will appear here after you edit your manifesto.',
       'Goal 3 will appear here after you edit your manifesto.',
     ],
-    views: 0,
+    views: candidate?.views || 0,
   };
 
-  const isIncomplete = !candidateInfo.statement;
+  const isIncomplete = !candidate || !candidateInfo.statement;
 
   return (
     <div className={styles.container}>
