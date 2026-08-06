@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { ManifestoClient } from './ManifestoClient';
 import { getCandidateProfile } from './actions';
 

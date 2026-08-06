@@ -230,16 +230,32 @@ create policy "Only admins can update system settings"
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 9. AUDIT LOGS
 -- ─────────────────────────────────────────────────────────────────────────────
+-- ── audit_logs ────────────────────────────────────────────────────────
 create table if not exists audit_logs (
   id           uuid primary key default gen_random_uuid(),
-  timestamp    timestamptz default now(),
   action       text not null,
   actor_role   text not null,
   ip_address   text,
   status       text not null,
   details      text,
-  severity     text default 'info'
+  severity     text not null,
+  timestamp    timestamptz default now()
 );
+
+-- ── system_settings ────────────────────────────────────────────────────────
+create table if not exists system_settings (
+  id integer primary key default 1 check (id = 1),
+  institution text default 'Cavendish University Uganda',
+  enforce_2fa boolean default false,
+  session_timeout integer default 15,
+  notify_election_start boolean default true,
+  notify_vote_milestone boolean default true,
+  notify_security_events boolean default true,
+  updated_at timestamptz default now()
+);
+
+-- insert default settings row
+insert into system_settings (id) values (1) on conflict (id) do nothing;
 
 -- RLS for audit_logs
 alter table audit_logs enable row level security;

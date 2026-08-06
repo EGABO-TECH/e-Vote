@@ -1,6 +1,9 @@
+export const dynamic = 'force-dynamic';
+
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { supabaseAdmin } from '@/lib/supabase';
 
 export default async function CandidateDashboardPage() {
   const user = await currentUser();
@@ -9,11 +12,47 @@ export default async function CandidateDashboardPage() {
   const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
   const avatarUrl = user.imageUrl;
 
-  // These would come from Supabase in production — mocked for now
-  const electionName = 'General Student Council Election 2026';
-  const timeRemaining = '14';
-  const timeUnit = 'DAYS';
-  const metrics = { manifestoViews: 1240, profileCompleteness: 100, daysSinceUpdate: 2 };
+  // Fetch candidate record
+  const { data: candidate, error: candidateError } = await supabaseAdmin
+    .from('candidates')
+    .select('*')
+    .eq('clerk_id', user.id)
+    .single();
+
+  // Fetch active election
+  const { data: elections, error: electionsError } = await supabaseAdmin
+    .from('elections')
+    .select('*')
+    .order('starts_at', { ascending: false });
+
+  const activeElection = elections?.[0] || null;
+  const electionName = activeElection ? activeElection.title : 'No Active Election';
+
+  // Calculate time remaining if election is active
+  let timeRemainingText = 'N/A';
+  if (activeElection && activeElection.status === 'live') {
+    const endsAt = new Date(activeElection.ends_at);
+    const now = new Date();
+    const diffTime = Math.abs(endsAt.getTime() - now.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    timeRemainingText = `${diffDays} DAYS`;
+  } else if (activeElection && activeElection.status === 'draft') {
+    const startsAt = new Date(activeElection.starts_at);
+    const now = new Date();
+    const diffTime = Math.abs(startsAt.getTime() - now.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    timeRemainingText = `OPENS IN ${diffDays} DAYS`;
+  } else if (activeElection && activeElection.status === 'closed') {
+    timeRemainingText = 'ELECTION CLOSED';
+  }
+
+  // Profile Completeness Calculation
+  let completeness = 0;
+  if (candidate) {
+    const fields = ['name', 'category', 'slogan', 'statement', 'manifesto', 'goals', 'photo_url'];
+    const filledFields = fields.filter(f => !!candidate[f]).length;
+    completeness = Math.round((filledFields / fields.length) * 100);
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -36,13 +75,13 @@ export default async function CandidateDashboardPage() {
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', background: 'rgba(59,130,246,0.25)', borderRadius: '999px', border: '1px solid rgba(59,130,246,0.5)', marginBottom: '1rem' }}>
             <span style={{ width: '8px', height: '8px', background: 'var(--blue-glow)', borderRadius: '50%', animation: 'pulse-dot 1.5s infinite' }} />
-            <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Voting opens in: {timeRemaining} {timeUnit}</span>
+            <span style={{ fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{timeRemainingText}</span>
           </div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '0.75rem', maxWidth: '480px' }}>
             {electionName}
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-            Candidate registration is open
+            Candidate status: {candidate ? (candidate.status || 'Pending Review').toUpperCase() : 'Not Registered'}
           </p>
           <Link href="/candidate/manifesto" style={{
             display: 'inline-flex', alignItems: 'center', gap: '10px',
@@ -63,9 +102,9 @@ export default async function CandidateDashboardPage() {
       {/* Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
         {[
-          { label: 'MANIFESTO VIEWS', value: metrics.manifestoViews.toLocaleString(), icon: 'visibility', color: 'var(--blue)', sub: '+14% this week', isPositive: true },
-          { label: 'PROFILE', value: `${metrics.profileCompleteness}%`, icon: 'person', color: 'var(--green)', sub: 'Dossier Completion', isPositive: true },
-          { label: 'LAST UPDATE', value: `${metrics.daysSinceUpdate} Days`, icon: 'update', color: 'var(--amber)', sub: 'Current', isPositive: true },
+          { label: 'MANIFESTO VIEWS', value: '0', icon: 'visibility', color: 'var(--blue)', sub: 'Analytics coming soon', isPositive: true },
+          { label: 'PROFILE', value: `${completeness}%`, icon: 'person', color: completeness === 100 ? 'var(--green)' : 'var(--amber)', sub: 'Dossier Completion', isPositive: completeness === 100 },
+          { label: 'LAST UPDATE', value: candidate?.created_at ? new Date(candidate.created_at).toLocaleDateString() : 'N/A', icon: 'update', color: 'var(--text-2)', sub: 'Current', isPositive: true },
         ].map((s) => (
           <div key={s.label} style={{
             background: 'var(--surface)',
@@ -105,24 +144,26 @@ export default async function CandidateDashboardPage() {
           </div>
           <div style={{ padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'var(--surface-2)', borderRadius: '8px' }}>
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={fullName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+              {candidate?.photo_url || avatarUrl ? (
+                <img src={candidate?.photo_url || avatarUrl} alt={fullName} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
               ) : (
                 <div style={{ width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-3)', color: 'var(--blue)', fontWeight: 'bold' }}>
                   {fullName[0] || 'C'}
                 </div>
               )}
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-1)' }}>{fullName || 'Your Name'}</div>
-                <div style={{ fontSize: '0.8125rem', color: 'var(--text-3)' }}>Candidate</div>
+                <div style={{ fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-1)' }}>{candidate?.name || fullName || 'Your Name'}</div>
+                <div style={{ fontSize: '0.8125rem', color: 'var(--text-3)' }}>{candidate?.category || 'Candidate'}</div>
               </div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--blue)', padding: '6px 12px', background: '#EFF6FF', borderRadius: '6px' }}>
-                APPROVED
-              </div>
+              {candidate?.status && (
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: candidate.status === 'approved' ? 'var(--green)' : 'var(--blue)', padding: '6px 12px', background: '#EFF6FF', borderRadius: '6px' }}>
+                  {candidate.status.toUpperCase()}
+                </div>
+              )}
             </div>
             
             <div style={{ fontSize: '0.9375rem', color: 'var(--text-2)', lineHeight: 1.6, padding: '16px', borderLeft: '2px solid var(--border)', marginLeft: '20px', fontStyle: 'italic' }}>
-              Your manifesto excerpt will appear here after you fill in your personal statement in the Manifesto section.
+              {candidate?.statement || 'Your manifesto excerpt will appear here after you fill in your personal statement in the Manifesto section.'}
             </div>
             
             <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>

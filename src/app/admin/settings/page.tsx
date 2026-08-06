@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { getSettings } from './actions';
 import { SettingsClient } from './SettingsClient';
 

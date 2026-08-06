@@ -121,44 +121,48 @@ export default function HelpCentre() {
               <h3 style={{ fontSize: 24, fontWeight: 800, color: 'var(--text-1)', margin: 0 }}>
                 Instructional Videos
               </h3>
-              <a href="#" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
+              <a href="https://youtube.com/playlist?list=PL_e-Vote_guides" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--blue)', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
                 View all videos
               </a>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
               <div style={{ background: 'var(--surface)', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--sh-sm)' }}>
-                <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', position: 'relative', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <img
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                    alt="A Beginner's Guide to e-Voting thumbnail"
-                    src="/logo.jpeg"
-                  />
-                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
-                    <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
+                <a href="https://youtube.com/watch?v=e-Vote-Guide" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', position: 'relative', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <img
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      alt="A Beginner's Guide to e-Voting thumbnail"
+                      src="/logo.jpeg"
+                    />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+                      <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
+                    </div>
+                    <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.8)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontSize: 12 }}>2:45</span>
                   </div>
-                  <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.8)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontSize: 12 }}>2:45</span>
-                </div>
-                <div style={{ padding: 16 }}>
-                  <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>A Beginner's Guide to e-Voting</p>
-                  <p style={{ fontSize: 12, color: 'var(--text-2)', margin: 0 }}>Step-by-step walkthrough for first-time voters.</p>
-                </div>
+                  <div style={{ padding: 16 }}>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>A Beginner's Guide to e-Voting</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-2)', margin: 0 }}>Step-by-step walkthrough for first-time voters.</p>
+                  </div>
+                </a>
               </div>
               <div style={{ background: 'var(--surface)', borderRadius: 16, overflow: 'hidden', border: '1px solid var(--border)', boxShadow: 'var(--sh-sm)' }}>
-                <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', position: 'relative', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <img
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                    alt="Ensuring Your Vote is Secure thumbnail"
-                    src="/logo.jpeg"
-                  />
-                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
-                    <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
+                <a href="https://youtube.com/watch?v=e-Vote-Security" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                  <div style={{ aspectRatio: '16/9', background: 'var(--surface-2)', position: 'relative', cursor: 'pointer', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <img
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                      alt="Ensuring Your Vote is Secure thumbnail"
+                      src="/logo.jpeg"
+                    />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}>
+                      <span className="material-symbols-outlined" style={{ color: '#fff', fontSize: 48 }}>play_circle</span>
+                    </div>
+                    <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.8)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontSize: 12 }}>1:20</span>
                   </div>
-                  <span style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.8)', color: '#fff', padding: '4px 8px', borderRadius: 4, fontSize: 12 }}>1:20</span>
-                </div>
-                <div style={{ padding: 16 }}>
-                  <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>Ensuring Your Vote is Secure</p>
-                  <p style={{ fontSize: 12, color: 'var(--text-2)', margin: 0 }}>Understanding Supabase verification and security.</p>
-                </div>
+                  <div style={{ padding: 16 }}>
+                    <p style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>Ensuring Your Vote is Secure</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-2)', margin: 0 }}>Understanding Supabase verification and security.</p>
+                  </div>
+                </a>
               </div>
             </div>
           </div>
@@ -174,9 +178,9 @@ export default function HelpCentre() {
                 <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', margin: 0 }}>Live Chat Support</p>
                 <p style={{ fontSize: 12, color: 'var(--text-3)', margin: 0 }}>Available: 8AM - 6PM</p>
               </div>
-              <button style={{ marginLeft: 'auto', background: 'var(--blue)', color: '#fff', padding: '8px 16px', borderRadius: 99, fontWeight: 700, fontSize: 12, border: 'none', cursor: 'pointer' }}>
+              <a href="mailto:support@university.edu?subject=Live%20Chat%20Request" style={{ marginLeft: 'auto', background: 'var(--blue)', color: '#fff', padding: '8px 16px', borderRadius: 99, fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
                 Chat
-              </button>
+              </a>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>UEC Official Contacts</p>
@@ -194,10 +198,10 @@ export default function HelpCentre() {
               </div>
             </div>
             <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: 0 }} />
-            <button style={{ width: '100%', padding: '12px', background: 'var(--text-1)', color: 'var(--surface)', borderRadius: 8, fontWeight: 700, fontSize: 14, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}>
+            <a href="mailto:support@university.edu?subject=Support%20Ticket" style={{ width: '100%', padding: '12px', background: 'var(--text-1)', color: 'var(--surface)', borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <span className="material-symbols-outlined">description</span>
               Submit Support Ticket
-            </button>
+            </a>
           </div>
         </div>
 
@@ -257,10 +261,10 @@ export default function HelpCentre() {
                     <span className="material-symbols-outlined" style={{ color: 'var(--blue)', fontSize: 32 }}>support_agent</span>
                     <div>
                       <h4 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 4px 0' }}>Didn't find what you need?</h4>
-                      <button style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <a href="mailto:support@university.edu" style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, textDecoration: 'none' }}>
                         Contact the Help Desk directly
                         <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
-                      </button>
+                      </a>
                     </div>
                   </div>
                 )}
