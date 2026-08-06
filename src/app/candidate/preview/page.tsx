@@ -58,11 +58,11 @@ export default async function CandidatePreviewPage() {
     policies: [
       { type: 'academic',        title: 'Core Manifesto & Policies',    body: candidate?.manifesto || 'Your main manifesto policies will appear here after you edit your manifesto.' },
     ],
-    goals: candidate?.goals ? candidate.goals.split('\n').filter(Boolean) : [
+    goals: (candidate?.goals ? candidate.goals.split('\n').filter(Boolean) : [
       'Goal 1 will appear here after you edit your manifesto.',
       'Goal 2 will appear here after you edit your manifesto.',
       'Goal 3 will appear here after you edit your manifesto.',
-    ],
+    ]) as string[],
     views: candidate?.views || 0,
   };
 
