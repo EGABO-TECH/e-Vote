@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET() {
@@ -8,15 +8,46 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: voterRow, error: voterError } = await supabaseAdmin
+  // Try to find the voter row
+  let { data: voterRow } = await supabaseAdmin
     .from('voters')
     .select('id')
     .eq('clerk_id', userId)
     .single();
 
-  if (voterError || !voterRow) {
-    return NextResponse.json({ error: 'Unable to resolve voter account.' }, { status: 403 });
+  // If no voter row exists, auto-create it from Clerk user data (webhook may not have fired)
+  if (!voterRow) {
+    const clerkUser = await currentUser();
+    if (!clerkUser) {
+      return NextResponse.json({ error: 'Unable to resolve user session.' }, { status: 403 });
+    }
+
+    const primaryEmail = clerkUser.emailAddresses.find(
+      (e) => e.id === clerkUser.primaryEmailAddressId
+    )?.emailAddress ?? null;
+
+    const fullName = `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null;
+
+    const { data: newVoter, error: insertError } = await supabaseAdmin
+      .from('voters')
+      .upsert([{
+        clerk_id: userId,
+        email: primaryEmail,
+        full_name: fullName,
+        role: 'voter',
+        student_id: primaryEmail ? primaryEmail.split('@')[0] : null,
+      }], { onConflict: 'clerk_id' })
+      .select('id')
+      .single();
+
+    if (insertError || !newVoter) {
+      console.error('Failed to auto-create voter row:', insertError);
+      return NextResponse.json({ error: 'Unable to resolve voter account.' }, { status: 403 });
+    }
+
+    voterRow = newVoter;
   }
+
 
   const voterId = voterRow.id;
 

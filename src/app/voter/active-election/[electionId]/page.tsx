@@ -48,12 +48,37 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
     image_url: c.photo_url || '/logo.jpeg',
   }));
 
-  // Look up voter ID from clerk_id
-  const { data: voterRow } = await supabaseAdmin
+  // Look up voter ID from clerk_id, auto-create row if missing
+  let { data: voterRow } = await supabaseAdmin
     .from('voters')
     .select('id')
     .eq('clerk_id', userId)
     .single();
+
+  if (!voterRow) {
+    const { currentUser } = await import('@clerk/nextjs/server');
+    const clerkUser = await currentUser();
+    if (clerkUser) {
+      const primaryEmail = clerkUser.emailAddresses.find(
+        (e) => e.id === clerkUser.primaryEmailAddressId
+      )?.emailAddress ?? null;
+      const fullName = `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null;
+
+      const { data: newVoter } = await supabaseAdmin
+        .from('voters')
+        .upsert([{
+          clerk_id: userId,
+          email: primaryEmail,
+          full_name: fullName,
+          role: 'voter',
+          student_id: primaryEmail ? primaryEmail.split('@')[0] : null,
+        }], { onConflict: 'clerk_id' })
+        .select('id')
+        .single();
+
+      if (newVoter) voterRow = newVoter;
+    }
+  }
 
   // Check if voter has already voted in this election
   let hasVoted = false;

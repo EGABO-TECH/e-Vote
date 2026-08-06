@@ -32,13 +32,38 @@ export async function castVoteAction(electionId: string, candidateId: string) {
     return { error: 'This election has already ended.' };
   }
 
-  const { data: voterRow, error: voterError } = await supabaseAdmin
+  let { data: voterRow } = await supabaseAdmin
     .from('voters')
     .select('id')
     .eq('clerk_id', userId)
     .single();
 
-  if (voterError || !voterRow) {
+  if (!voterRow) {
+    const { currentUser } = await import('@clerk/nextjs/server');
+    const clerkUser = await currentUser();
+    if (clerkUser) {
+      const primaryEmail = clerkUser.emailAddresses.find(
+        (e) => e.id === clerkUser.primaryEmailAddressId
+      )?.emailAddress ?? null;
+      const fullName = `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null;
+
+      const { data: newVoter } = await supabaseAdmin
+        .from('voters')
+        .upsert([{
+          clerk_id: userId,
+          email: primaryEmail,
+          full_name: fullName,
+          role: 'voter',
+          student_id: primaryEmail ? primaryEmail.split('@')[0] : null,
+        }], { onConflict: 'clerk_id' })
+        .select('id')
+        .single();
+
+      if (newVoter) voterRow = newVoter;
+    }
+  }
+
+  if (!voterRow) {
     return { error: 'Unable to identify your voter registration.' };
   }
 
