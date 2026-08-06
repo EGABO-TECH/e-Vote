@@ -20,13 +20,21 @@ export default async function CandidateDashboardPage() {
     .eq('clerk_id', user.id)
     .single();
 
-  // Fetch active election
-  const { data: elections, error: electionsError } = await supabaseAdmin
+  // Fetch open elections candidates can apply to
+  const { data: elections } = await supabaseAdmin
     .from('elections')
-    .select('*')
+    .select('id, title, description, status, starts_at, ends_at')
+    .in('status', ['active', 'live', 'draft', 'open'])
     .order('starts_at', { ascending: false });
 
-  const activeElection = elections?.[0] || null;
+  const openElections = elections || [];
+
+  // If candidate is already registered, find their election
+  const candidateElection = candidate?.election_id
+    ? openElections.find((e) => e.id === candidate.election_id) || null
+    : null;
+
+  const activeElection = candidateElection || openElections[0] || null;
   const electionName = activeElection ? activeElection.title : 'No Active Election';
 
   // Calculate time remaining if election is active
@@ -194,8 +202,8 @@ export default async function CandidateDashboardPage() {
               </div>
             </div>
           </div>
-        ) : activeElection ? (
-          <ApplyElectionClient electionId={activeElection.id} electionName={activeElection.title} />
+        ) : openElections.length > 0 ? (
+          <ApplyElectionClient elections={openElections} />
         ) : (
           <div style={{ background: 'var(--surface)', borderRadius: 'var(--r-lg)', border: '1px solid var(--border)', padding: '2rem', textAlign: 'center' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '48px', color: 'var(--text-3)', marginBottom: '1rem' }}>event_busy</span>
