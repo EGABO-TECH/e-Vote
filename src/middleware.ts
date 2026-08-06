@@ -11,7 +11,7 @@ const isPublicRoute = createRouteMatcher([
 const ROLE_ROUTES: Record<string, string> = {
   voter: '/voter',
   candidate: '/candidate',
-  ec: '/admin',
+  ec: '/ec',
   admin: '/admin',
   auditor: '/auditor',
 };
@@ -19,7 +19,7 @@ const ROLE_ROUTES: Record<string, string> = {
 const PROTECTED_PREFIXES: { prefix: string; roles: string[] }[] = [
   { prefix: '/voter', roles: ['voter'] },
   { prefix: '/candidate', roles: ['candidate'] },
-  { prefix: '/ec', roles: ['admin'] },
+  { prefix: '/ec', roles: ['ec', 'admin'] },
   { prefix: '/admin', roles: ['admin'] },
   { prefix: '/auditor', roles: ['admin', 'auditor'] },
 ];
