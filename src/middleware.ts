@@ -34,7 +34,11 @@ export default clerkMiddleware(async (auth, req) => {
   if (pathname.startsWith('/dashboard')) return;
 
   let role: string | undefined;
-  const sessionClaims = authObj.sessionClaims as any;
+  type SessionClaims = {
+    publicMetadata?: { role?: string };
+    metadata?: { role?: string };
+  };
+  const sessionClaims = authObj.sessionClaims as SessionClaims | undefined;
 
   if (sessionClaims?.publicMetadata?.role || sessionClaims?.metadata?.role) {
     role = sessionClaims.publicMetadata?.role || sessionClaims.metadata?.role;

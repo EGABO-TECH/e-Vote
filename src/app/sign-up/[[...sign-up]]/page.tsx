@@ -1,6 +1,6 @@
 'use client';
 
-import { useSignUp } from '@clerk/nextjs';
+import { useAuth, useSignUp } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -8,7 +8,8 @@ import Link from 'next/link';
 import { Eye, EyeOff, Lock, Mail, ArrowLeft, ShieldAlert } from 'lucide-react';
 
 export default function Page() {
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { signUp, errors, fetchStatus } = useSignUp();
+  const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
 
   const [firstName, setFirstName] = useState('');
@@ -23,7 +24,22 @@ export default function Page() {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+
+  const loading = fetchStatus === 'fetching';
+
+  const getErrorMessage = () => {
+    if (error) return error;
+    const fieldError =
+      errors.fields.emailAddress?.message ||
+      errors.fields.password?.message ||
+      errors.fields.code?.message;
+    if (fieldError) return fieldError;
+    const globalError = errors.global?.[0]?.message;
+    if (globalError) return globalError;
+    return '';
+  };
+
+  const displayError = getErrorMessage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,53 +48,59 @@ export default function Page() {
       setError('Passwords do not match.');
       return;
     }
-    setLoading(true);
     setError('');
 
-    try {
-      await signUp.create({
-        firstName,
-        lastName,
-        emailAddress,
-        password,
-      });
-
-      // Send the email verification code
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
-
-      setPendingVerification(true);
-    } catch (err: unknown) {
-      const clerkErr = err as { errors?: { message?: string }[] };
-      setError(clerkErr.errors?.[0]?.message || 'An error occurred during sign up.');
-    } finally {
-      setLoading(false);
+    const { error: passwordError } = await signUp.password({
+      firstName,
+      lastName,
+      emailAddress,
+      password,
+    });
+    if (passwordError) {
+      setError(passwordError.message || 'An error occurred during sign up.');
+      return;
     }
+
+    const { error: sendError } = await signUp.verifications.sendEmailCode();
+    if (sendError) {
+      setError(sendError.message || 'Failed to send verification code.');
+      return;
+    }
+
+    setPendingVerification(true);
   };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isLoaded || !signUp || !setActive) return;
-    setLoading(true);
+    if (!isLoaded || !signUp) return;
     setError('');
 
-    try {
-      const completeSignUp = await signUp.attemptEmailAddressVerification({
-        code,
-      });
+    const { error: verifyError } = await signUp.verifications.verifyEmailCode({ code });
+    if (verifyError) {
+      setError(verifyError.message || 'Verification failed.');
+      return;
+    }
 
-      if (completeSignUp.status === 'complete') {
-        await setActive({ session: completeSignUp.createdSessionId });
-        router.push('/dashboard');
-      } else {
-        setError('Verification was not completed. Please try again.');
-      }
-    } catch (err: unknown) {
-      const clerkErr = err as { errors?: { message?: string }[] };
-      setError(clerkErr.errors?.[0]?.message || 'Verification failed.');
-    } finally {
-      setLoading(false);
+    if (signUp.status === 'complete') {
+      await signUp.finalize({
+        navigate: ({ session, decorateUrl }) => {
+          if (session?.currentTask) return;
+          const url = decorateUrl('/dashboard');
+          if (url.startsWith('http')) {
+            window.location.href = url;
+          } else {
+            router.push(url);
+          }
+        },
+      });
+    } else {
+      setError('Verification was not completed. Please try again.');
     }
   };
+
+  if (!isLoaded || isSignedIn) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 select-none">
@@ -107,10 +129,10 @@ export default function Page() {
 
         {/* Content Block */}
         <div className="p-6 sm:p-8 bg-white">
-          {error && (
+          {displayError && (
             <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 text-red-800 text-sm">
               <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5" />
-              <span>{error}</span>
+              <span>{displayError}</span>
             </div>
           )}
 
@@ -249,7 +271,7 @@ export default function Page() {
                   Verify Email
                 </h3>
                 <p className="text-sm text-slate-500 mb-6">
-                  We've sent a 6-digit verification code to <span className="font-semibold text-slate-700">{emailAddress}</span>. Please enter it below to complete enrollment.
+                  We&apos;ve sent a 6-digit verification code to <span className="font-semibold text-slate-700">{emailAddress}</span>. Please enter it below to complete enrollment.
                 </p>
                 <div>
                   <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
@@ -286,6 +308,8 @@ export default function Page() {
               </div>
             </form>
           )}
+
+          <div id="clerk-captcha" />
         </div>
       </div>
     </div>

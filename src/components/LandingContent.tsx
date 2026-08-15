@@ -1,19 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { SignIn, SignUp } from '@clerk/nextjs';
 import styles from './LandingContent.module.css';
 
 export default function LandingContent() {
   // Use a simple state to toggle between SignIn and SignUp, but initialize it based on hash if present
-  const [mode, setMode] = useState<'sign-in' | 'sign-up'>('sign-in');
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const hash = window.location.hash;
-      if (hash === '#sign-up') setMode('sign-up');
+  const [mode, setMode] = useState<'sign-in' | 'sign-up'>(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#sign-up') {
+      return 'sign-up';
     }
-  }, []);
+    return 'sign-in';
+  });
 
   return (
     <main className={styles.page}>
