@@ -1,427 +1,209 @@
+"use client";
+
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  ArrowRight,
-  BarChart3,
-  Check,
-  Cloud,
-  Lock,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
-
-const navLinks = [
-  { href: '#security', label: 'Security' },
-  { href: '#how-it-works', label: 'How it works' },
-  { href: '#about', label: 'About' },
-];
+import { ArrowRight, Lock, Sparkles, Eye, EyeOff, Mail, CheckCircle, Smartphone, Shield } from 'lucide-react';
 
 const metrics = [
-  { value: '99.99%', label: 'System availability' },
-  { value: 'AES-256', label: 'End-to-end encryption' },
-  { value: 'Fair', label: 'No ballot tampering' },
-  { value: 'Real-time', label: 'Public auditability' },
+  { label: 'System availability', icon: CheckCircle },
+  { label: 'End-to-end encryption', icon: Lock },
+  { label: 'No ballot tampering', icon: Smartphone },
+  { label: 'Public auditability', icon: Shield },
 ];
-
-const trustSignals = [
-  {
-    title: 'Tamper-proof ballot storage',
-    description:
-      'Write-once records and immutable audit trails keep every vote verifiable from cast to count.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Offline resilience',
-    description:
-      'Local-first synchronization keeps elections operational when connectivity is inconsistent.',
-    icon: Cloud,
-  },
-  {
-    title: 'Verified access control',
-    description:
-      'Institutional identity checks ensure only eligible voters can sign in and participate.',
-    icon: Lock,
-  },
-  {
-    title: 'Live audit visibility',
-    description:
-      'Administrators and auditors can track election health without compromising ballot secrecy.',
-    icon: BarChart3,
-  },
-];
-
-const steps = [
-  {
-    title: 'Authenticate securely',
-    description:
-      'Students and staff enter through Clerk-backed institutional sign-in pages.',
-  },
-  {
-    title: 'Cast a single verified vote',
-    description:
-      'Each ballot is captured once, protected immediately, and linked to the election rules.',
-  },
-  {
-    title: 'Review with confidence',
-    description:
-      'Auditors and election officials inspect transparent records and outcome summaries in real time.',
-  },
-];
-
-function FeatureIcon({ icon: Icon }: { icon: React.ComponentType<{ className?: string; strokeWidth?: number }> }) {
-  return <Icon className="h-5 w-5" strokeWidth={2.2} />;
-}
 
 export default function LandingPage() {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <main className="overflow-hidden bg-slate-50 text-slate-900 selection:bg-emerald-600 selection:text-white">
-      <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/assets/e-Vote-Logo.png"
-              alt="e-Vote"
-              width={44}
-              height={44}
-              className="h-11 w-11 rounded-full object-cover shadow-sm"
-              priority
-            />
-            <div>
-              <p className="text-lg font-semibold tracking-tight text-slate-950">e-Vote</p>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-500">
-                Secure voting system
-              </p>
-            </div>
-          </Link>
+    <main className="min-h-screen bg-slate-950 text-slate-900 selection:bg-emerald-600 selection:text-white">
+      <section className="relative overflow-visible min-h-screen flex flex-col lg:flex-row">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(16,185,129,0.14),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(15,23,42,0.12),_transparent_36%)] pointer-events-none" />
+        <div className="relative w-full flex flex-col lg:flex-row min-h-screen">
+          {/* Left Panel */}
+          <div className="relative flex flex-1 flex-col justify-center overflow-visible bg-slate-950 px-6 py-12 text-white sm:px-10 lg:px-12 xl:px-16 lg:w-[53%]">
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(0,31,63,0.96),rgba(0,51,102,0.92)_45%,rgba(0,80,157,0.88))]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_40%)]" />
 
-          <nav className="hidden items-center gap-8 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 lg:flex">
-            {navLinks.map((item) => (
-              <a key={item.href} href={item.href} className="transition hover:text-emerald-600">
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3">
-            <Link
-              href="/sign-in"
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-950"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/sign-up"
-              className="hidden rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 sm:inline-flex"
-            >
-              Create account
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <section className="relative overflow-hidden lg:min-h-[calc(100vh-73px)]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(16,185,129,0.14),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(15,23,42,0.12),_transparent_36%)]" />
-        <div className="relative grid lg:grid-cols-[1.08fr_0.92fr] lg:min-h-[calc(100vh-73px)]">
-          <div className="relative flex items-center overflow-hidden bg-slate-950 px-6 py-12 text-white sm:px-10 lg:px-12 xl:px-16">
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.9)_55%,rgba(5,150,105,0.36))]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_35%)]" />
-
-            <div className="relative z-10 max-w-xl space-y-6 lg:max-w-[34rem]">
-              <div className="flex items-center gap-3 lg:gap-4">
-                <Image
-                  src="/assets/e-Vote-Logo.png"
-                  alt="e-Vote logo"
-                  width={88}
-                  height={88}
-                  className="h-16 w-16 rounded-2xl object-cover ring-1 ring-white/10 lg:h-20 lg:w-20"
-                  priority
-                />
+            <div className="relative z-10 max-w-3xl space-y-8 lg:space-y-6 xl:space-y-8">
+              {/* Brand Header */}
+              <div className="flex flex-row items-center gap-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.25rem] bg-white/5 ring-1 ring-white/10 backdrop-blur-sm">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm p-1">
+                    <Image
+                      src="/assets/e-Vote-Logo.png"
+                      alt="e-Vote logo"
+                      width={44}
+                      height={44}
+                      className="h-10 w-10 object-contain"
+                      priority
+                    />
+                  </div>
+                </div>
                 <div>
-                  <p className="text-3xl font-black uppercase tracking-tight sm:text-4xl lg:text-5xl">e-Vote</p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/75 sm:text-xs lg:text-sm">
-                    Electronic voting system
+                  <h1 className="text-2xl font-black tracking-wide text-white leading-none">e-Vote</h1>
+                  <p className="mt-1.5 text-[10px] font-extrabold tracking-[0.22em] text-white/90 leading-none">
+                    YOUR ONLINE VOTING PARTNER
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-4 lg:space-y-5">
-                <h1 className="max-w-xl text-4xl font-black leading-[1.02] tracking-tight sm:text-5xl lg:text-[3.9rem] xl:text-[4.25rem]">
-                  Paper belongs in class.
-                  <span className="block text-emerald-400">Not in elections.</span>
+              {/* Hero Header */}
+              <div className="space-y-3">
+                <h1 className="text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem] xl:text-[4rem]">
+                  Paper Belongs in Class.
+                  <span className="block text-slate-950">Not in Elections.</span>
                 </h1>
-                <p className="max-w-lg text-base leading-7 text-white/[0.78] sm:text-lg lg:text-[1.05rem]">
+                <p className="max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base sm:leading-relaxed">
                   Leave slow queues and manual ballot boxes behind. Experience a fast, cryptographically secure campus election where your vote is locked in instantly.
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 lg:gap-4">
-                {metrics.map((metric) => (
-                  <div key={metric.label} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm lg:p-5">
-                    <div className="text-xl font-bold text-white lg:text-2xl">{metric.value}</div>
-                    <div className="mt-1 text-[9px] font-semibold uppercase tracking-[0.26em] text-white/60 lg:text-[10px]">
-                      {metric.label}
+              {/* Metrics Grid (2x2) */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                {metrics.map((metric) => {
+                  const IconComponent = metric.icon;
+                  return (
+                    <div key={metric.label} className="rounded-3xl border border-[#214371] bg-[#0c2e59] p-5 shadow-sm flex flex-col items-center justify-center text-center min-h-[120px]">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white mb-3 shadow-inner">
+                        <IconComponent className="h-5 w-5" />
+                      </div>
+                      <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#86aedc]">
+                        {metric.label}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-2 text-[11px] text-white/80 sm:text-xs lg:gap-3 lg:text-sm">
-                {['Institution-grade controls', 'Offline-ready workflow', 'Auditable result trail'].map((item) => (
-                  <span key={item} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 lg:px-4 lg:py-2">
-                    <Sparkles className="h-3.5 w-3.5 text-emerald-300 lg:h-4 lg:w-4" />
-                    {item}
-                  </span>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
 
-          <div className="relative flex items-center justify-center bg-[#f8fafc] px-0 py-8 sm:px-6 lg:px-0 lg:py-0">
-            <div className="w-full max-w-[32rem] rounded-none border-0 bg-white px-6 py-8 shadow-none sm:rounded-[2rem] sm:border sm:border-slate-200 sm:px-8 sm:py-8 sm:shadow-[0_24px_60px_rgba(15,23,42,0.12)] lg:mx-0 lg:max-w-[35rem] lg:min-h-full lg:rounded-none lg:border-0 lg:px-8 lg:py-6 lg:shadow-none xl:px-10">
-              <div className="flex flex-col gap-5 text-center lg:gap-4">
-                <div className="flex justify-center">
+          {/* Right Panel */}
+          <div className="flex flex-1 flex-col items-center justify-center bg-[#f8fafc] px-6 py-12 sm:px-10 lg:w-[47%]">
+            <div className="w-full max-w-[28rem] sm:max-w-[30rem] rounded-[2.5rem] border border-slate-100 bg-white p-6 sm:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
+              <div className="flex flex-col items-center text-center">
+                <div className="mb-3">
                   <Image
                     src="/assets/Cavendish-University-Uganda-Logo.png"
                     alt="Cavendish University Uganda logo"
-                    width={112}
-                    height={112}
-                    className="h-20 w-20 rounded-3xl object-cover shadow-sm lg:h-24 lg:w-24"
+                    width={64}
+                    height={64}
+                    className="h-14 w-14 object-contain"
                   />
                 </div>
-
-                <div className="space-y-1.5 lg:space-y-2">
-                  <h2 className="text-xl font-bold tracking-tight text-slate-950 lg:text-2xl">
-                    Sign in to your account
-                  </h2>
-                  <p className="text-sm leading-6 text-slate-600 lg:text-[0.95rem]">
-                    Access the voting portal using your institutional credentials.
-                  </p>
-                </div>
-
-                <div className="space-y-2.5 text-left lg:space-y-3">
-                  <Link
-                    href="/sign-in"
-                    className="flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700"
-                  >
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-sm">
-                      <span className="text-xs font-black text-slate-900">G</span>
-                    </span>
-                    Continue with Google
-                  </Link>
-                  <Link
-                    href="/sign-in"
-                    className="flex items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 font-semibold text-white transition hover:bg-slate-800"
-                  >
-                    Use institutional email
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-
-                <div className="relative flex items-center py-0.5 lg:py-1">
-                  <div className="flex-1 border-t border-slate-200" />
-                  <span className="mx-4 text-[10px] font-semibold uppercase tracking-[0.32em] text-slate-400">
-                    or
-                  </span>
-                  <div className="flex-1 border-t border-slate-200" />
-                </div>
-
-                <div className="space-y-3 text-left lg:space-y-4">
-                  <div>
-                    <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.24em] text-slate-600">
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        <Lock className="h-4 w-4" />
-                      </span>
-                      <input
-                        className="w-full rounded-xl border border-slate-200 bg-white px-10 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                        placeholder="Enter your institution email address"
-                        type="email"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="mb-1.5 flex items-center justify-between">
-                      <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-600">
-                        Password
-                      </label>
-                      <Link href="/sign-in" className="text-[10px] font-semibold uppercase tracking-[0.24em] text-emerald-700 hover:underline">
-                        Forgot?
-                      </Link>
-                    </div>
-                    <div className="relative">
-                      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                        <Lock className="h-4 w-4" />
-                      </span>
-                      <input
-                        className="w-full rounded-xl border border-slate-200 bg-white px-10 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-                        placeholder="••••••••"
-                        type="password"
-                      />
-                    </div>
-                  </div>
-
-                  <Link
-                    href="/sign-in"
-                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 font-bold text-white transition hover:bg-emerald-700"
-                  >
-                    Sign in
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-
-                <p className="text-sm text-slate-600">
-                  New to e-Vote?{' '}
-                  <Link href="/sign-up" className="font-semibold text-emerald-700 hover:underline">
-                    Create an account
-                  </Link>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="security" className="bg-white px-6 py-20 sm:px-8 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr] lg:items-end">
-            <div className="space-y-5">
-              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-emerald-700">
-                <ShieldCheck className="h-4 w-4" />
-                Institutional grade
-              </div>
-              <h2 className="max-w-xl text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-                Uncompromising integrity for campus elections.
-              </h2>
-              <p className="max-w-2xl text-lg leading-8 text-slate-600">
-                The platform is designed around zero-trust principles, clear auditability, and election workflows that remain dependable even when infrastructure conditions are not perfect.
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {trustSignals.slice(0, 2).map((signal) => (
-                <article key={signal.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-950 text-white">
-                    <FeatureIcon icon={signal.icon} />
-                  </div>
-                  <h3 className="text-lg font-semibold text-slate-950">{signal.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-slate-600">{signal.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {trustSignals.map((signal) => (
-              <article key={signal.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
-                  <FeatureIcon icon={signal.icon} />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-950">{signal.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{signal.description}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="how-it-works" className="bg-slate-50 px-6 py-20 sm:px-8 lg:px-8">
-        <div className="mx-auto max-w-[1440px]">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-              Engineered for transparency.
-            </h2>
-            <p className="mt-4 text-lg leading-8 text-slate-600">
-              Every stage of the election flow is structured so administrators, auditors, and voters can trust the process from sign-in to result publication.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 lg:grid-cols-3">
-            {steps.map((step, index) => (
-              <article key={step.title} className="rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-slate-950 text-white">
-                  <span className="text-sm font-bold">0{index + 1}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-slate-950">{step.title}</h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600">{step.description}</p>
-                <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-emerald-700">
-                  <Check className="h-4 w-4" />
-                  Verifiable by design
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="mt-12 rounded-[2rem] border border-slate-200 bg-slate-950 px-8 py-10 text-white shadow-[0_24px_60px_rgba(15,23,42,0.18)] sm:px-12 sm:py-12">
-            <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-300">
-                  Ready to get started
-                </p>
-                <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-                  Modernize campus elections without sacrificing trust.
+                <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                  Welcome
                 </h2>
+                <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-slate-500">
+                  Access the voting portal using your institutional credentials.
+                </p>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                <Link
-                  href="/sign-in"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-3.5 font-semibold text-white transition hover:bg-emerald-400"
+
+              {/* Social Login */}
+              <div className="mt-6">
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300"
                 >
-                  Sign in now
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="/sign-up"
-                  className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3.5 font-semibold text-white transition hover:bg-white/10"
-                >
-                  Create account
-                </Link>
+                  <svg className="h-4 w-4" viewBox="0 0 24 24">
+                    <path
+                      fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+                    />
+                    <path
+                      fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                    />
+                  </svg>
+                  Continue with Google
+                </button>
               </div>
+
+              {/* Divider */}
+              <div className="relative my-5 flex items-center text-slate-400">
+                <span className="h-px flex-1 bg-slate-200" />
+                <span className="mx-3 text-[10px] font-bold uppercase tracking-[0.2em]">OR USE EMAIL</span>
+                <span className="h-px flex-1 bg-slate-200" />
+              </div>
+
+              {/* Form fields */}
+              <form className="space-y-4">
+                <div>
+                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                    EMAIL ADDRESS
+                  </label>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                      <Mail className="h-5 w-5" />
+                    </span>
+                    <input
+                      className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
+                      placeholder="name@students.cavendish.ac.ug"
+                      type="email"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                      PASSWORD
+                    </label>
+                    <Link href="/sign-in" className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#000080] hover:underline">
+                      FORGOT?
+                    </Link>
+                  </div>
+                  <div className="relative">
+                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                      <Lock className="h-5 w-5" />
+                    </span>
+                    <input
+                      className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-11 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
+                      placeholder="••••••••"
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 bg-transparent border-0 border-none outline-none p-0 focus:outline-none focus:ring-0 focus:border-0 shadow-none focus:shadow-none"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#000080] py-3.5 text-base font-bold text-white shadow-md transition hover:bg-[#000066]"
+                >
+                  Sign In
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+              </form>
+
+              <p className="mt-6 text-center text-sm font-semibold text-slate-500">
+                New to e-Vote?{' '}
+                <Link href="/sign-up" className="font-bold text-[#000080] hover:underline">
+                  Create an account
+                </Link>
+              </p>
             </div>
+
+            {/* Page Footer */}
+            <span className="text-slate-400 font-bold tracking-[0.25em] text-[9px] mt-6 text-center block">
+              THE E-VOTE ELECTRONIC VOTING SYSTEM
+            </span>
           </div>
         </div>
       </section>
-
-      <footer id="about" className="border-t border-slate-200 bg-white px-6 py-10 sm:px-8 lg:px-8">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/assets/e-Vote-Logo.png"
-              alt="e-Vote logo"
-              width={44}
-              height={44}
-              className="h-11 w-11 rounded-full object-cover"
-            />
-            <div>
-              <p className="text-lg font-semibold text-slate-950">e-Vote</p>
-              <p className="text-sm text-slate-600">
-                The official electronic voting platform for Cavendish University Uganda.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium text-slate-600">
-            <a href="#security" className="transition hover:text-emerald-700">
-              Security
-            </a>
-            <a href="#how-it-works" className="transition hover:text-emerald-700">
-              How it works
-            </a>
-            <Link href="/sign-in" className="transition hover:text-emerald-700">
-              Sign in
-            </Link>
-            <Link href="/sign-up" className="transition hover:text-emerald-700">
-              Create account
-            </Link>
-          </div>
-        </div>
-
-        <div className="mx-auto mt-4 max-w-[1440px] border-t border-slate-200 pt-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-500">
-          © 2026 eVote Cavendish University Uganda. All rights reserved.
-        </div>
-      </footer>
     </main>
   );
 }
