@@ -5,23 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Eye, EyeOff, Lock, Mail, Phone, ArrowLeft, ShieldAlert } from 'lucide-react';
-
-function formatPhoneNumber(input: string): string {
-  const trimmed = input.trim();
-  const digits = trimmed.replace(/\D/g, '');
-
-  if (trimmed.startsWith('+')) {
-    return `+${digits}`;
-  }
-  if (digits.startsWith('256')) {
-    return `+${digits}`;
-  }
-  if (digits.startsWith('0')) {
-    return `+256${digits.slice(1)}`;
-  }
-  return `+256${digits}`;
-}
+import { Eye, EyeOff, Lock, Mail, ArrowLeft, ShieldAlert } from 'lucide-react';
 
 export default function Page() {
   const { signUp, errors, fetchStatus } = useSignUp();
@@ -31,7 +15,6 @@ export default function Page() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -39,7 +22,6 @@ export default function Page() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [pendingVerification, setPendingVerification] = useState(false);
-  const [verificationStep, setVerificationStep] = useState<'email' | 'phone'>('email');
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
 
@@ -49,7 +31,6 @@ export default function Page() {
     if (error) return error;
     const fieldError =
       errors.fields.emailAddress?.message ||
-      errors.fields.phoneNumber?.message ||
       errors.fields.password?.message ||
       errors.fields.code?.message;
     if (fieldError) return fieldError;
@@ -67,11 +48,6 @@ export default function Page() {
       setError('Passwords do not match.');
       return;
     }
-    const formattedPhone = formatPhoneNumber(phoneNumber);
-    if (!/^\+256\d{9}$/.test(formattedPhone)) {
-      setError('Please enter a valid Ugandan contact number (e.g. +256 712 345 678).');
-      return;
-    }
     setError('');
 
     const { error: passwordError } = await signUp.password({
@@ -79,26 +55,18 @@ export default function Page() {
       lastName,
       emailAddress,
       password,
-      phoneNumber: formattedPhone,
     });
     if (passwordError) {
       setError(passwordError.message || 'An error occurred during sign up.');
       return;
     }
 
-    const { error: sendEmailError } = await signUp.verifications.sendEmailCode();
-    if (sendEmailError) {
-      setError(sendEmailError.message || 'Failed to send email verification code.');
+    const { error: sendError } = await signUp.verifications.sendEmailCode();
+    if (sendError) {
+      setError(sendError.message || 'Failed to send verification code.');
       return;
     }
 
-    const { error: sendPhoneError } = await signUp.verifications.sendPhoneCode();
-    if (sendPhoneError) {
-      setError(sendPhoneError.message || 'Failed to send SMS verification code.');
-      return;
-    }
-
-    setVerificationStep('email');
     setPendingVerification(true);
   };
 
@@ -107,24 +75,10 @@ export default function Page() {
     if (!isLoaded || !signUp) return;
     setError('');
 
-    if (verificationStep === 'email') {
-      const { error: verifyEmailError } = await signUp.verifications.verifyEmailCode({ code });
-      if (verifyEmailError) {
-        setError(verifyEmailError.message || 'Email verification failed.');
-        return;
-      }
-
-      if (signUp.unverifiedFields.includes('phone_number')) {
-        setVerificationStep('phone');
-        setCode('');
-        return;
-      }
-    } else {
-      const { error: verifyPhoneError } = await signUp.verifications.verifyPhoneCode({ code });
-      if (verifyPhoneError) {
-        setError(verifyPhoneError.message || 'Phone verification failed.');
-        return;
-      }
+    const { error: verifyError } = await signUp.verifications.verifyEmailCode({ code });
+    if (verifyError) {
+      setError(verifyError.message || 'Verification failed.');
+      return;
     }
 
     if (signUp.status === 'complete') {
@@ -292,31 +246,6 @@ export default function Page() {
                 </div>
               </div>
 
-              {/* Verification Section */}
-              <div>
-                <h3 className="text-base font-bold text-[#001b3d] border-b border-slate-100 pb-2 mb-4">
-                  Verification
-                </h3>
-                <div>
-                  <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-                    CONTACT NUMBER
-                  </label>
-                  <div className="relative">
-                    <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                      <Phone className="h-5 w-5" />
-                    </span>
-                    <input
-                      required
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="+256 ..."
-                      className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
-                      type="tel"
-                    />
-                  </div>
-                </div>
-              </div>
-
               <button
                 type="submit"
                 disabled={loading}
@@ -339,20 +268,10 @@ export default function Page() {
             <form onSubmit={handleVerify} className="space-y-6">
               <div>
                 <h3 className="text-base font-bold text-[#001b3d] border-b border-slate-100 pb-2 mb-4">
-                  {verificationStep === 'email' ? 'Verify Email' : 'Verify Contact Number'}
+                  Verify Email
                 </h3>
                 <p className="text-sm text-slate-500 mb-6">
-                  {verificationStep === 'email' ? (
-                    <>
-                      We&apos;ve sent a 6-digit verification code to{' '}
-                      <span className="font-semibold text-slate-700">{emailAddress}</span>. Please enter it below.
-                    </>
-                  ) : (
-                    <>
-                      We&apos;ve sent a 6-digit verification code to{' '}
-                      <span className="font-semibold text-slate-700">{formatPhoneNumber(phoneNumber)}</span>. Please enter it below to complete enrollment.
-                    </>
-                  )}
+                  We&apos;ve sent a 6-digit verification code to <span className="font-semibold text-slate-700">{emailAddress}</span>. Please enter it below to complete enrollment.
                 </p>
                 <div>
                   <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
@@ -374,17 +293,13 @@ export default function Page() {
                 disabled={loading}
                 className="mt-8 flex w-full items-center justify-center rounded-xl bg-[#001b3d] py-4 text-base font-bold text-white shadow-md transition hover:bg-[#001129] disabled:opacity-50"
               >
-                {loading ? 'Verifying...' : verificationStep === 'email' ? 'Verify Email' : 'Verify & Activate Account'}
+                {loading ? 'Verifying...' : 'Verify & Activate Account'}
               </button>
 
               <div className="flex justify-center mt-6">
                 <button
                   type="button"
-                  onClick={() => {
-                    setPendingVerification(false);
-                    setVerificationStep('email');
-                    setCode('');
-                  }}
+                  onClick={() => setPendingVerification(false)}
                   className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-slate-800 transition bg-transparent border-0 outline-none"
                 >
                   <ArrowLeft className="h-4 w-4" />
