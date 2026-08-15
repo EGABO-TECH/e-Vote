@@ -13,78 +13,74 @@ const metrics = [
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-900 selection:bg-emerald-600 selection:text-white">
-      <section className="relative overflow-visible min-h-screen flex flex-col lg:flex-row">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(16,185,129,0.14),_transparent_30%),radial-gradient(circle_at_bottom_left,_rgba(15,23,42,0.12),_transparent_36%)] pointer-events-none" />
-        <div className="relative w-full flex flex-col lg:flex-row min-h-screen">
-          {/* Left Panel */}
-          <div className="relative flex flex-1 flex-col justify-center overflow-visible bg-slate-950 px-6 py-12 text-white sm:px-10 lg:px-12 xl:px-16 lg:w-[53%]">
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(0,31,63,0.96),rgba(0,51,102,0.92)_45%,rgba(0,80,157,0.88))]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.08),_transparent_40%)]" />
-
-            <div className="relative z-10 max-w-3xl space-y-8 lg:space-y-6 xl:space-y-8">
-              {/* Brand Header */}
-              <div className="flex flex-row items-center gap-4">
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.25rem] bg-white/5 ring-1 ring-white/10 backdrop-blur-sm">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm p-1">
-                    <Image
-                      src="/assets/e-Vote-Logo.png"
-                      alt="e-Vote logo"
-                      width={44}
-                      height={44}
-                      className="h-10 w-10 object-contain"
-                      priority
-                    />
-                  </div>
-                </div>
-                <div>
-                  <h1 className="text-2xl font-black tracking-wide text-white leading-none">e-Vote</h1>
-                  <p className="mt-1.5 text-[10px] font-extrabold tracking-[0.22em] text-white/90 leading-none">
-                    YOUR ONLINE VOTING PARTNER
-                  </p>
-                </div>
+    <main className="min-h-screen bg-gradient-to-r from-[#001428] from-[0%] via-[#0b2f5c] via-[42%] to-[#d4dce8] to-[100%] text-slate-900 selection:bg-emerald-600 selection:text-white">
+      <section className="relative min-h-screen flex flex-col lg:flex-row">
+        {/* Left — marketing (~58%) */}
+        <div className="relative flex flex-[1.35] flex-col justify-center px-6 py-12 sm:px-10 lg:px-12 xl:px-16 xl:py-16">
+          <div className="relative z-10 max-w-2xl space-y-8 lg:space-y-10">
+            {/* Brand */}
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white p-2 shadow-sm">
+                <Image
+                  src="/assets/e-Vote-Logo.png"
+                  alt="e-Vote logo"
+                  width={40}
+                  height={40}
+                  className="h-9 w-9 object-contain"
+                  priority
+                />
               </div>
-
-              {/* Hero Header */}
-              <div className="space-y-3">
-                <h1 className="text-4xl font-black leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.5rem] xl:text-[4rem]">
-                  Paper Belongs in Class.
-                  <span className="block text-slate-950">Not in Elections.</span>
-                </h1>
-                <p className="max-w-2xl text-sm leading-relaxed text-white/80 sm:text-base sm:leading-relaxed">
-                  Leave slow queues and manual ballot boxes behind. Experience a fast, cryptographically secure campus election where your vote is locked in instantly.
+              <div>
+                <p className="text-xl font-black tracking-wide text-white leading-none">e-Vote</p>
+                <p className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.22em] text-[#7eb0e8] leading-none">
+                  YOUR ONLINE VOTING PARTNER
                 </p>
               </div>
+            </div>
 
-              {/* Metrics Grid (2x2) */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                {metrics.map((metric) => {
-                  const IconComponent = metric.icon;
-                  return (
-                    <div key={metric.label} className="rounded-3xl border border-[#214371] bg-[#0c2e59] p-5 shadow-sm flex flex-col items-center justify-center text-center min-h-[120px]">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white mb-3 shadow-inner">
-                        <IconComponent className="h-5 w-5" />
-                      </div>
-                      <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] text-[#86aedc]">
-                        {metric.label}
-                      </div>
+            {/* Hero */}
+            <div className="space-y-4">
+              <h1 className="text-[2.35rem] font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem]">
+                Paper Belongs in Class.
+                <span className="mt-1 block text-white/95">Not in Elections.</span>
+              </h1>
+              <p className="max-w-xl text-sm leading-relaxed text-white/75 sm:text-[0.95rem] sm:leading-relaxed">
+                Leave slow queues and manual ballot boxes behind. Experience a fast,
+                cryptographically secure campus election where your vote is locked in instantly.
+              </p>
+            </div>
+
+            {/* Feature grid */}
+            <div className="grid max-w-lg gap-3.5 sm:grid-cols-2 sm:gap-4">
+              {metrics.map((metric) => {
+                const Icon = metric.icon;
+                return (
+                  <div
+                    key={metric.label}
+                    className="flex min-h-[108px] flex-col items-center justify-center rounded-[1.35rem] border border-white/10 bg-[#0a2548]/75 px-4 py-5 text-center backdrop-blur-sm"
+                  >
+                    <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white">
+                      <Icon className="h-[18px] w-[18px] stroke-[1.75]" />
                     </div>
-                  );
-                })}
-              </div>
+                    <p className="text-[9px] font-semibold uppercase leading-snug tracking-[0.18em] text-[#8cb8e8] sm:text-[10px]">
+                      {metric.label}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
+        </div>
 
-          {/* Right Panel — live Clerk sign-in */}
-          <div className="flex flex-1 flex-col items-center justify-center bg-[#f8fafc] px-6 py-12 sm:px-10 lg:w-[47%]">
-            <div className="w-full max-w-[28rem] sm:max-w-[30rem] rounded-[2.5rem] border border-slate-100 bg-white p-6 sm:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
-              <SignInCard showFooter={false} />
-            </div>
-
-            <span className="text-slate-400 font-bold tracking-[0.25em] text-[9px] mt-6 text-center block">
-              THE E-VOTE ELECTRONIC VOTING SYSTEM
-            </span>
+        {/* Right — sign-in card (~42%) */}
+        <div className="relative flex flex-1 flex-col items-center justify-center px-6 py-10 sm:px-8 lg:px-10 lg:py-12">
+          <div className="w-full max-w-[22.5rem] rounded-[1.75rem] border border-white/60 bg-white p-6 shadow-[0_20px_50px_rgba(15,23,42,0.12)] sm:max-w-[24rem] sm:p-7">
+            <SignInCard showFooter={false} />
           </div>
+
+          <p className="mt-5 text-center text-[9px] font-bold uppercase tracking-[0.28em] text-slate-500/80">
+            THE E-VOTE ELECTRONIC VOTING SYSTEM
+          </p>
         </div>
       </section>
     </main>

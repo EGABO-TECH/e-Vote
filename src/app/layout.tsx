@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   title: 'e-Vote — Secure Electronic Voting System',
   description:
     'A secure, offline-first electronic voting platform for academic and institutional elections at Cavendish University Uganda.',
+  icons: {
+    icon: [{ url: '/assets/e-Vote-Logo.png', type: 'image/png' }],
+    apple: '/assets/e-Vote-Logo.png',
+  },
 };
 
 export default function RootLayout({

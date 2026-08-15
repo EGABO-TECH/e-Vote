@@ -202,24 +202,24 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
   return (
     <>
       <div className="flex flex-col items-center text-center">
-        <div className="mb-3">
+        <div className="mb-2.5">
           <Image
             src="/assets/Cavendish-University-Uganda-Logo.png"
             alt="Cavendish University Uganda logo"
-            width={64}
-            height={64}
-            className="h-14 w-14 object-contain"
+            width={56}
+            height={56}
+            className="h-12 w-12 object-contain"
           />
         </div>
-        <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+        <h2 className="text-[1.65rem] font-bold tracking-tight text-slate-900">
           {view === 'forgot-password' ? 'Reset Password' : 'Welcome'}
         </h2>
-        <p className="mt-1.5 text-xs sm:text-sm leading-relaxed text-slate-500">
+        <p className="mt-1 text-xs leading-relaxed text-slate-500">
           {view === 'forgot-password'
             ? 'Enter your email to receive a password reset code.'
             : view === 'verify-device'
               ? 'Verify this device to continue signing in.'
-              : 'Access the voting portal using your institutional credentials.'}
+              : 'Access the voting portal using your Institutional credentials.'}
         </p>
       </div>
 
@@ -232,12 +232,12 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
 
       {view === 'sign-in' && (
         <>
-          <div className="mt-6">
+          <div className="mt-5">
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2.5 rounded-[10px] border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300 disabled:opacity-50"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -261,7 +261,7 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
             </button>
           </div>
 
-          <div className="relative my-5 flex items-center text-slate-400">
+          <div className="relative my-4 flex items-center text-slate-400">
             <span className="h-px flex-1 bg-slate-200" />
             <span className="mx-3 text-[10px] font-bold uppercase tracking-[0.2em]">OR USE EMAIL</span>
             <span className="h-px flex-1 bg-slate-200" />
@@ -280,7 +280,7 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
                   required
                   value={emailAddress}
                   onChange={(e) => setEmailAddress(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
+                  className="w-full rounded-[10px] border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
                   placeholder="name@students.cavendish.ac.ug"
                   type="email"
                 />
@@ -314,7 +314,7 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-11 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
+                  className="w-full rounded-[10px] border border-slate-200 bg-white py-2.5 pl-11 pr-11 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
                   placeholder="••••••••"
                   type={showPassword ? 'text' : 'password'}
                 />
@@ -331,14 +331,14 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#000080] py-3.5 text-base font-bold text-white shadow-md transition hover:bg-[#000066] disabled:opacity-50"
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#000080] py-3 text-[0.95rem] font-bold text-white shadow-md transition hover:bg-[#000066] disabled:opacity-50"
             >
               {loading ? 'Signing in...' : 'Sign In'}
               {!loading && <ArrowRight className="h-5 w-5" />}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm font-semibold text-slate-500">
+          <p className="mt-5 text-center text-sm font-semibold text-slate-500">
             New to e-Vote?{' '}
             <Link href="/sign-up" className="font-bold text-[#000080] hover:underline">
               Create an account
@@ -401,7 +401,7 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
                         required
                         value={emailAddress}
                         onChange={(e) => setEmailAddress(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
+                        className="w-full rounded-[10px] border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
                         placeholder="name@students.cavendish.ac.ug"
                         type="email"
                       />
@@ -454,7 +454,7 @@ export function SignInCard({ showFooter = true, initialView = 'sign-in' }: SignI
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
+                    className="w-full rounded-[10px] border border-slate-200 bg-white py-2.5 pl-11 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-0"
                     placeholder="••••••••"
                     type="password"
                   />
