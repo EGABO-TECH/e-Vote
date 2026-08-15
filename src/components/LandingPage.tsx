@@ -42,7 +42,7 @@ export default function LandingPage() {
             <div className="space-y-4">
               <h1 className="text-[2.35rem] font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.25rem] xl:text-[3.75rem]">
                 Paper Belongs in Class.
-                <span className="mt-1 block text-white/95">Not in Elections.</span>
+                <span className="mt-1 block text-black">Not in Elections.</span>
               </h1>
               <p className="max-w-xl text-sm leading-relaxed text-white/75 sm:text-[0.95rem] sm:leading-relaxed">
                 Leave slow queues and manual ballot boxes behind. Experience a fast,
