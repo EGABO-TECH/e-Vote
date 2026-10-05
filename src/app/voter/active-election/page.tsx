@@ -19,7 +19,7 @@ type ElectionResponse = Omit<ElectionListItem, 'candidateCount'> & { candidates?
 
 export default function ActiveElectionList() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState<"All" | "Upcoming" | "Open">("All");
+  const [filterStatus, setFilterStatus] = useState<"All" | "Open">("All");
   const [elections, setElections] = useState<ElectionListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -112,7 +112,7 @@ export default function ActiveElectionList() {
             )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            {(['All', 'Upcoming', 'Open'] as const).map((f) => (
+            {(['All', 'Open'] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilterStatus(f)}
@@ -225,8 +225,8 @@ export default function ActiveElectionList() {
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>groups</span>
                     {election.candidateCount} approved candidate{election.candidateCount !== 1 ? 's' : ''}
                   </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--blue)', fontWeight: 700, fontSize: 13 }}>
-                    {election.hasVoted ? 'View Results' : 'Cast Ballot'}
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '8px 10px', borderRadius: 6, color: '#fff', background: 'var(--blue)', fontWeight: 750, fontSize: 12, whiteSpace: 'nowrap' }}>
+                    View candidates
                     <span className="material-symbols-outlined" style={{ fontSize: 16 }}>arrow_forward</span>
                   </span>
                 </div>

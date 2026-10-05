@@ -3,50 +3,53 @@ export const dynamic = 'force-dynamic';
 import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase";
+import { getOrCreateVoterRecord, type VoterRecord } from "@/lib/voter-record";
 
 export default async function VoterDashboard() {
   const user = await currentUser();
+  const now = new Date().toISOString();
 
-  // Get the live/active election
+  // Keep the dashboard and election portal on the same currently-open elections.
   const { data: elections } = await supabaseAdmin
     .from("elections")
     .select("*")
     .in("status", ["live", "active"])
-    .order("ends_at", { ascending: true })
-    .limit(1);
+    .lte("starts_at", now)
+    .gte("ends_at", now)
+    .order("ends_at", { ascending: true });
 
-  const activeElection = elections?.[0] ?? null;
+  const activeElections = elections ?? [];
+  const activeElection = activeElections[0] ?? null;
 
   // Get live vote counts per candidate for the active election
-  let candidates: { name: string; votes: number }[] = [];
+  let candidates: { name: string; votes: number; photo_url: string | null }[] = [];
   let totalVotes = 0;
   let voterHasVoted = false;
-  let voterRecord: any = null;
+  let voterRecord: VoterRecord | null = null;
+  let voterAccountError: string | null = null;
   let totalVoters = 0;
 
+  if (user) {
+    const voterResult = await getOrCreateVoterRecord(user.id);
+    voterRecord = voterResult.voter;
+    voterAccountError = voterResult.error;
+  }
+
   if (activeElection) {
-    const [candidatesRes, votesRes, voterRes, totalVotersRes] = await Promise.all([
+    const [candidatesRes, votesRes, totalVotersRes] = await Promise.all([
       supabaseAdmin
         .from("candidates")
-        .select("id, full_name")
+        .select("id, name, photo_url")
         .eq("election_id", activeElection.id)
         .eq("status", "approved"),
       supabaseAdmin
         .from("votes")
         .select("candidate_id")
         .eq("election_id", activeElection.id),
-      user
-        ? supabaseAdmin
-            .from("voters")
-            .select("id, voting_suspended")
-            .eq("clerk_id", user.id)
-            .single()
-        : Promise.resolve({ data: null }),
       supabaseAdmin.from("voters").select("id", { count: "exact", head: true }),
     ]);
 
     totalVoters = totalVotersRes.count ?? 0;
-    voterRecord = voterRes.data;
     const allVotes = votesRes.data ?? [];
     totalVotes = allVotes.length;
 
@@ -56,7 +59,7 @@ export default async function VoterDashboard() {
     }
 
     candidates = (candidatesRes.data ?? [])
-      .map((c) => ({ name: c.full_name, votes: voteCounts[c.id] || 0 }))
+      .map((c) => ({ name: c.name, photo_url: c.photo_url, votes: voteCounts[c.id] || 0 }))
       .sort((a, b) => b.votes - a.votes)
       .slice(0, 5);
 
@@ -68,7 +71,13 @@ export default async function VoterDashboard() {
         .eq("election_id", activeElection.id)
         .eq("voter_id", voterRecord.id)
         .maybeSingle();
-      voterHasVoted = !!voteCheck;
+      const { data: registry } = await supabaseAdmin
+        .from("voter_registry")
+        .select("has_voted")
+        .eq("election_id", activeElection.id)
+        .eq("voter_id", voterRecord.id)
+        .maybeSingle();
+      voterHasVoted = !!voteCheck || Boolean(registry?.has_voted);
     }
   }
 
@@ -78,7 +87,7 @@ export default async function VoterDashboard() {
   // Compute time remaining
   let timeLeft = "—";
   if (activeElection?.ends_at) {
-    const diff = new Date(activeElection.ends_at).getTime() - Date.now();
+    const diff = new Date(activeElection.ends_at).getTime() - new Date(now).getTime();
     if (diff > 0) {
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
@@ -129,14 +138,19 @@ export default async function VoterDashboard() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+      {voterAccountError && (
+        <div role="alert" style={{ padding: '14px 18px', border: '1px solid #FECACA', borderRadius: 8, background: '#FEF2F2', color: '#991B1B', fontSize: 14, fontWeight: 650 }}>
+          {voterAccountError}
+        </div>
+      )}
 
       {/* Hero Election Card */}
       <div
         style={{
-          background:
-            "linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%)",
+          background: "linear-gradient(125deg, #142448 0%, #2453a6 58%, #147b78 100%)",
           borderRadius: "var(--r-lg)",
           padding: "2.5rem",
+          minHeight: 260,
           color: "#fff",
           boxShadow: "var(--sh-lg)",
           display: "grid",
@@ -147,18 +161,9 @@ export default async function VoterDashboard() {
           position: "relative",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            top: "-80px",
-            right: "120px",
-            width: "300px",
-            height: "300px",
-            background: "rgba(255,255,255,0.04)",
-            borderRadius: "50%",
-          }}
-        />
-        <div>
+        {activeElection?.banner_url && <img src={activeElection.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(7,16,40,0.94) 0%, rgba(7,16,40,0.78) 55%, rgba(7,16,40,0.2) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
           {activeElection ? (
             <>
               <div
@@ -205,6 +210,11 @@ export default async function VoterDashboard() {
               >
                 {activeElection.title}
               </h1>
+              {activeElection.description && (
+                <p style={{ maxWidth: 620, margin: '0 0 1.25rem', color: 'rgba(255,255,255,0.82)', fontSize: 15, lineHeight: 1.65 }}>
+                  {activeElection.description}
+                </p>
+              )}
               <div
                 style={{
                   display: "flex",
@@ -231,30 +241,13 @@ export default async function VoterDashboard() {
                 </span>
               </div>
               {voterHasVoted ? (
-                <div
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    padding: "14px 28px",
-                    background: "var(--green)",
-                    color: "#fff",
-                    borderRadius: "var(--r-md)",
-                    fontWeight: 800,
-                    fontSize: "1rem",
-                  }}
-                >
-                  <span
-                    className="material-symbols-outlined"
-                    style={{ fontSize: "20px" }}
-                  >
-                    check_circle
-                  </span>
-                  Ballot Cast — Thank you!
-                </div>
+                <Link href={`/voter/active-election/${activeElection.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 20px', border: '1px solid rgba(255,255,255,0.35)', borderRadius: 8, background: 'rgba(255,255,255,0.12)', color: '#fff', fontWeight: 750, textDecoration: 'none' }}>
+                  Ballot cast · View candidates
+                  <span className="material-symbols-outlined" style={{ fontSize: 19 }}>arrow_forward</span>
+                </Link>
               ) : (
                 <Link
-                  href="/voter/active-election"
+                  href={`/voter/active-election/${activeElection.id}`}
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
@@ -270,7 +263,7 @@ export default async function VoterDashboard() {
                     boxShadow: "var(--sh-blue)",
                   }}
                 >
-                  Cast Your Ballot
+                  View candidates
                   <span
                     className="material-symbols-outlined"
                     style={{ fontSize: "20px" }}
@@ -322,12 +315,7 @@ export default async function VoterDashboard() {
             </>
           )}
         </div>
-        <span
-          className="material-symbols-outlined"
-          style={{ fontSize: "6rem", opacity: 0.15, userSelect: "none", flexShrink: 0 }}
-        >
-          how_to_vote
-        </span>
+        {!activeElection?.banner_url && <span className="material-symbols-outlined" aria-hidden="true" style={{ position: 'relative', zIndex: 1, fontSize: '6rem', opacity: 0.18, userSelect: 'none', flexShrink: 0 }}>how_to_vote</span>}
       </div>
 
       {/* Stats Row — Real Data */}
@@ -402,6 +390,36 @@ export default async function VoterDashboard() {
           </div>
         ))}
       </div>
+
+      {activeElections.length > 1 && (
+        <section style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div>
+              <h2 style={{ margin: 0, color: 'var(--text-1)', fontSize: 22, fontWeight: 850 }}>More active elections</h2>
+              <p style={{ margin: '5px 0 0', color: 'var(--text-2)', fontSize: 14 }}>Explore each election and review its approved candidates.</p>
+            </div>
+            <Link href="/voter/active-election" style={{ color: 'var(--blue)', fontSize: 13, fontWeight: 750, textDecoration: 'none' }}>All elections →</Link>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 16 }}>
+            {activeElections.slice(1).map((election) => (
+              <article key={election.id} style={{ overflow: 'hidden', border: '1px solid var(--border)', borderRadius: 10, background: 'var(--surface)', boxShadow: 'var(--sh-sm)' }}>
+                <div style={{ position: 'relative', height: 150, background: 'linear-gradient(125deg, #142448 0%, #2453a6 58%, #147b78 100%)' }}>
+                  {election.banner_url && <img src={election.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(0deg, rgba(7,16,40,0.68), rgba(7,16,40,0.04))' }} />
+                  <span style={{ position: 'absolute', left: 16, bottom: 14, color: '#fff', fontWeight: 800, fontSize: 11, textTransform: 'uppercase' }}>Live election</span>
+                </div>
+                <div style={{ padding: 18 }}>
+                  <h3 style={{ margin: '0 0 8px', color: 'var(--text-1)', fontSize: 17, fontWeight: 800, lineHeight: 1.25 }}>{election.title}</h3>
+                  <p style={{ minHeight: 44, margin: '0 0 14px', color: 'var(--text-2)', fontSize: 13, lineHeight: 1.55 }}>{election.description || 'Review the election and meet the candidates.'}</p>
+                  <Link href={`/voter/active-election/${election.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: 'var(--blue)', fontSize: 13, fontWeight: 750, textDecoration: 'none' }}>
+                    View candidates <span className="material-symbols-outlined" style={{ fontSize: 17 }}>arrow_forward</span>
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Two columns: Live results + Quick Actions */}
       <div
@@ -509,7 +527,7 @@ export default async function VoterDashboard() {
                             color: i === 0 ? "#fff" : "var(--text-2)",
                           }}
                         >
-                          {c.name[0]}
+                          {c.photo_url ? <img src={c.photo_url} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : c.name[0]}
                         </div>
                         <p
                           style={{

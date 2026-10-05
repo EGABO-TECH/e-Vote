@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getOrCreateVoterRecord } from '@/lib/voter-record';
 import { CandidateVotingCards } from '../CandidateVotingCards';
 
 export const dynamic = 'force-dynamic';
@@ -31,12 +32,15 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
   }
 
   // Check if election is open for voting
-  const isOpen = election.status === 'active' || election.status === 'live';
+  const now = new Date();
+  const isOpen = (election.status === 'active' || election.status === 'live')
+    && new Date(election.starts_at) <= now
+    && new Date(election.ends_at) > now;
 
   // Fetch only APPROVED candidates for this election
   const { data: candidatesData } = await supabaseAdmin
     .from('candidates')
-    .select('id, name, category, slogan, manifesto, photo_url')
+    .select('id, name, category, slogan, statement, manifesto, goals, photo_url')
     .eq('election_id', electionId)
     .eq('status', 'approved');
 
@@ -45,52 +49,32 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
     name: c.name,
     position: c.category || 'Candidate',
     slogan: c.slogan || 'Committed to student leadership.',
+    statement: c.statement || '',
     manifesto: c.manifesto || 'No manifesto provided.',
-    image_url: c.photo_url || '/logo.jpeg',
+    goals: c.goals || '',
+    image_url: c.photo_url || null,
   }));
 
-  // Look up voter ID from clerk_id, auto-create row if missing
-  let { data: voterRow } = await supabaseAdmin
-    .from('voters')
-    .select('id')
-    .eq('clerk_id', userId)
-    .single();
-
-  if (!voterRow) {
-    const { currentUser } = await import('@clerk/nextjs/server');
-    const clerkUser = await currentUser();
-    if (clerkUser) {
-      const primaryEmail = clerkUser.emailAddresses.find(
-        (e) => e.id === clerkUser.primaryEmailAddressId
-      )?.emailAddress ?? null;
-      const fullName = `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null;
-
-      const { data: newVoter } = await supabaseAdmin
-        .from('voters')
-        .upsert([{
-          clerk_id: userId,
-          email: primaryEmail,
-          full_name: fullName,
-          role: 'voter',
-          student_id: primaryEmail ? primaryEmail.split('@')[0] : null,
-        }], { onConflict: 'clerk_id' })
-        .select('id')
-        .single();
-
-      if (newVoter) voterRow = newVoter;
-    }
-  }
+  const { voter: voterRow, error: voterError } = await getOrCreateVoterRecord(userId);
 
   // Check if voter has already voted in this election
   let hasVoted = false;
   if (voterRow) {
-    const { data: registry } = await supabaseAdmin
-      .from('voter_registry')
-      .select('has_voted')
-      .eq('voter_id', voterRow.id)
-      .eq('election_id', electionId)
-      .single();
-    hasVoted = Boolean(registry?.has_voted);
+    const [registryResult, voteResult] = await Promise.all([
+      supabaseAdmin
+        .from('voter_registry')
+        .select('has_voted')
+        .eq('voter_id', voterRow.id)
+        .eq('election_id', electionId)
+        .maybeSingle(),
+      supabaseAdmin
+        .from('votes')
+        .select('id')
+        .eq('voter_id', voterRow.id)
+        .eq('election_id', electionId)
+        .maybeSingle(),
+    ]);
+    hasVoted = Boolean(registryResult.data?.has_voted || voteResult.data);
   }
 
   return (
@@ -108,6 +92,12 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
         <span style={{ color: 'var(--text-3)', fontSize: 14 }}>/</span>
         <span style={{ color: 'var(--text-1)', fontWeight: 700, fontSize: 14 }}>{election.title}</span>
       </div>
+
+      {voterError && (
+        <div role="alert" style={{ background: 'var(--red-bg)', color: 'var(--red)', border: '1px solid rgba(220,38,38,0.2)', borderRadius: 12, padding: '12px 16px', fontSize: 14, fontWeight: 600 }}>
+          {voterError}
+        </div>
+      )}
 
       {/* Closed election banner */}
       {!isOpen && (
@@ -134,6 +124,7 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
           bannerUrl={election.banner_url}
           candidates={candidates}
           hasVoted={hasVoted}
+          voterError={voterError}
         />
       )}
     </div>

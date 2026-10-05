@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getOrCreateVoterRecord } from '@/lib/voter-record';
 
 export async function GET() {
   const { userId } = await auth();
@@ -8,53 +9,17 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  // Try to find the voter row
-  let { data: voterRow } = await supabaseAdmin
-    .from('voters')
-    .select('id')
-    .eq('clerk_id', userId)
-    .single();
+  const { voter, error: voterError } = await getOrCreateVoterRecord(userId);
+  if (!voter) return NextResponse.json({ error: voterError }, { status: 403 });
+  const voterId = voter.id;
 
-  // If no voter row exists, auto-create it from Clerk user data (webhook may not have fired)
-  if (!voterRow) {
-    const clerkUser = await currentUser();
-    if (!clerkUser) {
-      return NextResponse.json({ error: 'Unable to resolve user session.' }, { status: 403 });
-    }
-
-    const primaryEmail = clerkUser.emailAddresses.find(
-      (e) => e.id === clerkUser.primaryEmailAddressId
-    )?.emailAddress ?? null;
-
-    const fullName = `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null;
-
-    const { data: newVoter, error: insertError } = await supabaseAdmin
-      .from('voters')
-      .upsert([{
-        clerk_id: userId,
-        email: primaryEmail,
-        full_name: fullName,
-        role: 'voter',
-        student_id: primaryEmail ? primaryEmail.split('@')[0] : null,
-      }], { onConflict: 'clerk_id' })
-      .select('id')
-      .single();
-
-    if (insertError || !newVoter) {
-      console.error('Failed to auto-create voter row:', insertError);
-      return NextResponse.json({ error: 'Unable to resolve voter account.' }, { status: 403 });
-    }
-
-    voterRow = newVoter;
-  }
-
-
-  const voterId = voterRow.id;
-
+  const now = new Date().toISOString();
   const { data: elections, error: electionsError } = await supabaseAdmin
     .from('elections')
     .select('id, title, description, banner_url, status, starts_at, ends_at')
     .in('status', ['active', 'live'])
+    .lte('starts_at', now)
+    .gte('ends_at', now)
     .order('starts_at', { ascending: false });
 
   if (electionsError) {
@@ -62,6 +27,7 @@ export async function GET() {
   }
 
   const electionIds = (elections || []).map((election) => election.id);
+  if (electionIds.length === 0) return NextResponse.json({ elections: [] });
 
   const { data: candidatesData, error: candidatesError } = await supabaseAdmin
     .from('candidates')
@@ -73,26 +39,34 @@ export async function GET() {
     return NextResponse.json({ error: 'Unable to load candidates.' }, { status: 500 });
   }
 
-  const { data: registryRows, error: registryError } = await supabaseAdmin
-    .from('voter_registry')
-    .select('election_id, has_voted')
-    .eq('voter_id', voterId)
-    .in('election_id', electionIds);
+  const [registryResult, votesResult] = await Promise.all([
+    supabaseAdmin
+      .from('voter_registry')
+      .select('election_id, has_voted')
+      .eq('voter_id', voterId)
+      .in('election_id', electionIds),
+    supabaseAdmin
+      .from('votes')
+      .select('election_id')
+      .eq('voter_id', voterId)
+      .in('election_id', electionIds),
+  ]);
 
-  if (registryError) {
+  if (registryResult.error || votesResult.error) {
     return NextResponse.json({ error: 'Unable to load voting status.' }, { status: 500 });
   }
 
-  const hasVotedMap = Object.fromEntries(
-    (registryRows || []).map((row) => [row.election_id, row.has_voted])
-  );
+  const hasVotedIds = new Set([
+    ...(registryResult.data || []).filter((row) => row.has_voted).map((row) => row.election_id),
+    ...(votesResult.data || []).map((row) => row.election_id),
+  ]);
 
   const formattedElections = (elections || []).map((election) => ({
     id: election.id,
     title: election.title,
     description: election.description,
     banner_url: election.banner_url,
-    status: election.status === 'live' ? 'Open' : 'Open',
+    status: 'Open',
     starts_at: election.starts_at,
     ends_at: election.ends_at,
     candidates: (candidatesData || [])
@@ -105,7 +79,7 @@ export async function GET() {
         manifesto: candidate.manifesto || 'No manifesto provided yet.',
         image_url: candidate.photo_url || '/logo.jpeg',
       })),
-    hasVoted: Boolean(hasVotedMap[election.id]),
+    hasVoted: hasVotedIds.has(election.id),
   }));
 
   return NextResponse.json({

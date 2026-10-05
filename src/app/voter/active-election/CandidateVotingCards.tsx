@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { castVoteAction } from '@/app/election/[id]/vote/actions';
 
 export type CandidateCardData = {
@@ -8,8 +9,10 @@ export type CandidateCardData = {
   name: string;
   position: string;
   slogan: string;
+  statement: string;
   manifesto: string;
-  image_url: string;
+  goals: string;
+  image_url: string | null;
 };
 
 export function CandidateVotingCards({
@@ -19,6 +22,7 @@ export function CandidateVotingCards({
   bannerUrl,
   candidates,
   hasVoted,
+  voterError,
 }: {
   electionId: string;
   title: string;
@@ -26,23 +30,27 @@ export function CandidateVotingCards({
   bannerUrl: string | null;
   candidates: CandidateCardData[];
   hasVoted: boolean;
+  voterError: string | null;
 }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const router = useRouter();
+  const [submittingCandidateId, setSubmittingCandidateId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const totalCandidates = useMemo(() => candidates.length, [candidates.length]);
 
-  const handleVote = async () => {
-    if (!selectedId || hasVoted || submitting) return;
+  const handleVote = async (candidate: CandidateCardData) => {
+    if (hasVoted || submitting || voterError) return;
+    if (!window.confirm(`Cast your one vote for ${candidate.name}? This cannot be changed.`)) return;
 
     setSubmitting(true);
+    setSubmittingCandidateId(candidate.id);
     setError(null);
     setSuccessMessage(null);
 
     try {
-      const result = await castVoteAction(electionId, selectedId);
+      const result = await castVoteAction(electionId, candidate.id);
 
       if ('error' in result && result.error) {
         setError(result.error);
@@ -50,12 +58,12 @@ export function CandidateVotingCards({
       }
 
       setSuccessMessage('Vote successfully recorded. Your verification receipt is now available.');
-      setSelectedId(null);
-      window.location.href = '/voter/verification-receipt';
+      router.replace('/voter/verification-receipt');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Unable to record your vote.');
     } finally {
       setSubmitting(false);
+      setSubmittingCandidateId(null);
     }
   };
 
@@ -91,77 +99,67 @@ export function CandidateVotingCards({
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
         {candidates.map((candidate) => {
-          const isSelected = selectedId === candidate.id;
-          const isDisabled = hasVoted;
+          const isDisabled = hasVoted || Boolean(voterError) || submitting;
+          const isSubmittingThis = submittingCandidateId === candidate.id;
 
           return (
             <div
               key={candidate.id}
-              onClick={() => {
-                if (!isDisabled) setSelectedId(candidate.id);
-              }}
               style={{
-                position: 'relative',
-                background: 'linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(246,249,255,1) 100%)',
-                border: isSelected ? '2px solid var(--blue)' : '1px solid var(--border)',
-                borderRadius: 22,
-                padding: 18,
-                boxShadow: isSelected ? '0 18px 35px rgba(29,78,216,0.18)' : 'var(--sh-sm)',
-                transform: isSelected ? 'translateY(-6px) scale(1.01)' : 'translateY(0) scale(1)',
-                transition: 'all 0.25s ease',
-                cursor: isDisabled ? 'not-allowed' : 'pointer',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 12,
+                padding: 12,
+                boxShadow: 'var(--sh-sm)',
                 overflow: 'hidden',
               }}
             >
-              <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at top, rgba(59,130,246,0.14), transparent 48%)', pointerEvents: 'none' }} />
-
-              <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ width: 68, height: 68, borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(29,78,216,0.12)', background: '#eaf1ff', flexShrink: 0 }}>
-                    <img src={candidate.image_url || '/logo.jpeg'} alt={candidate.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  </div>
-                  {isSelected && (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 30, height: 30, borderRadius: '50%', background: 'var(--blue)', color: '#fff', fontSize: 18 }}>
-                      ✓
-                    </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+                <div style={{ position: 'relative', height: 190, overflow: 'hidden', borderRadius: 8, background: 'linear-gradient(125deg, #dce8f5, #b8ccde)' }}>
+                  {candidate.image_url ? (
+                    <img src={candidate.image_url} alt={`${candidate.name}, candidate portrait`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+                  ) : (
+                    <div aria-label={`${candidate.name} portrait unavailable`} style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', color: '#17345b', fontSize: 48, fontWeight: 850 }}>
+                      {candidate.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()}
+                    </div>
                   )}
+                  <span style={{ position: 'absolute', left: 12, bottom: 12, padding: '6px 9px', borderRadius: 4, background: 'rgba(8,20,44,0.78)', color: '#fff', fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>{candidate.position}</span>
                 </div>
 
                 <div>
-                  <h3 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 8px', color: 'var(--text-1)' }}>{candidate.name}</h3>
-                  <p style={{ fontSize: 12, fontWeight: 750, color: 'var(--text-3)', margin: '0 0 8px', textTransform: 'uppercase' }}>{candidate.position}</p>
-                  <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--blue)', margin: '0 0 12px' }}>
-                    “{candidate.slogan}”
-                  </p>
+                  <h3 style={{ fontSize: 21, fontWeight: 850, margin: '0 0 5px', color: 'var(--text-1)' }}>{candidate.name}</h3>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--blue)', margin: 0 }}>{candidate.slogan}</p>
                 </div>
 
-                <div style={{ background: 'rgba(148,163,184,0.06)', borderRadius: 16, padding: 14, border: '1px solid rgba(148,163,184,0.12)' }}>
-                  <p style={{ fontSize: 14, lineHeight: 1.7, color: 'var(--text-2)', margin: 0 }}>
-                    {candidate.manifesto}
-                  </p>
-                </div>
+                {candidate.statement && <p style={{ margin: 0, color: 'var(--text-2)', fontSize: 13, lineHeight: 1.6 }}>{candidate.statement}</p>}
+                {candidate.goals && <div style={{ padding: '12px 14px', borderLeft: '3px solid var(--green)', background: 'var(--surface-2)' }}>
+                  <p style={{ margin: '0 0 5px', color: 'var(--text-3)', fontSize: 10, fontWeight: 800, textTransform: 'uppercase' }}>Promises and goals</p>
+                  <p style={{ margin: 0, color: 'var(--text-2)', fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-line' }}>{candidate.goals}</p>
+                </div>}
+                <details style={{ paddingTop: 12, borderTop: '1px solid var(--border)' }}>
+                  <summary style={{ color: 'var(--blue)', fontSize: 13, fontWeight: 750, cursor: 'pointer' }}>Read full manifesto</summary>
+                  <p style={{ margin: '10px 0 0', color: 'var(--text-2)', fontSize: 13, lineHeight: 1.7, whiteSpace: 'pre-line' }}>{candidate.manifesto}</p>
+                </details>
 
                 <button
-                  disabled={hasVoted || submitting || isDisabled}
+                  disabled={isDisabled || submitting}
                   onClick={(event) => {
                     event.stopPropagation();
-                    if (!hasVoted) setSelectedId(candidate.id);
+                    void handleVote(candidate);
                   }}
                   style={{
                     width: '100%',
                     border: 'none',
-                    borderRadius: 14,
+                    borderRadius: 8,
                     padding: '12px 16px',
-                    fontWeight: 800,
-                    fontSize: 15,
+                    fontWeight: 750,
+                    fontSize: 14,
                     color: '#fff',
-                    background: hasVoted ? 'var(--text-3)' : 'linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%)',
-                    boxShadow: hasVoted ? 'none' : '0 12px 24px rgba(29,78,216,0.2)',
-                    cursor: hasVoted ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.2s ease',
+                    background: isDisabled ? 'var(--text-3)' : 'var(--blue)',
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {hasVoted ? 'Ballot Cast' : submitting && selectedId === candidate.id ? 'Recording...' : 'Vote Me'}
+                  {hasVoted ? 'Ballot already cast' : voterError ? 'Unavailable' : isSubmittingThis ? 'Recording vote…' : `Vote for ${candidate.name}`}
                 </button>
               </div>
             </div>
@@ -169,24 +167,6 @@ export function CandidateVotingCards({
         })}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginTop: 10 }}>
-        <button
-          onClick={handleVote}
-          disabled={!selectedId || hasVoted || submitting}
-          style={{
-            padding: '14px 28px',
-            borderRadius: 14,
-            border: 'none',
-            fontWeight: 800,
-            background: !selectedId || hasVoted || submitting ? 'var(--border)' : 'var(--navy)',
-            color: !selectedId || hasVoted || submitting ? 'var(--text-3)' : '#fff',
-            cursor: !selectedId || hasVoted || submitting ? 'not-allowed' : 'pointer',
-            boxShadow: !selectedId || hasVoted || submitting ? 'none' : 'var(--sh-blue)',
-          }}
-        >
-          {submitting ? 'Submitting Vote...' : 'Confirm Vote'}
-        </button>
-      </div>
     </div>
   );
 }
