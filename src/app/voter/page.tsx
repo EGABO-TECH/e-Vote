@@ -14,12 +14,21 @@ export default async function VoterDashboard() {
     .from("elections")
     .select("*")
     .in("status", ["live", "active"])
-    .lte("starts_at", now)
     .gte("ends_at", now)
-    .order("ends_at", { ascending: true });
+    .order("starts_at", { ascending: true });
 
   const activeElections = elections ?? [];
-  const activeElection = activeElections[0] ?? null;
+  const nowTime = new Date(now).getTime();
+  const runningElections = activeElections
+    .filter((election) => new Date(election.starts_at).getTime() <= nowTime)
+    .sort((a, b) => new Date(a.ends_at).getTime() - new Date(b.ends_at).getTime());
+  const upcomingElections = activeElections
+    .filter((election) => new Date(election.starts_at).getTime() > nowTime)
+    .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime());
+  const activeElection = runningElections[0] ?? upcomingElections[0] ?? null;
+  const electionIsOpen = Boolean(activeElection
+    && new Date(activeElection.starts_at) <= new Date(now)
+    && new Date(activeElection.ends_at) > new Date(now));
 
   // Get live vote counts per candidate for the active election
   let candidates: { name: string; votes: number; photo_url: string | null }[] = [];
@@ -118,7 +127,7 @@ export default async function VoterDashboard() {
     },
     {
       label: "Election",
-      value: activeElection ? activeElection.status.toUpperCase() : "None",
+      value: activeElection ? electionIsOpen ? "LIVE" : "UPCOMING" : "None",
       icon: "how_to_vote",
       color: activeElection ? "var(--blue)" : "var(--text-3)",
     },
@@ -195,7 +204,7 @@ export default async function VoterDashboard() {
                     textTransform: "uppercase",
                   }}
                 >
-                  Election Status · {activeElection.status.toUpperCase()}
+                  Election Status · {electionIsOpen ? "LIVE" : "UPCOMING"}
                 </span>
               </div>
               <h1
@@ -234,9 +243,9 @@ export default async function VoterDashboard() {
                   >
                     schedule
                   </span>
-                  Closes:{" "}
+                  {electionIsOpen ? "Closes: " : "Opens: "}
                   <strong style={{ color: "#fff" }}>
-                    {new Date(activeElection.ends_at).toLocaleString()}
+                    {new Date(electionIsOpen ? activeElection.ends_at : activeElection.starts_at).toLocaleString()}
                   </strong>
                 </span>
               </div>
@@ -263,7 +272,7 @@ export default async function VoterDashboard() {
                     boxShadow: "var(--sh-blue)",
                   }}
                 >
-                  View candidates
+                  {electionIsOpen ? "View candidates" : "Review candidates"}
                   <span
                     className="material-symbols-outlined"
                     style={{ fontSize: "20px" }}
@@ -455,7 +464,7 @@ export default async function VoterDashboard() {
                 color: "var(--text-1)",
               }}
             >
-              Live Results Preview
+              {electionIsOpen ? "Live Results Preview" : "Candidate Preview"}
             </p>
             <span
               style={{
@@ -466,7 +475,7 @@ export default async function VoterDashboard() {
                 letterSpacing: "0.06em",
               }}
             >
-              {totalVotes.toLocaleString()} votes cast
+              {electionIsOpen ? `${totalVotes.toLocaleString()} votes cast` : "Voting has not opened"}
             </span>
           </div>
           <div
@@ -548,7 +557,7 @@ export default async function VoterDashboard() {
                               i === 0 ? "var(--blue)" : "var(--text-1)",
                           }}
                         >
-                          {pct}%
+                          {electionIsOpen ? `${pct}%` : "Candidate"}
                         </span>
                         <p
                           style={{
@@ -556,7 +565,7 @@ export default async function VoterDashboard() {
                             color: "var(--text-3)",
                           }}
                         >
-                          {c.votes.toLocaleString()} votes
+                          {electionIsOpen ? `${c.votes.toLocaleString()} votes` : "View profile"}
                         </p>
                       </div>
                     </div>

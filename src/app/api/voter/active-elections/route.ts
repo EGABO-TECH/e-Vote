@@ -18,7 +18,6 @@ export async function GET() {
     .from('elections')
     .select('id, title, description, banner_url, status, starts_at, ends_at')
     .in('status', ['active', 'live'])
-    .lte('starts_at', now)
     .gte('ends_at', now)
     .order('starts_at', { ascending: false });
 
@@ -66,7 +65,7 @@ export async function GET() {
     title: election.title,
     description: election.description,
     banner_url: election.banner_url,
-    status: 'Open',
+    status: new Date(election.starts_at) > new Date(now) ? 'Upcoming' : 'Open',
     starts_at: election.starts_at,
     ends_at: election.ends_at,
     candidates: (candidatesData || [])

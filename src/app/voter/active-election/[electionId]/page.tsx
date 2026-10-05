@@ -33,9 +33,14 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
 
   // Check if election is open for voting
   const now = new Date();
-  const isOpen = (election.status === 'active' || election.status === 'live')
-    && new Date(election.starts_at) <= now
-    && new Date(election.ends_at) > now;
+  const canViewCandidates = election.status === 'active' || election.status === 'live';
+  const isUpcoming = new Date(election.starts_at) > now;
+  const isOpen = canViewCandidates && !isUpcoming && new Date(election.ends_at) > now;
+  const votingOpensAt = new Intl.DateTimeFormat('en-GB', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'UTC',
+  }).format(new Date(election.starts_at)) + ' UTC';
 
   // Fetch only APPROVED candidates for this election
   const { data: candidatesData } = await supabaseAdmin
@@ -93,22 +98,22 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
         <span style={{ color: 'var(--text-1)', fontWeight: 700, fontSize: 14 }}>{election.title}</span>
       </div>
 
-      {voterError && (
+      {voterError && (!canViewCandidates || candidates.length === 0) && (
         <div role="alert" style={{ background: 'var(--red-bg)', color: 'var(--red)', border: '1px solid rgba(220,38,38,0.2)', borderRadius: 12, padding: '12px 16px', fontSize: 14, fontWeight: 600 }}>
           {voterError}
         </div>
       )}
 
-      {/* Closed election banner */}
+      {/* Election timing */}
       {!isOpen && (
         <div style={{ background: '#FEF3C7', border: '1px solid #FCD34D', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10, color: '#92400E', fontWeight: 600 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>info</span>
-          This election is currently {election.status} and not open for voting.
+          {isUpcoming ? `Candidate profiles are available now. Voting opens ${votingOpensAt}.` : `This election is currently ${election.status} and not open for voting.`}
         </div>
       )}
 
       {/* No approved candidates banner */}
-      {isOpen && candidates.length === 0 && (
+      {canViewCandidates && candidates.length === 0 && (
         <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10, color: 'var(--blue)', fontWeight: 600 }}>
           <span className="material-symbols-outlined" style={{ fontSize: 20 }}>pending</span>
           No candidates have been approved by the Electoral Commission yet. Please check back soon.
@@ -116,7 +121,7 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
       )}
 
       {/* Voting cards */}
-      {isOpen && candidates.length > 0 && (
+      {canViewCandidates && candidates.length > 0 && (
         <CandidateVotingCards
           electionId={election.id}
           title={election.title}
@@ -125,6 +130,8 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
           candidates={candidates}
           hasVoted={hasVoted}
           voterError={voterError}
+          canVote={isOpen}
+          votingOpensAt={votingOpensAt}
         />
       )}
     </div>

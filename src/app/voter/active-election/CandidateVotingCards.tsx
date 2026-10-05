@@ -23,6 +23,8 @@ export function CandidateVotingCards({
   candidates,
   hasVoted,
   voterError,
+  canVote,
+  votingOpensAt,
 }: {
   electionId: string;
   title: string;
@@ -31,6 +33,8 @@ export function CandidateVotingCards({
   candidates: CandidateCardData[];
   hasVoted: boolean;
   voterError: string | null;
+  canVote: boolean;
+  votingOpensAt: string;
 }) {
   const router = useRouter();
   const [submittingCandidateId, setSubmittingCandidateId] = useState<string | null>(null);
@@ -41,7 +45,7 @@ export function CandidateVotingCards({
   const totalCandidates = useMemo(() => candidates.length, [candidates.length]);
 
   const handleVote = async (candidate: CandidateCardData) => {
-    if (hasVoted || submitting || voterError) return;
+    if (!canVote || hasVoted || submitting || voterError) return;
     if (!window.confirm(`Cast your one vote for ${candidate.name}? This cannot be changed.`)) return;
 
     setSubmitting(true);
@@ -74,13 +78,13 @@ export function CandidateVotingCards({
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(9,18,38,0.88) 0%, rgba(9,18,38,0.62) 52%, rgba(9,18,38,0.15) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 1, minHeight: 300, padding: '30px clamp(22px, 5vw, 52px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', color: '#fff' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
-            <span style={{ padding: '7px 11px', border: '1px solid rgba(255,255,255,0.32)', borderRadius: 999, background: 'rgba(255,255,255,0.13)', fontWeight: 800, fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Active election</span>
+            <span style={{ padding: '7px 11px', border: '1px solid rgba(255,255,255,0.32)', borderRadius: 999, background: 'rgba(255,255,255,0.13)', fontWeight: 800, fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}>{canVote ? 'Open for voting' : 'Upcoming election'}</span>
             <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: 13, fontWeight: 650 }}>{totalCandidates} candidates</span>
           </div>
           <h2 style={{ maxWidth: 760, margin: 0, fontSize: 40, fontWeight: 900, lineHeight: 1.05 }}>{title}</h2>
           {description && <p style={{ maxWidth: 680, color: 'rgba(255,255,255,0.88)', fontSize: 15, lineHeight: 1.7, margin: '16px 0 0' }}>{description}</p>}
-          <div style={{ marginTop: 22, padding: '8px 12px', borderRadius: 6, background: hasVoted ? 'rgba(255,255,255,0.2)' : '#d9f99d', color: hasVoted ? '#fff' : '#244315', fontSize: 12, fontWeight: 800 }}>
-            {hasVoted ? 'Ballot cast' : 'Open for voting'}
+          <div style={{ marginTop: 22, padding: '8px 12px', borderRadius: 6, background: hasVoted || !canVote ? 'rgba(255,255,255,0.2)' : '#d9f99d', color: hasVoted || !canVote ? '#fff' : '#244315', fontSize: 12, fontWeight: 800 }}>
+            {hasVoted ? 'Ballot cast' : canVote ? 'Your ballot is open' : `Voting opens ${votingOpensAt}`}
           </div>
         </div>
       </div>
@@ -99,7 +103,7 @@ export function CandidateVotingCards({
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}>
         {candidates.map((candidate) => {
-          const isDisabled = hasVoted || Boolean(voterError) || submitting;
+          const isDisabled = !canVote || hasVoted || Boolean(voterError) || submitting;
           const isSubmittingThis = submittingCandidateId === candidate.id;
 
           return (
@@ -159,7 +163,7 @@ export function CandidateVotingCards({
                     cursor: isDisabled ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {hasVoted ? 'Ballot already cast' : voterError ? 'Unavailable' : isSubmittingThis ? 'Recording vote…' : `Vote for ${candidate.name}`}
+                  {hasVoted ? 'Ballot already cast' : voterError ? 'Unavailable' : !canVote ? 'Voting not open' : isSubmittingThis ? 'Recording vote…' : `Vote for ${candidate.name}`}
                 </button>
               </div>
             </div>
