@@ -462,8 +462,8 @@ desktop-only {
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important;
-    object-position: 50% 30% !important;
+    object-fit: contain !important;
+    object-position: center center !important;
     transform-origin: center center;
     animation: voter-election-banner-pan 18s ease-in-out infinite alternate;
     will-change: transform;
@@ -475,7 +475,7 @@ desktop-only {
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__content {
     min-height: 0 !important;
-    padding: 196px 18px 20px !important;
+    padding: 250px 18px 20px !important;
   }
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__title {
@@ -509,24 +509,14 @@ desktop-only {
 }
 
 @keyframes voter-election-banner-pan {
-  0%, 16% {
-    object-position: 28% 30%;
-    transform: scale(1.12) translateX(2.5%);
-  }
-  42%, 58% {
-    object-position: 50% 30%;
-    transform: scale(1.12) translateX(0);
-  }
-  84%, 100% {
-    object-position: 72% 30%;
-    transform: scale(1.12) translateX(-2.5%);
-  }
+  from { transform: translateX(-1%); }
+  to { transform: translateX(1%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__image {
     animation: none !important;
-    object-position: center 30% !important;
+    object-position: center center !important;
     transform: none !important;
     will-change: auto;
   }
