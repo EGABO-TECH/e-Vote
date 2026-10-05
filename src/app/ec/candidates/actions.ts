@@ -3,6 +3,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
+import { createNotifications } from '@/lib/notifications';
 
 export async function getCandidates() {
   const user = await currentUser();
@@ -32,7 +33,7 @@ export async function updateCandidateStatus(id: string, status: 'approved' | 're
       reviewer_note: status === 'pending' ? reviewerNote.trim() || null : null,
     })
     .eq('id', id)
-    .select('election_id')
+    .select('election_id, clerk_id, name')
     .single();
 
   if (error) {
@@ -46,6 +47,22 @@ export async function updateCandidateStatus(id: string, status: 'approved' | 're
   revalidatePath('/candidate/preview');
   revalidatePath('/voter/active-election');
   if (candidate.election_id) revalidatePath(`/voter/active-election/${candidate.election_id}`);
+
+  if (candidate.clerk_id) {
+    const requestedChanges = status === 'pending' && Boolean(reviewerNote.trim());
+    await createNotifications([candidate.clerk_id], {
+      type: 'candidate_review',
+      title: requestedChanges ? 'EC requested profile changes' : `Candidacy ${status}`,
+      message: requestedChanges
+        ? reviewerNote.trim()
+        : status === 'approved'
+          ? 'Your candidate profile was approved and is now visible to voters.'
+          : status === 'rejected'
+            ? 'Your candidate application was rejected by the Electoral Commission.'
+            : 'Your candidate profile is pending Electoral Commission review.',
+      href: '/candidate/manifesto',
+    });
+  }
 
   return { success: true };
 }

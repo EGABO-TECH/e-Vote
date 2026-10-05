@@ -142,6 +142,8 @@ This design supports integrity, role-based access, and future expansion for more
 
 For an existing Supabase project, run `supabase/election-media-setup.sql` in the Supabase SQL Editor. It configures the public `election-media` bucket, adds the election banner, reviewer feedback, and timezone columns, and converts existing election wall-clock timestamps once from the previous UTC interpretation to `Africa/Kampala`. New election form times are entered in Kampala time and stored as UTC instants. Image uploads accept JPG, PNG, WebP, and AVIF files up to 4 MB and use `SUPABASE_SERVICE_ROLE_KEY` on the server.
 
+For persisted in-app notifications, run `supabase/notifications.sql` in the Supabase SQL Editor. The notification API and RLS policies scope records to the signed-in Clerk user; election, candidate-review, and ballot events create notifications automatically.
+
 Do not rerun `supabase/schema.sql` against a database with live data: that bootstrap file contains `DROP TABLE` statements. The election media setup script is the additive update for existing installations.
 
 ## 📌 Project Purpose

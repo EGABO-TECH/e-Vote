@@ -5,6 +5,7 @@ import { createHash } from 'crypto';
 import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getOrCreateVoterRecord } from '@/lib/voter-record';
+import { createNotifications } from '@/lib/notifications';
 
 export async function castVoteAction(electionId: string, candidateId: string) {
   const { userId } = await auth();
@@ -118,6 +119,13 @@ export async function castVoteAction(electionId: string, candidateId: string) {
     console.error('Receipt insert error:', receiptError);
     return { error: 'Failed to issue verification receipt. Your ballot was not recorded; please try again.' };
   }
+
+  await createNotifications([userId], {
+    type: 'vote_recorded',
+    title: 'Vote recorded',
+    message: `Your ballot for ${election.title} was recorded. Your receipt is ready.`,
+    href: '/voter/verification-receipt',
+  });
 
   // Audit Log for Vote Casting
   await supabaseAdmin

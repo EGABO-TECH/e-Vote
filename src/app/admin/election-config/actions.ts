@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 import { currentUser } from '@clerk/nextjs/server';
 import { localElectionDateTimeToUtc } from '@/lib/date-time';
+import { createNotifications, getNotificationRecipients } from '@/lib/notifications';
 
 const IMAGE_BUCKET = 'election-media';
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
@@ -53,11 +54,21 @@ export async function createElection(formData: FormData) {
 
   const banner_url = await uploadImage(formData.get('banner'), 'elections');
 
-  const { error } = await supabaseAdmin.from('elections').insert({
+  const { data: election, error } = await supabaseAdmin.from('elections').insert({
     title, description: description || null, starts_at, ends_at, status, banner_url, time_zone: 'Africa/Kampala',
-  });
+  }).select('id').single();
 
   if (error) throw error;
+
+  if (['live', 'active'].includes(status) && election) {
+    const recipients = await getNotificationRecipients(['voter', 'candidate']);
+    await createNotifications(recipients, {
+      type: 'election_live',
+      title: 'Election published',
+      message: `${title} is available in the voter portal. Voting opens at its scheduled time.`,
+      href: `/voter/active-election/${election.id}`,
+    });
+  }
 
   revalidatePath('/admin/election-config');
 }
@@ -66,8 +77,22 @@ export async function updateElectionStatus(id: string, status: string) {
   await requireAdmin();
   if (!['draft', 'live', 'active', 'closed'].includes(status)) throw new Error('Invalid election status.');
 
-  const { error } = await supabaseAdmin.from('elections').update({ status }).eq('id', id);
+  const { data: election, error } = await supabaseAdmin
+    .from('elections')
+    .update({ status })
+    .eq('id', id)
+    .select('id, title')
+    .single();
   if (error) throw error;
+  if (['live', 'active'].includes(status) && election) {
+    const recipients = await getNotificationRecipients(['voter', 'candidate']);
+    await createNotifications(recipients, {
+      type: 'election_live',
+      title: 'Election published',
+      message: `${election.title} is available in the voter portal. Voting opens at its scheduled time.`,
+      href: `/voter/active-election/${election.id}`,
+    });
+  }
   revalidatePath('/admin/election-config');
 }
 

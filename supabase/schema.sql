@@ -27,6 +27,24 @@ create table if not exists voters (
   created_at   timestamptz default now()
 );
 
+-- ── in-app notifications ──────────────────────────────────────────────────────
+drop table if exists notifications cascade;
+create table if not exists notifications (
+  id                  uuid primary key default gen_random_uuid(),
+  recipient_clerk_id  text not null,
+  type                text not null check (type in ('candidate_application', 'candidate_review', 'election_live', 'vote_recorded')),
+  title               text not null,
+  message             text not null,
+  href                text not null,
+  created_at          timestamptz not null default now(),
+  read_at             timestamptz
+);
+
+create index if not exists notifications_recipient_created_idx
+  on notifications (recipient_clerk_id, created_at desc);
+create index if not exists notifications_recipient_unread_idx
+  on notifications (recipient_clerk_id, read_at) where read_at is null;
+
 -- ── elections ─────────────────────────────────────────────────────────────────
 drop table if exists elections cascade;
 create table if not exists elections (
@@ -105,6 +123,7 @@ create table if not exists voter_registry (
 
 -- ── Row Level Security ────────────────────────────────────────────────────────
 alter table voters     enable row level security;
+alter table notifications enable row level security;
 alter table elections  enable row level security;
 alter table candidates enable row level security;
 alter table votes      enable row level security;
@@ -119,6 +138,15 @@ create policy "voters_select_own" on voters
 drop policy if exists "voters_update_own" on voters;
 create policy "voters_update_own" on voters
   for update using (clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
+drop policy if exists "notifications_select_own" on notifications;
+create policy "notifications_select_own" on notifications
+  for select using (recipient_clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
+
+drop policy if exists "notifications_update_own" on notifications;
+create policy "notifications_update_own" on notifications
+  for update using (recipient_clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'))
+  with check (recipient_clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub'));
 
 -- elections: anyone authenticated can read open and live elections; admins can do all
 drop policy if exists "elections_read_open" on elections;

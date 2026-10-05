@@ -1,6 +1,7 @@
 'use server';
 
 import { auth, clerkClient } from '@clerk/nextjs/server';
+import { createNotifications, getNotificationRecipients } from '@/lib/notifications';
 
 export async function updateCandidateId(candidateId: string) {
   const { userId } = await auth();
@@ -101,6 +102,14 @@ export async function applyForElection(electionId: string) {
     console.error('Failed to apply for election', error);
     throw new Error('Failed to submit application');
   }
+
+  const reviewers = await getNotificationRecipients(['admin', 'ec']);
+  await createNotifications(reviewers, {
+    type: 'candidate_application',
+    title: 'New candidate application',
+    message: `${fullName} applied for candidacy and is awaiting review.`,
+    href: '/ec/candidates',
+  });
 
   return { success: true };
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
+import { NotificationsMenu } from "./NotificationsMenu";
 
 const ROLE_LABELS: Record<string, string> = {
   voter: "Student Voter",
@@ -106,30 +107,7 @@ export default function TopNavBar() {
           </span>
         </button>
 
-        {/* Notifications */}
-        <button
-          className="topbar-notifications"
-          title="Notifications"
-          style={{
-            width: "38px", height: "38px",
-            borderRadius: "50%",
-            border: "1.5px solid var(--border)",
-            background: "var(--surface-2)",
-            cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "var(--text-2)",
-            position: "relative",
-            transition: "all 0.15s",
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: "18px" }}>notifications</span>
-          <span style={{
-            position: "absolute", top: "6px", right: "6px",
-            width: "8px", height: "8px",
-            background: "var(--red)", borderRadius: "50%",
-            border: "2px solid var(--surface)",
-          }} />
-        </button>
+        <NotificationsMenu />
 
         <button
           type="button"

@@ -3,6 +3,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
+import { createNotifications, getNotificationRecipients } from '@/lib/notifications';
 
 const IMAGE_BUCKET = 'election-media';
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
@@ -125,6 +126,15 @@ export async function saveManifesto(formData: FormData) {
   revalidatePath(`/voter/active-election/${electionId}`);
   if (candidate.election_id && candidate.election_id !== electionId) {
     revalidatePath(`/voter/active-election/${candidate.election_id}`);
+  }
+  if (changed) {
+    const reviewers = await getNotificationRecipients(['admin', 'ec']);
+    await createNotifications(reviewers, {
+      type: 'candidate_application',
+      title: 'Candidate profile resubmitted',
+      message: `${name} updated their profile. Review the latest submission.`,
+      href: '/ec/candidates',
+    });
   }
   return { success: true, candidate: updatedCandidate };
 }
