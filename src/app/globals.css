@@ -448,6 +448,9 @@ desktop-only {
     inset: 0 0 auto !important;
     height: 250px !important;
     object-position: center 24% !important;
+    transform-origin: center center;
+    animation: voter-election-banner-pan 18s ease-in-out infinite alternate;
+    will-change: transform, object-position;
   }
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__overlay {
@@ -486,5 +489,29 @@ desktop-only {
     font-size: 0.9rem !important;
     line-height: 1.25 !important;
     text-align: center;
+  }
+}
+
+@keyframes voter-election-banner-pan {
+  0% {
+    object-position: 0% 28%;
+    transform: scale(1.13) translate3d(2%, 1%, 0);
+  }
+  50% {
+    object-position: 100% 48%;
+    transform: scale(1.13) translate3d(-2%, -1%, 0);
+  }
+  100% {
+    object-position: 18% 72%;
+    transform: scale(1.13) translate3d(1%, -2%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__image {
+    animation: none !important;
+    object-position: center 36% !important;
+    transform: none !important;
+    will-change: auto;
   }
 }
