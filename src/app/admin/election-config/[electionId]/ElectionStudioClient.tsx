@@ -5,9 +5,10 @@ import { useState } from 'react';
 import {
   deleteElectionCandidate,
   saveElectionCandidate,
+  updateElectionSchedule,
   updateElectionBanner,
 } from '../actions';
-import { formatEastAfricaTime } from '@/lib/date-time';
+import { formatEastAfricaTime, utcToLocalElectionDateTime } from '@/lib/date-time';
 
 type Election = {
   id: string;
@@ -59,9 +60,31 @@ export function ElectionStudioClient({ election, initialCandidates }: {
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
   const [candidateFormOpen, setCandidateFormOpen] = useState(false);
   const [bannerPending, setBannerPending] = useState(false);
+  const [schedulePending, setSchedulePending] = useState(false);
   const [candidatePending, setCandidatePending] = useState(false);
   const [bannerError, setBannerError] = useState('');
+  const [scheduleError, setScheduleError] = useState('');
+  const [scheduleSaved, setScheduleSaved] = useState(false);
   const [candidateError, setCandidateError] = useState('');
+  const [schedule, setSchedule] = useState({
+    starts_at: utcToLocalElectionDateTime(election.starts_at),
+    ends_at: utcToLocalElectionDateTime(election.ends_at),
+  });
+
+  const handleScheduleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setScheduleError('');
+    setScheduleSaved(false);
+    setSchedulePending(true);
+    try {
+      await updateElectionSchedule(election.id, new FormData(event.currentTarget));
+      setScheduleSaved(true);
+    } catch (error) {
+      setScheduleError(error instanceof Error ? error.message : 'Could not update the election schedule.');
+    } finally {
+      setSchedulePending(false);
+    }
+  };
 
   const handleBannerSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -135,6 +158,40 @@ export function ElectionStudioClient({ election, initialCandidates }: {
           Add candidate
         </button>
       </header>
+
+      <section style={{ padding: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, boxShadow: 'var(--sh-sm)' }}>
+        <div style={{ marginBottom: 16 }}>
+          <h2 style={{ margin: 0, color: 'var(--text-1)', fontSize: 18, fontWeight: 800 }}>Election schedule</h2>
+          <p style={{ margin: '6px 0 0', color: 'var(--text-2)', fontSize: 13 }}>Set when voting opens and closes. Times use East Africa Time (Africa/Kampala).</p>
+        </div>
+        <form onSubmit={handleScheduleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, alignItems: 'end' }}>
+          <label style={labelStyle}>Voting opens · EAT
+            <input
+              name="starts_at"
+              type="datetime-local"
+              required
+              value={schedule.starts_at}
+              onChange={(event) => { setScheduleSaved(false); setSchedule((current) => ({ ...current, starts_at: event.target.value })); }}
+              style={{ ...fieldStyle, display: 'block', marginTop: 6 }}
+            />
+          </label>
+          <label style={labelStyle}>Voting closes · EAT
+            <input
+              name="ends_at"
+              type="datetime-local"
+              required
+              value={schedule.ends_at}
+              onChange={(event) => { setScheduleSaved(false); setSchedule((current) => ({ ...current, ends_at: event.target.value })); }}
+              style={{ ...fieldStyle, display: 'block', marginTop: 6 }}
+            />
+          </label>
+          <button type="submit" disabled={schedulePending} style={{ minHeight: 42, padding: '10px 18px', border: 0, borderRadius: 8, color: '#fff', background: 'var(--blue)', fontWeight: 750, cursor: schedulePending ? 'wait' : 'pointer' }}>
+            {schedulePending ? 'Saving…' : 'Save schedule'}
+          </button>
+        </form>
+        {scheduleError && <p role="alert" style={{ margin: '12px 0 0', color: 'var(--red)', fontSize: 13, fontWeight: 650 }}>{scheduleError}</p>}
+        {scheduleSaved && <p role="status" style={{ margin: '12px 0 0', color: 'var(--green)', fontSize: 13, fontWeight: 700 }}>Schedule saved: {formatEastAfricaTime(new Date(`${schedule.starts_at}:00+03:00`).toISOString())} – {formatEastAfricaTime(new Date(`${schedule.ends_at}:00+03:00`).toISOString())}</p>}
+      </section>
 
       <section style={{ padding: 22, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, boxShadow: 'var(--sh-sm)' }}>
         <div style={{ marginBottom: 16 }}>

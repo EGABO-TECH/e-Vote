@@ -122,6 +122,31 @@ export async function updateElectionBanner(electionId: string, formData: FormDat
   return bannerUrl;
 }
 
+export async function updateElectionSchedule(electionId: string, formData: FormData) {
+  await requireAdmin();
+
+  const startsAtLocal = String(formData.get('starts_at') || '');
+  const endsAtLocal = String(formData.get('ends_at') || '');
+  if (!startsAtLocal || !endsAtLocal) throw new Error('Choose both opening and closing times.');
+
+  const starts_at = localElectionDateTimeToUtc(startsAtLocal);
+  const ends_at = localElectionDateTimeToUtc(endsAtLocal);
+  if (new Date(ends_at) <= new Date(starts_at)) throw new Error('Closing time must be after opening time.');
+
+  const { error } = await supabaseAdmin
+    .from('elections')
+    .update({ starts_at, ends_at, time_zone: 'Africa/Kampala' })
+    .eq('id', electionId);
+  if (error) throw error;
+
+  revalidatePath('/admin/election-config');
+  revalidatePath(`/admin/election-config/${electionId}`);
+  revalidatePath('/ec/elections');
+  revalidatePath('/voter');
+  revalidatePath('/voter/active-election');
+  revalidatePath(`/voter/active-election/${electionId}`);
+}
+
 export async function saveElectionCandidate(electionId: string, candidateId: string | null, formData: FormData) {
   await requireAdmin();
 

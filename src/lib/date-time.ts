@@ -33,3 +33,9 @@ export function localElectionDateTimeToUtc(value: string) {
 
   return new Date(localAsUtc - 3 * 60 * 60 * 1000).toISOString();
 }
+
+export function utcToLocalElectionDateTime(value: string) {
+  return new Date(new Date(value).getTime() + 3 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 16);
+}
