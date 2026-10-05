@@ -451,38 +451,26 @@ desktop-only {
   }
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__media {
-    position: relative;
-    inset: auto;
-    height: 250px;
-    background: rgba(7, 16, 40, 0.55);
-  }
-
-  .voter-featured-election[data-has-banner="true"] .voter-featured-election__media::after {
-    content: '';
     position: absolute;
-    z-index: 1;
-    inset: 0 auto 0 0;
-    width: 28%;
-    pointer-events: none;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.34), transparent);
-    transform: translateX(-160%);
-    animation: voter-election-banner-sweep 7s ease-in-out infinite;
+    inset: 0 0 auto;
+    height: 250px;
+    background: transparent;
   }
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__image {
-    position: relative !important;
-    inset: auto !important;
-    display: block;
+    position: absolute !important;
+    inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    object-fit: contain !important;
-    object-position: center center !important;
-    transform: none !important;
-    animation: none !important;
+    object-fit: cover !important;
+    object-position: center 36% !important;
+    transform-origin: center center;
+    animation: voter-election-banner-pan 16s ease-in-out infinite alternate;
+    will-change: transform;
   }
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__overlay {
-    background: transparent !important;
+    background: linear-gradient(180deg, rgba(7, 16, 40, 0.06) 0%, rgba(7, 16, 40, 0.16) 34%, rgba(7, 16, 40, 0.91) 230px, #071028 310px) !important;
   }
 
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__content {
@@ -520,21 +508,16 @@ desktop-only {
   }
 }
 
-@keyframes voter-election-banner-sweep {
-  0%, 12% { transform: translateX(-160%); }
-  88%, 100% { transform: translateX(460%); }
+@keyframes voter-election-banner-pan {
+  0% { transform: scale(1.22) translateX(-9%); }
+  100% { transform: scale(1.22) translateX(9%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .voter-featured-election[data-has-banner="true"] .voter-featured-election__image {
     animation: none !important;
-    object-position: center center !important;
+    object-position: center 36% !important;
     transform: none !important;
     will-change: auto;
-  }
-
-  .voter-featured-election[data-has-banner="true"] .voter-featured-election__media::after {
-    animation: none !important;
-    display: none;
   }
 }
