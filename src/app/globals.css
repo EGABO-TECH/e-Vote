@@ -463,9 +463,9 @@ desktop-only {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
-    object-position: center 36% !important;
+    object-position: 50% 36% !important;
     transform-origin: center center;
-    animation: voter-election-banner-pan 16s ease-in-out infinite alternate;
+    animation: voter-election-banner-pan 18s ease-in-out infinite alternate;
     will-change: transform;
   }
 
@@ -509,8 +509,18 @@ desktop-only {
 }
 
 @keyframes voter-election-banner-pan {
-  0% { transform: scale(1.22) translateX(-9%); }
-  100% { transform: scale(1.22) translateX(9%); }
+  0%, 12% {
+    object-position: 0% 36%;
+    transform: scale(1.16) translateX(5%);
+  }
+  44%, 56% {
+    object-position: 50% 36%;
+    transform: scale(1.16) translateX(0);
+  }
+  88%, 100% {
+    object-position: 100% 36%;
+    transform: scale(1.16) translateX(-5%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
