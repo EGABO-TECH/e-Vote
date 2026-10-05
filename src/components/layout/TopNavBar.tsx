@@ -13,10 +13,7 @@ const ROLE_LABELS: Record<string, string> = {
 export default function TopNavBar() {
   const [theme, setTheme] = useState<"light" | "dark">(() => {
     if (typeof window === "undefined") return "light";
-    return localStorage.theme === "dark" ||
-      (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ? "dark"
-      : "light";
+    return localStorage.theme === "dark" ? "dark" : "light";
   });
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();

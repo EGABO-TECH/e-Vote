@@ -339,16 +339,12 @@ const ROLE_LABELS: Record<string, string> = {
 export default function AuditorDashboardClient({ data }: { data: AuditorDashboardData }) {
   const [activeNav, setActiveNav]       = useState<NavKey>('overview');
   const [search, setSearch]             = useState('');
-  const [theme, setTheme]               = useState<'light' | 'dark'>('light');
+  const [theme, setTheme]               = useState<'light' | 'dark'>(() => {
+    if (typeof window === 'undefined') return 'light';
+    return localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+  });
   const { signOut } = useClerk();
   const { user, isLoaded } = useUser();
-
-  useEffect(() => {
-    const stored = localStorage.getItem('theme');
-    if (stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setTheme('dark');
-    }
-  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : '');
