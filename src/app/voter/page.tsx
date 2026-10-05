@@ -155,6 +155,8 @@ export default async function VoterDashboard() {
 
       {/* Hero Election Card */}
       <div
+        className="voter-featured-election"
+        data-has-banner={activeElection?.banner_url ? 'true' : 'false'}
         style={{
           background: "linear-gradient(125deg, #142448 0%, #2453a6 58%, #147b78 100%)",
           borderRadius: "var(--r-lg)",
@@ -170,9 +172,9 @@ export default async function VoterDashboard() {
           position: "relative",
         }}
       >
-        {activeElection?.banner_url && <img src={activeElection.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(7,16,40,0.94) 0%, rgba(7,16,40,0.78) 55%, rgba(7,16,40,0.2) 100%)' }} />
-        <div style={{ position: 'relative', zIndex: 1 }}>
+        {activeElection?.banner_url && <img className="voter-featured-election__image" src={activeElection.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+        <div className="voter-featured-election__overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(7,16,40,0.94) 0%, rgba(7,16,40,0.78) 55%, rgba(7,16,40,0.2) 100%)' }} />
+        <div className="voter-featured-election__content" style={{ position: 'relative', zIndex: 1 }}>
           {activeElection ? (
             <>
               <div
@@ -208,6 +210,7 @@ export default async function VoterDashboard() {
                 </span>
               </div>
               <h1
+                className="voter-featured-election__title"
                 style={{
                   fontSize: "1.8rem",
                   fontWeight: 900,
@@ -220,11 +223,12 @@ export default async function VoterDashboard() {
                 {activeElection.title}
               </h1>
               {activeElection.description && (
-                <p style={{ maxWidth: 620, margin: '0 0 1.25rem', color: 'rgba(255,255,255,0.82)', fontSize: 15, lineHeight: 1.65 }}>
+                <p className="voter-featured-election__description" style={{ maxWidth: 620, margin: '0 0 1.25rem', color: 'rgba(255,255,255,0.82)', fontSize: 15, lineHeight: 1.65 }}>
                   {activeElection.description}
                 </p>
               )}
               <div
+                className="voter-featured-election__timing"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -250,12 +254,13 @@ export default async function VoterDashboard() {
                 </span>
               </div>
               {voterHasVoted ? (
-                <Link href={`/voter/active-election/${activeElection.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 20px', border: '1px solid rgba(255,255,255,0.35)', borderRadius: 8, background: 'rgba(255,255,255,0.12)', color: '#fff', fontWeight: 750, textDecoration: 'none' }}>
+                <Link className="voter-featured-election__action" href={`/voter/active-election/${activeElection.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '14px 20px', border: '1px solid rgba(255,255,255,0.35)', borderRadius: 8, background: 'rgba(255,255,255,0.12)', color: '#fff', fontWeight: 750, textDecoration: 'none' }}>
                   Ballot cast · View candidates
                   <span className="material-symbols-outlined" style={{ fontSize: 19 }}>arrow_forward</span>
                 </Link>
               ) : (
                 <Link
+                  className="voter-featured-election__action"
                   href={`/voter/active-election/${activeElection.id}`}
                   style={{
                     display: "inline-flex",

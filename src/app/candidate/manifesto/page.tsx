@@ -1,11 +1,13 @@
 export const dynamic = 'force-dynamic';
 
+import { currentUser } from '@clerk/nextjs/server';
 import { ManifestoClient } from './ManifestoClient';
 import { getCandidateProfile } from './actions';
 
 import { supabaseAdmin } from '@/lib/supabase';
 
 export default async function ManifestoPage() {
+  const user = await currentUser();
   let profile = null;
   try {
     profile = await getCandidateProfile();
@@ -22,5 +24,13 @@ export default async function ManifestoPage() {
 
   const openElections = elections || [];
 
-  return <ManifestoClient initialProfile={profile} openElections={openElections} />;
+  const initialName = `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim();
+  return (
+    <ManifestoClient
+      initialProfile={profile}
+      openElections={openElections}
+      initialName={initialName}
+      clerkImageUrl={user?.imageUrl ?? null}
+    />
+  );
 }

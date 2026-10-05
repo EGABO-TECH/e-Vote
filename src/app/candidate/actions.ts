@@ -42,6 +42,27 @@ export async function updateCandidateProfile(profile: {
     },
   });
 
+  const { supabaseAdmin } = await import('@/lib/supabase');
+  const candidateName = `${profile.firstName.trim()} ${profile.lastName.trim()}`.trim();
+  const { data: candidate, error: candidateError } = await supabaseAdmin
+    .from('candidates')
+    .select('id, name')
+    .eq('clerk_id', userId);
+  if (candidateError) throw candidateError;
+  if (candidate?.[0] && candidate[0].name !== candidateName) {
+    const { error } = await supabaseAdmin
+      .from('candidates')
+      .update({ name: candidateName, status: 'pending' })
+      .eq('clerk_id', userId);
+    if (error) throw error;
+  }
+
+  const { revalidatePath } = await import('next/cache');
+  revalidatePath('/candidate');
+  revalidatePath('/candidate/manifesto');
+  revalidatePath('/candidate/preview');
+  revalidatePath('/voter/active-election');
+
   return { success: true };
 }
 

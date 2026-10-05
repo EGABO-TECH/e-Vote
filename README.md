@@ -140,7 +140,7 @@ This design supports integrity, role-based access, and future expansion for more
 
 ### Election banners and candidate images
 
-For an existing Supabase project, run `supabase/election-media-setup.sql` once in the Supabase SQL Editor. It safely adds the election banner column and configures the public `election-media` bucket for JPG, PNG, WebP, and AVIF images up to 4 MB. Uploads are performed by the server using `SUPABASE_SERVICE_ROLE_KEY`.
+For an existing Supabase project, run `supabase/election-media-setup.sql` once in the Supabase SQL Editor. It safely adds the election banner and reviewer-feedback columns and configures the public `election-media` bucket for JPG, PNG, WebP, and AVIF images up to 4 MB. Uploads are performed by the server using `SUPABASE_SERVICE_ROLE_KEY`.
 
 Do not rerun `supabase/schema.sql` against a database with live data: that bootstrap file contains `DROP TABLE` statements. The election media setup script is the additive update for existing installations.
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from '../shared.module.css';
 import { updateCandidateStatus } from './actions';
 
@@ -8,10 +8,27 @@ type Candidate = {
   id: string;
   name: string;
   position: string;
-  time?: string;
   initials: string;
   status: 'pending' | 'approved' | 'rejected';
+  photo_url: string | null;
+  slogan: string | null;
+  statement: string | null;
   manifesto?: string;
+  goals: string | null;
+  reviewer_note: string | null;
+};
+
+type CandidateRecord = {
+  id: string;
+  name: string;
+  category: string | null;
+  status: Candidate['status'];
+  photo_url: string | null;
+  slogan: string | null;
+  statement: string | null;
+  manifesto: string | null;
+  goals: string | null;
+  reviewer_note: string | null;
 };
 
 const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || '??';
@@ -29,21 +46,22 @@ const pill = (bg: string, color: string) => ({
   borderRadius: '999px', letterSpacing: '0.02em', background: bg, color,
 } as React.CSSProperties);
 
-export function CandidatesClient({ initialCandidates }: { initialCandidates: any[] }) {
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-
-  useEffect(() => {
-    setCandidates(
-      initialCandidates.map(c => ({
+export function CandidatesClient({ initialCandidates }: { initialCandidates: CandidateRecord[] }) {
+  const [candidates, setCandidates] = useState<Candidate[]>(() =>
+    initialCandidates.map(c => ({
         id: c.id,
         name: c.name || 'Unknown',
         position: c.category || 'Unknown Position',
         initials: getInitials(c.name || ''),
         status: c.status || 'pending',
+        photo_url: c.photo_url,
+        slogan: c.slogan,
+        statement: c.statement,
         manifesto: c.manifesto || '',
+        goals: c.goals,
+        reviewer_note: c.reviewer_note,
       }))
-    );
-  }, [initialCandidates]);
+  );
 
   const [tab, setTab] = useState<'pending' | 'approved' | 'rejected'>('pending');
   const pending = candidates.filter(c => c.status === 'pending');
@@ -74,9 +92,21 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
   const handleApprove = () => handleUpdateStatus('approved');
   const handleReject = () => handleUpdateStatus('rejected');
 
-  const handleRequestChanges = () => {
-    setReviewAction('changes');
-    setTimeout(() => setReviewAction(null), 2500);
+  const handleRequestChanges = async () => {
+    if (!reviewCandidate || isUpdating) return;
+    setIsUpdating(true);
+    try {
+      await updateCandidateStatus(reviewCandidate.id, 'pending', reviewNote);
+      setCandidates(prev => prev.map(c => c.id === reviewCandidate.id
+        ? { ...c, status: 'pending', reviewer_note: reviewNote.trim() || null }
+        : c));
+      setReviewAction('changes');
+      setTimeout(() => { setReviewAction(null); setReviewCandidate(null); setReviewNote(''); setTab('pending'); }, 1500);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to return the profile for changes.');
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const tabBtn = (key: typeof tab, label: string, count: number) => (
@@ -96,11 +126,11 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
 
   const listRow = (c: Candidate, showReview = false) => (
     <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 0', borderBottom: '1px solid #F0F1F5' }}>
-      <div style={avatar(c.initials)}>{c.initials}</div>
+      <div style={{ ...avatar(c.initials), overflow: 'hidden' }}>{c.photo_url ? <img src={c.photo_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : c.initials}</div>
       <div style={{ flex: 1 }}>
         <div style={{ fontWeight: 700, fontSize: '14px' }}>{c.name}</div>
         <div style={{ fontSize: '12.5px', color: 'var(--muted)' }}>
-          {c.position}{c.time ? ` · ${c.time}` : ''}
+          {c.position}
         </div>
       </div>
       {c.status === 'pending' && <span style={pill('var(--amber-bg)', 'var(--amber)')}>Pending</span>}
@@ -171,14 +201,16 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
           )}
           {reviewAction === 'changes' && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: '8px', color: '#92400E', fontWeight: 600, fontSize: '14px', marginBottom: '16px' }}>
-              <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 4, verticalAlign: 'text-bottom' }}>mail</span> Change request sent to {reviewCandidate.name}.
+              <span className="material-symbols-outlined" style={{ fontSize: 16, marginRight: 4, verticalAlign: 'text-bottom' }}>mail</span> Feedback saved. {reviewCandidate.name}&apos;s profile is pending review.
             </div>
           )}
 
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '18px' }}>
             <div style={{ background: 'var(--card)', border: '1px solid var(--card-border)', borderRadius: '16px', padding: '24px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-                <div style={avatar(reviewCandidate.initials, 64)}>{reviewCandidate.initials}</div>
+                <div style={{ ...avatar(reviewCandidate.initials, 64), overflow: 'hidden' }}>
+                  {reviewCandidate.photo_url ? <img src={reviewCandidate.photo_url} alt={`${reviewCandidate.name} portrait`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : reviewCandidate.initials}
+                </div>
                 <div>
                   <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '4px' }}>Running for</div>
                   <div style={{ fontSize: '19px', fontWeight: 800 }}>{reviewCandidate.position}</div>
@@ -189,16 +221,28 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
               <div style={{ borderTop: '1px solid #F0F1F5', paddingTop: '16px', marginBottom: '16px' }}>
                 <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Personal Statement</div>
                 <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>
-                  I'm running to make sure every student's voice reaches the guild floor — practical office hours, transparent budgets, and a faster response to hostel and welfare complaints.
+                  {reviewCandidate.statement || 'No personal statement submitted.'}
                 </p>
               </div>
 
               <div style={{ borderTop: '1px solid #F0F1F5', paddingTop: '16px', marginBottom: '20px' }}>
-                <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Policy Pillars</div>
+                <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Campaign Slogan</div>
                 <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.6, margin: 0 }}>
-                  Academic Excellence · Student Welfare · Digital Innovation · Campus Infrastructure
+                  {reviewCandidate.slogan || 'No campaign slogan submitted.'}
                 </p>
               </div>
+
+              <div style={{ borderTop: '1px solid #F0F1F5', paddingTop: '16px', marginBottom: '16px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Full Manifesto</div>
+                <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-line' }}>
+                  {reviewCandidate.manifesto || 'No manifesto submitted.'}
+                </p>
+              </div>
+
+              {reviewCandidate.goals && <div style={{ borderTop: '1px solid #F0F1F5', paddingTop: '16px', marginBottom: '16px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em', color: 'var(--muted)', textTransform: 'uppercase', marginBottom: '8px' }}>Candidate Goals</div>
+                <p style={{ fontSize: '14px', color: 'var(--muted)', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-line' }}>{reviewCandidate.goals}</p>
+              </div>}
 
               <div style={{ marginBottom: '20px' }}>
                 <label style={{ display: 'block', fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--ink)', marginBottom: '8px' }}>
@@ -215,6 +259,7 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
 
               <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                 <button
+                  disabled={isUpdating}
                   onClick={handleApprove}
                   style={{ background: 'var(--green)', color: '#fff', fontWeight: 700, fontSize: '13.5px', padding: '11px 20px', borderRadius: '11px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
                 >
@@ -222,12 +267,14 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
                   Approve
                 </button>
                 <button
+                  disabled={isUpdating}
                   onClick={handleRequestChanges}
                   style={{ background: '#fff', color: 'var(--ink)', fontWeight: 600, fontSize: '13.5px', padding: '10px 18px', borderRadius: '11px', border: '1px solid var(--card-border)', cursor: 'pointer' }}
                 >
-                  Request Changes
+                  {isUpdating ? 'Saving…' : 'Request Changes'}
                 </button>
                 <button
+                  disabled={isUpdating}
                   onClick={handleReject}
                   style={{ background: 'var(--red)', color: '#fff', fontWeight: 700, fontSize: '13.5px', padding: '11px 20px', borderRadius: '11px', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
                 >
@@ -241,7 +288,7 @@ export function CandidatesClient({ initialCandidates }: { initialCandidates: any
               <div style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.07em', color: '#7FA3F5', textTransform: 'uppercase', marginBottom: '10px' }}>This is exactly what voters will see</div>
               <h3 style={{ margin: '0 0 10px', fontSize: '18px', fontWeight: 800 }}>Public profile preview</h3>
               <p style={{ margin: 0, fontSize: '13.5px', color: '#B7C1E0', lineHeight: 1.6 }}>
-                The candidate's Active Ballot card will show this photo, position, and manifesto excerpt exactly as rendered here — review it as the final artifact, not just the submission form.
+                {reviewCandidate.slogan || 'No campaign slogan'} · {reviewCandidate.manifesto || 'No manifesto submitted'}
               </p>
             </div>
           </div>

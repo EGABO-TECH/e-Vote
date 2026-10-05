@@ -436,4 +436,55 @@ desktop-only {
     line-height: 1.5 !important;
     white-space: normal !important;
   }
+
+  .voter-featured-election[data-has-banner="true"] {
+    display: block !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    border-radius: 14px !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__image {
+    inset: 0 0 auto !important;
+    height: 250px !important;
+    object-position: center 24% !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__overlay {
+    background: linear-gradient(180deg, rgba(7, 16, 40, 0.06) 0%, rgba(7, 16, 40, 0.16) 34%, rgba(7, 16, 40, 0.91) 230px, #071028 310px) !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__content {
+    min-height: 0 !important;
+    padding: 196px 18px 20px !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__title {
+    max-width: none !important;
+    margin: 0 0 10px !important;
+    font-size: 1.5rem !important;
+    line-height: 1.12 !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__description {
+    margin-bottom: 14px !important;
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__timing {
+    margin-bottom: 14px !important;
+    gap: 6px !important;
+    align-items: flex-start !important;
+  }
+
+  .voter-featured-election[data-has-banner="true"] .voter-featured-election__action {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    padding: 12px 14px !important;
+    font-size: 0.9rem !important;
+    line-height: 1.25 !important;
+    text-align: center;
+  }
 }

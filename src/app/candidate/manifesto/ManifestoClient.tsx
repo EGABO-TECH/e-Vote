@@ -1,15 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './page.module.css';
 import { saveManifesto } from './actions';
 
 const categories = ['President', 'Vice President', 'Secretary General', 'Treasurer', 'Guild Representative'];
 
-export function ManifestoClient({ initialProfile, openElections }: { initialProfile: any, openElections: any[] }) {
+type CandidateProfile = {
+  id: string;
+  name: string;
+  election_id: string | null;
+  category: string | null;
+  slogan: string | null;
+  statement: string | null;
+  manifesto: string | null;
+  goals: string | null;
+  photo_url: string | null;
+  reviewer_note: string | null;
+  status: string;
+};
+
+type ElectionOption = { id: string; title: string; status: string };
+
+export function ManifestoClient({ initialProfile, openElections, initialName, clerkImageUrl }: {
+  initialProfile: CandidateProfile | null;
+  openElections: ElectionOption[];
+  initialName: string;
+  clerkImageUrl: string | null;
+}) {
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
+  const [profileStatus, setProfileStatus] = useState(initialProfile?.status || 'pending');
+  const [reviewerNote, setReviewerNote] = useState(initialProfile?.reviewer_note || '');
+  const [photoUrl, setPhotoUrl] = useState(initialProfile?.photo_url || clerkImageUrl);
+  const [portraitFile, setPortraitFile] = useState<File | null>(null);
+  const [portraitPreview, setPortraitPreview] = useState<string | null>(null);
+  const portraitPreviewRef = useRef<string | null>(null);
+  const [removePhoto, setRemovePhoto] = useState(false);
   const [form, setForm] = useState({
+    name: initialProfile?.name || initialName,
     category: initialProfile?.category || '',
     slogan: initialProfile?.slogan || '',
     statement: initialProfile?.statement || '',
@@ -18,24 +48,40 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
     election_id: initialProfile?.election_id || '',
   });
 
+  useEffect(() => () => {
+    if (portraitPreviewRef.current) URL.revokeObjectURL(portraitPreviewRef.current);
+  }, []);
+
   const handleChange = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
     setSaved(false);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormError('');
     setSaving(true);
     try {
-      await saveManifesto(form);
+      const result = await saveManifesto(new FormData(event.currentTarget));
+      setPhotoUrl(result.candidate.photo_url);
+      setProfileStatus(result.candidate.status);
+      setReviewerNote('');
+      if (portraitPreviewRef.current) URL.revokeObjectURL(portraitPreviewRef.current);
+      portraitPreviewRef.current = null;
+      setPortraitPreview(null);
+      setPortraitFile(null);
+      setRemovePhoto(false);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (e) {
       console.error(e);
-      alert('Failed to save manifesto');
+      setFormError(e instanceof Error ? e.message : 'Failed to save your candidate profile.');
     } finally {
       setSaving(false);
     }
   };
+
+  const displayedPhoto = portraitPreview || (removePhoto ? null : photoUrl);
 
   return (
     <div className={styles.container}>
@@ -44,7 +90,7 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
           <h1 className={styles.pageTitle}>Edit Manifesto</h1>
           <p className={styles.pageSubtitle}>Your public-facing candidate profile and policy statements</p>
         </div>
-        <button onClick={handleSave} disabled={saving} className={`${styles.saveBtn} ${saved ? styles.saved : ''}`}>
+        <button type="submit" form="candidate-manifesto-form" disabled={saving || !initialProfile} className={`${styles.saveBtn} ${saved ? styles.saved : ''}`}>
           {saving ? (
             <>Saving...</>
           ) : saved ? (
@@ -55,39 +101,113 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
         </button>
       </div>
 
-      <div className={styles.formGrid}>
+      {formError && <div role="alert" className={styles.formError}>{formError}</div>}
+      {saved && <div role="status" className={styles.formSuccess}>Your candidate profile has been saved.</div>}
+      {!initialProfile && <div role="status" className={styles.formError}>Submit a candidacy application before editing your public candidate profile.</div>}
+      {reviewerNote && <div role="status" className={styles.reviewNote}><strong>EC feedback</strong><p>{reviewerNote}</p></div>}
+
+      <form id="candidate-manifesto-form" className={styles.formGrid} onSubmit={handleSave}>
         <div className={styles.formMain}>
+          <div className={styles.fieldCard}>
+            <label className={styles.fieldLabel} htmlFor="candidate-name">Public Candidate Name *</label>
+            <p className={styles.fieldHint}>This name appears on the ballot and your public candidate profile.</p>
+            <input
+              id="candidate-name"
+              name="name"
+              className={styles.input}
+              value={form.name}
+              onChange={e => handleChange('name', e.target.value)}
+              maxLength={120}
+              required
+            />
+            <div className={styles.photoField}>
+              <div className={styles.photoPreview}>
+                {displayedPhoto ? <img src={displayedPhoto} alt={`${form.name || 'Candidate'} portrait`} /> : <span className="material-symbols-outlined">person</span>}
+              </div>
+              <div className={styles.photoControls}>
+                <label className={styles.fieldLabel} htmlFor="candidate-photo">Profile photo</label>
+                <p className={styles.fieldHint}>Use a clear, recent portrait. JPG, PNG, WebP, or AVIF, up to 4 MB.</p>
+                <input
+                  id="candidate-photo"
+                  name="photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  onChange={e => {
+                    const file = e.target.files?.[0] || null;
+                    if (file && file.size > 4 * 1024 * 1024) {
+                      setFormError('Portraits must be 4 MB or smaller.');
+                      e.target.value = '';
+                      return;
+                    }
+                    setFormError('');
+                    if (portraitPreviewRef.current) URL.revokeObjectURL(portraitPreviewRef.current);
+                    portraitPreviewRef.current = file ? URL.createObjectURL(file) : null;
+                    setPortraitPreview(portraitPreviewRef.current);
+                    setPortraitFile(file);
+                    if (file) setRemovePhoto(false);
+                    setSaved(false);
+                  }}
+                  disabled={!initialProfile || saving}
+                  className={styles.fileInput}
+                />
+                {photoUrl && !portraitFile && (
+                  <label className={styles.removePhoto}>
+                    <input
+                      type="checkbox"
+                      name="remove_photo"
+                      checked={removePhoto}
+                      onChange={e => { setRemovePhoto(e.target.checked); setSaved(false); }}
+                    />
+                    Remove current photo
+                  </label>
+                )}
+              </div>
+            </div>
+          </div>
+
           {/* Election */}
           <div className={styles.fieldCard}>
-            <label className={styles.fieldLabel}>Election</label>
+            <label className={styles.fieldLabel} htmlFor="candidate-election">Election *</label>
             <select
+              id="candidate-election"
+              name="election_id"
               className={styles.select}
               value={form.election_id}
+              required
               onChange={e => handleChange('election_id', e.target.value)}
             >
               <option value="">-- Select an election --</option>
+              {initialProfile?.election_id && !openElections.some(e => e.id === initialProfile.election_id) && (
+                <option value={initialProfile.election_id}>Current election</option>
+              )}
               {openElections.map(e => <option key={e.id} value={e.id}>{e.title}</option>)}
             </select>
           </div>
 
           {/* Category */}
           <div className={styles.fieldCard}>
-            <label className={styles.fieldLabel}>Running For Position</label>
+            <label className={styles.fieldLabel} htmlFor="candidate-category">Running For Position *</label>
             <select
+              id="candidate-category"
+              name="category"
               className={styles.select}
               value={form.category}
+              required
               onChange={e => handleChange('category', e.target.value)}
             >
               <option value="">-- Select a position --</option>
+              {form.category && !categories.includes(form.category) && <option value={form.category}>{form.category}</option>}
               {categories.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 
           {/* Slogan */}
           <div className={styles.fieldCard}>
-            <label className={styles.fieldLabel}>Campaign Slogan</label>
+            <label className={styles.fieldLabel} htmlFor="candidate-slogan">Campaign Slogan</label>
             <p className={styles.fieldHint}>A short, memorable statement that represents your campaign.</p>
             <input
+              id="candidate-slogan"
+              name="slogan"
               className={styles.input}
               value={form.slogan}
               onChange={e => handleChange('slogan', e.target.value)}
@@ -97,9 +217,11 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
 
           {/* Personal Statement */}
           <div className={styles.fieldCard}>
-            <label className={styles.fieldLabel}>Personal Statement</label>
+            <label className={styles.fieldLabel} htmlFor="candidate-statement">Personal Statement</label>
             <p className={styles.fieldHint}>Introduce yourself to voters. This appears at the top of your public profile.</p>
             <textarea
+              id="candidate-statement"
+              name="statement"
               className={styles.textarea}
               rows={6}
               value={form.statement}
@@ -111,9 +233,11 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
 
           {/* Full Manifesto */}
           <div className={styles.fieldCard}>
-            <label className={styles.fieldLabel}>Full Policy Manifesto</label>
+            <label className={styles.fieldLabel} htmlFor="candidate-manifesto">Full Policy Manifesto</label>
             <p className={styles.fieldHint}>Detail your specific policy proposals and plans for office.</p>
             <textarea
+              id="candidate-manifesto"
+              name="manifesto"
               className={styles.textarea}
               rows={12}
               value={form.manifesto}
@@ -124,9 +248,11 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
 
           {/* Goals */}
           <div className={styles.fieldCard}>
-            <label className={styles.fieldLabel}>Key Measurable Goals</label>
+            <label className={styles.fieldLabel} htmlFor="candidate-goals">Key Measurable Goals</label>
             <p className={styles.fieldHint}>Specific, quantifiable targets you commit to achieving if elected.</p>
             <textarea
+              id="candidate-goals"
+              name="goals"
               className={styles.textarea}
               rows={4}
               value={form.goals}
@@ -160,11 +286,13 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
             </div>
             <h3 className={styles.infoCardTitle} style={{ color: '#fff' }}>EC Review Status</h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
-              <span style={{ color: '#10B981', fontWeight: 600, fontSize: '0.875rem' }}>Approved</span>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: profileStatus === 'approved' ? '#10B981' : profileStatus === 'rejected' ? '#F87171' : '#FBBF24', display: 'inline-block' }} />
+              <span style={{ color: profileStatus === 'approved' ? '#10B981' : profileStatus === 'rejected' ? '#F87171' : '#FBBF24', fontWeight: 600, fontSize: '0.875rem' }}>
+                {profileStatus === 'approved' ? 'Approved' : profileStatus === 'rejected' ? 'Changes requested' : 'Pending review'}
+              </span>
             </div>
             <p style={{ color: '#94A3B8', fontSize: '0.8125rem', marginTop: 8, lineHeight: 1.5 }}>
-              Your manifesto has been reviewed and approved by the Electoral Commission. Any edits will require re-review.
+              {profileStatus === 'approved' ? 'Your current profile is approved. Saving a change will send it back for EC review.' : 'The Electoral Commission will review your latest saved profile before it is published to voters.'}
             </p>
           </div>
           <a href="/candidate/preview" className={styles.previewBtn}>
@@ -174,7 +302,7 @@ export function ManifestoClient({ initialProfile, openElections }: { initialProf
             Preview as Voters See It
           </a>
         </div>
-      </div>
+      </form>
     </div>
   );
 }

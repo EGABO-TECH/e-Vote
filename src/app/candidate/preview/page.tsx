@@ -42,15 +42,14 @@ export default async function CandidatePreviewPage() {
   const user = await currentUser();
   if (!user) redirect('/sign-in');
 
-  const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
-  const avatarUrl = user.imageUrl;
-
   const { supabaseAdmin } = await import('@/lib/supabase');
   const { data: candidate } = await supabaseAdmin
     .from('candidates')
     .select('*')
     .eq('clerk_id', user.id)
     .single();
+  const fullName = candidate?.name || `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
+  const avatarUrl = candidate?.photo_url || user.imageUrl;
   const candidateInfo = {
     category: candidate?.category || 'Candidate',
     slogan: candidate?.slogan || '',
@@ -117,7 +116,7 @@ export default async function CandidatePreviewPage() {
               <div className={styles.runningFor}>Running for {candidateInfo.category}</div>
               <h2 className={styles.candidateName}>{fullName || 'Your Name'}</h2>
               {candidateInfo.slogan ? (
-                <p className={styles.candidateSlogan}>"{candidateInfo.slogan}"</p>
+                <p className={styles.candidateSlogan}>&quot;{candidateInfo.slogan}&quot;</p>
               ) : (
                 <p className={styles.emptyField}>No slogan added yet — add one in your manifesto</p>
               )}
@@ -125,7 +124,7 @@ export default async function CandidatePreviewPage() {
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
-                EC Verified Candidate
+                  {candidate?.status === 'approved' ? 'EC Verified Candidate' : candidate?.status === 'rejected' ? 'Changes Requested' : 'Pending EC Review'}
               </div>
             </div>
           </div>
@@ -147,7 +146,7 @@ export default async function CandidatePreviewPage() {
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              Profile not yet published
+                {candidate?.status === 'approved' ? 'Approved for voters' : 'Awaiting EC approval'}
             </div>
           </div>
 

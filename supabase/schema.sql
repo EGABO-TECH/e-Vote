@@ -60,9 +60,12 @@ create table if not exists candidates (
   manifesto    text,
   goals        text,
   photo_url    text,
+  reviewer_note text,
   status       text default 'pending' check (status in ('pending', 'approved', 'rejected')),
   created_at   timestamptz default now()
 );
+
+alter table candidates add column if not exists reviewer_note text;
 
 -- ── votes ─────────────────────────────────────────────────────────────────────
 -- One vote per voter per election — enforced by unique constraint

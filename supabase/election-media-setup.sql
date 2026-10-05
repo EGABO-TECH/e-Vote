@@ -1,5 +1,6 @@
 -- Safe additive setup for an existing e-Vote Supabase project.
 alter table public.elections add column if not exists banner_url text;
+alter table public.candidates add column if not exists reviewer_note text;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (

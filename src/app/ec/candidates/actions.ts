@@ -2,13 +2,11 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { currentUser } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 
 export async function getCandidates() {
   const user = await currentUser();
-  if (!user || user.publicMetadata.role !== 'admin') {
-    // Basic authorization, you could enforce stronger checks
-    // throw new Error('Not authorized');
-  }
+  if (!user || !['ec', 'admin'].includes(String(user.publicMetadata?.role || ''))) throw new Error('Unauthorized');
 
   const { data, error } = await supabaseAdmin
     .from('candidates')
@@ -23,19 +21,31 @@ export async function getCandidates() {
   return data;
 }
 
-export async function updateCandidateStatus(id: string, status: 'approved' | 'rejected' | 'pending') {
+export async function updateCandidateStatus(id: string, status: 'approved' | 'rejected' | 'pending', reviewerNote = '') {
   const user = await currentUser();
-  // Authorization would go here
+  if (!user || !['ec', 'admin'].includes(String(user.publicMetadata?.role || ''))) throw new Error('Unauthorized');
 
-  const { error } = await supabaseAdmin
+  const { data: candidate, error } = await supabaseAdmin
     .from('candidates')
-    .update({ status })
-    .eq('id', id);
+    .update({
+      status,
+      reviewer_note: status === 'pending' ? reviewerNote.trim() || null : null,
+    })
+    .eq('id', id)
+    .select('election_id')
+    .single();
 
   if (error) {
     console.error('Error updating candidate:', error);
     throw new Error('Failed to update candidate');
   }
+
+  revalidatePath('/ec/candidates');
+  revalidatePath('/candidate');
+  revalidatePath('/candidate/manifesto');
+  revalidatePath('/candidate/preview');
+  revalidatePath('/voter/active-election');
+  if (candidate.election_id) revalidatePath(`/voter/active-election/${candidate.election_id}`);
 
   return { success: true };
 }
