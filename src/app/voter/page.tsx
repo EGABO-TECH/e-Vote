@@ -4,6 +4,7 @@ import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { getOrCreateVoterRecord, type VoterRecord } from "@/lib/voter-record";
+import { formatEastAfricaTime } from "@/lib/date-time";
 
 export default async function VoterDashboard() {
   const user = await currentUser();
@@ -253,7 +254,7 @@ export default async function VoterDashboard() {
                   </span>
                   {electionIsOpen ? "Closes: " : "Opens: "}
                   <strong style={{ color: "#fff" }}>
-                    {new Date(electionIsOpen ? activeElection.ends_at : activeElection.starts_at).toLocaleString()}
+                    {formatEastAfricaTime(electionIsOpen ? activeElection.ends_at : activeElection.starts_at)}
                   </strong>
                 </span>
               </div>

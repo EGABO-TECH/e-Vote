@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import Link from 'next/link';
+import { formatEastAfricaTime } from '@/lib/date-time';
 import { createElection, updateElectionStatus, deleteElection } from './actions';
 
 type Election = {
@@ -178,7 +179,7 @@ export function ElectionConfigClient({ initialElections, stats }: { initialElect
                     </div>
                   </td>
                   <td style={{ padding: '16px 24px', fontSize: 14, color: 'var(--text-2)', whiteSpace: 'nowrap' }}>
-                    {new Date(el.starts_at).toLocaleDateString()} — {new Date(el.ends_at).toLocaleDateString()}
+                    {formatEastAfricaTime(el.starts_at)} — {formatEastAfricaTime(el.ends_at)}
                   </td>
                   <td style={{ padding: '16px 24px' }}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', background: 'var(--surface-3)', color: statusColor(el.status), fontSize: 12, fontWeight: 700, borderRadius: 99 }}>
@@ -240,6 +241,7 @@ export function ElectionConfigClient({ initialElections, stats }: { initialElect
                   <input name="ends_at" type="datetime-local" required style={{ marginTop: 6, width: '100%', padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, color: 'var(--text-1)', outline: 'none' }} />
                 </div>
               </div>
+              <p style={{ margin: '-8px 0 0', color: 'var(--text-3)', fontSize: 12 }}>Times are entered in East Africa Time (Africa/Kampala).</p>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Initial Status</label>
                 <select name="status" defaultValue="draft" style={{ marginTop: 6, width: '100%', padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, color: 'var(--text-1)', outline: 'none' }}>

@@ -7,6 +7,7 @@ import {
   saveElectionCandidate,
   updateElectionBanner,
 } from '../actions';
+import { formatEastAfricaTime } from '@/lib/date-time';
 
 type Election = {
   id: string;
@@ -126,7 +127,7 @@ export function ElectionStudioClient({ election, initialCandidates }: {
           <p style={{ margin: '0 0 8px', color: 'var(--blue)', fontSize: 12, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Election studio</p>
           <h1 style={{ margin: 0, color: 'var(--text-1)', fontSize: 32, fontWeight: 850, lineHeight: 1.1 }}>{election.title}</h1>
           <p style={{ margin: '10px 0 0', color: 'var(--text-2)', fontSize: 14 }}>
-            {new Date(election.starts_at).toLocaleString()} – {new Date(election.ends_at).toLocaleString()} · {election.status}
+            {formatEastAfricaTime(election.starts_at)} – {formatEastAfricaTime(election.ends_at)} · {election.status}
           </p>
         </div>
         <button type="button" onClick={() => openCandidateForm()} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 18px', border: 0, borderRadius: 8, color: '#fff', background: 'var(--blue)', fontWeight: 750, cursor: 'pointer' }}>

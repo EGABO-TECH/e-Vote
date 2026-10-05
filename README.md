@@ -140,7 +140,7 @@ This design supports integrity, role-based access, and future expansion for more
 
 ### Election banners and candidate images
 
-For an existing Supabase project, run `supabase/election-media-setup.sql` once in the Supabase SQL Editor. It safely adds the election banner and reviewer-feedback columns and configures the public `election-media` bucket for JPG, PNG, WebP, and AVIF images up to 4 MB. Uploads are performed by the server using `SUPABASE_SERVICE_ROLE_KEY`.
+For an existing Supabase project, run `supabase/election-media-setup.sql` in the Supabase SQL Editor. It configures the public `election-media` bucket, adds the election banner, reviewer feedback, and timezone columns, and converts existing election wall-clock timestamps once from the previous UTC interpretation to `Africa/Kampala`. New election form times are entered in Kampala time and stored as UTC instants. Image uploads accept JPG, PNG, WebP, and AVIF files up to 4 MB and use `SUPABASE_SERVICE_ROLE_KEY` on the server.
 
 Do not rerun `supabase/schema.sql` against a database with live data: that bootstrap file contains `DROP TABLE` statements. The election media setup script is the additive update for existing installations.
 

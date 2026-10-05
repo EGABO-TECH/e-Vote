@@ -119,9 +119,9 @@ export function CandidateVotingCards({
               }}
             >
               <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-                <div style={{ position: 'relative', height: 190, overflow: 'hidden', borderRadius: 8, background: 'linear-gradient(125deg, #dce8f5, #b8ccde)' }}>
+                <div className="voter-candidate-image-frame" style={{ position: 'relative', height: 190, overflow: 'hidden', borderRadius: 8, background: 'linear-gradient(125deg, #dce8f5, #b8ccde)' }}>
                   {candidate.image_url ? (
-                    <img src={candidate.image_url} alt={`${candidate.name}, candidate portrait`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
+                    <img className="voter-candidate-image" src={candidate.image_url} alt={`${candidate.name}, candidate portrait`} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }} />
                   ) : (
                     <div aria-label={`${candidate.name} portrait unavailable`} style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%', color: '#17345b', fontSize: 48, fontWeight: 850 }}>
                       {candidate.name.split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase()}

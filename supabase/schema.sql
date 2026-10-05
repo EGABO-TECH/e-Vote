@@ -40,12 +40,14 @@ create table if not exists elections (
   categories   text[],
   starts_at    timestamptz not null,
   ends_at      timestamptz not null,
+  time_zone    text not null default 'Africa/Kampala',
   status       text default 'draft' check (status in ('draft', 'active', 'live', 'closed')),
   created_by   uuid references voters(id) on delete set null,
   created_at   timestamptz default now()
 );
 
 alter table elections add column if not exists banner_url text;
+alter table elections add column if not exists time_zone text not null default 'Africa/Kampala';
 
 -- ── candidates ────────────────────────────────────────────────────────────────
 drop table if exists candidates cascade;

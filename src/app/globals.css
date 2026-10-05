@@ -508,6 +508,21 @@ desktop-only {
   }
 }
 
+@media (min-width: 768px) {
+  .voter-candidate-image-frame {
+    height: clamp(280px, 30vw, 360px) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #eaf0f7, #d9e3ef) !important;
+  }
+
+  .voter-candidate-image {
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+}
+
 @keyframes voter-election-banner-pan {
   from { transform: translateX(-1%); }
   to { transform: translateX(1%); }

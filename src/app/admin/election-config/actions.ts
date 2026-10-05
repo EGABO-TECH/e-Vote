@@ -3,6 +3,7 @@
 import { supabaseAdmin } from '@/lib/supabase';
 import { revalidatePath } from 'next/cache';
 import { currentUser } from '@clerk/nextjs/server';
+import { localElectionDateTimeToUtc } from '@/lib/date-time';
 
 const IMAGE_BUCKET = 'election-media';
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024;
@@ -40,18 +41,20 @@ export async function createElection(formData: FormData) {
 
   const title = String(formData.get('title') || '').trim();
   const description = String(formData.get('description') || '').trim();
-  const starts_at = String(formData.get('starts_at') || '');
-  const ends_at = String(formData.get('ends_at') || '');
+  const startsAtLocal = String(formData.get('starts_at') || '');
+  const endsAtLocal = String(formData.get('ends_at') || '');
   const status = String(formData.get('status') || 'draft');
 
-  if (!title || !starts_at || !ends_at) throw new Error('Missing required fields');
+  if (!title || !startsAtLocal || !endsAtLocal) throw new Error('Missing required fields');
+  const starts_at = localElectionDateTimeToUtc(startsAtLocal);
+  const ends_at = localElectionDateTimeToUtc(endsAtLocal);
   if (new Date(ends_at) <= new Date(starts_at)) throw new Error('The end date must be after the start date.');
   if (!['draft', 'live'].includes(status)) throw new Error('Invalid election status.');
 
   const banner_url = await uploadImage(formData.get('banner'), 'elections');
 
   const { error } = await supabaseAdmin.from('elections').insert({
-    title, description: description || null, starts_at, ends_at, status, banner_url,
+    title, description: description || null, starts_at, ends_at, status, banner_url, time_zone: 'Africa/Kampala',
   });
 
   if (error) throw error;

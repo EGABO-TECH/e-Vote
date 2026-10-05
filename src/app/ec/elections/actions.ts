@@ -2,6 +2,7 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 import { currentUser } from '@clerk/nextjs/server';
+import { localElectionDateTimeToUtc } from '@/lib/date-time';
 
 export async function getElections() {
   const user = await currentUser();
@@ -32,6 +33,10 @@ export async function createElection(data: {
   categories: string[];
 }) {
   const user = await currentUser();
+  if (!data.opens || !data.closes) throw new Error('Choose both election opening and closing times.');
+  const starts_at = localElectionDateTimeToUtc(data.opens);
+  const ends_at = localElectionDateTimeToUtc(data.closes);
+  if (new Date(ends_at) <= new Date(starts_at)) throw new Error('The end date must be after the start date.');
 
   // Find the voter to associate with created_by
   const { data: voter } = await supabaseAdmin
@@ -45,8 +50,9 @@ export async function createElection(data: {
     .insert({
       title: data.title,
       scope: data.scope,
-      starts_at: data.opens || new Date().toISOString(),
-      ends_at: data.closes || new Date().toISOString(),
+      starts_at,
+      ends_at,
+      time_zone: 'Africa/Kampala',
       eligibility: data.eligibility,
       biometric: data.biometric,
       categories: data.categories,

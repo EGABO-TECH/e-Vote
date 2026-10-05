@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import styles from '../shared.module.css';
 import { createElection } from './actions';
+import { formatEastAfricaTime, localElectionDateTimeToUtc } from '@/lib/date-time';
 
 type Election = {
   id: string;
@@ -10,6 +11,15 @@ type Election = {
   scope: string;
   window: string;
   status: 'draft' | 'active' | 'live' | 'closed';
+};
+
+type ElectionRecord = {
+  id: string;
+  title: string;
+  scope: string | null;
+  starts_at: string;
+  ends_at: string;
+  status: Election['status'];
 };
 
 const statusStyle = (status: string): React.CSSProperties => {
@@ -39,24 +49,14 @@ const labelStyle: React.CSSProperties = {
   color: 'var(--ink)', marginBottom: '8px',
 };
 
-export function ElectionsClient({ initialElections }: { initialElections: any[] }) {
-  const [elections, setElections] = useState<Election[]>([]);
-
-  useEffect(() => {
-    setElections(
-      initialElections.map(e => {
-        const opensDate = new Date(e.starts_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        const closesDate = new Date(e.ends_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-        return {
-          id: e.id,
-          title: e.title,
-          scope: e.scope || 'All faculties',
-          window: `${opensDate} – ${closesDate}`,
-          status: e.status || 'draft',
-        };
-      })
-    );
-  }, [initialElections]);
+export function ElectionsClient({ initialElections }: { initialElections: ElectionRecord[] }) {
+  const [elections, setElections] = useState<Election[]>(() => initialElections.map(e => ({
+    id: e.id,
+    title: e.title,
+    scope: e.scope || 'All faculties',
+    window: `${formatEastAfricaTime(e.starts_at)} – ${formatEastAfricaTime(e.ends_at)}`,
+    status: e.status || 'draft',
+  })));
 
   const [showCreate, setShowCreate] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -80,8 +80,8 @@ export function ElectionsClient({ initialElections }: { initialElections: any[] 
 
     try {
       await createElection({ ...form, categories });
-      const opensDate = form.opens ? new Date(form.opens).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD';
-      const closesDate = form.closes ? new Date(form.closes).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'TBD';
+      const opensDate = form.opens ? formatEastAfricaTime(localElectionDateTimeToUtc(form.opens)) : 'TBD';
+      const closesDate = form.closes ? formatEastAfricaTime(localElectionDateTimeToUtc(form.closes)) : 'TBD';
       const newElection: Election = {
         id: String(Date.now()),
         title: form.title,
@@ -195,13 +195,14 @@ export function ElectionsClient({ initialElections }: { initialElections: any[] 
             <div style={{ display: 'flex', gap: '14px' }}>
               <div style={{ flex: 1 }}>
                 <label style={labelStyle}>Voting Opens</label>
-                <input type="datetime-local" value={form.opens} onChange={e => setForm(p => ({ ...p, opens: e.target.value }))} style={inputStyle} />
+                <input type="datetime-local" required value={form.opens} onChange={e => setForm(p => ({ ...p, opens: e.target.value }))} style={inputStyle} />
               </div>
               <div style={{ flex: 1 }}>
                 <label style={labelStyle}>Voting Closes</label>
-                <input type="datetime-local" value={form.closes} onChange={e => setForm(p => ({ ...p, closes: e.target.value }))} style={inputStyle} />
+                <input type="datetime-local" required value={form.closes} onChange={e => setForm(p => ({ ...p, closes: e.target.value }))} style={inputStyle} />
               </div>
             </div>
+            <p style={{ margin: '-12px 0 0', color: 'var(--muted)', fontSize: '12px' }}>Times are entered in East Africa Time (Africa/Kampala).</p>
 
             <div>
               <label style={labelStyle}>Candidate Categories</label>

@@ -3,6 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import Link from 'next/link';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getOrCreateVoterRecord } from '@/lib/voter-record';
+import { formatEastAfricaTime } from '@/lib/date-time';
 import { CandidateVotingCards } from '../CandidateVotingCards';
 
 export const dynamic = 'force-dynamic';
@@ -36,11 +37,7 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
   const canViewCandidates = election.status === 'active' || election.status === 'live';
   const isUpcoming = new Date(election.starts_at) > now;
   const isOpen = canViewCandidates && !isUpcoming && new Date(election.ends_at) > now;
-  const votingOpensAt = new Intl.DateTimeFormat('en-GB', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-    timeZone: 'UTC',
-  }).format(new Date(election.starts_at)) + ' UTC';
+  const votingOpensAt = formatEastAfricaTime(election.starts_at);
 
   // Fetch only APPROVED candidates for this election
   const { data: candidatesData } = await supabaseAdmin
