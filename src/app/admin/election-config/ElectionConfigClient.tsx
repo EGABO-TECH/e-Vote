@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import Link from 'next/link';
 import { createElection, updateElectionStatus, deleteElection } from './actions';
 
 type Election = {
   id: string;
   title: string;
   description: string | null;
+  banner_url: string | null;
   starts_at: string;
   ends_at: string;
   status: string;
@@ -43,8 +45,8 @@ export function ElectionConfigClient({ initialElections, stats }: { initialElect
         setShowModal(false);
         form.reset();
         window.location.reload();
-      } catch (err: any) {
-        setFormError(err.message || 'Failed to create election');
+      } catch (err: unknown) {
+        setFormError(err instanceof Error ? err.message : 'Failed to create election');
       }
     });
   };
@@ -185,6 +187,9 @@ export function ElectionConfigClient({ initialElections, stats }: { initialElect
                     </span>
                   </td>
                   <td style={{ padding: '16px 24px', textAlign: 'right', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                    <Link href={`/admin/election-config/${el.id}`} style={{ background: 'var(--surface-3)', color: 'var(--blue)', border: '1px solid var(--border)', padding: '5px 12px', borderRadius: 6, fontSize: 13, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                      Manage
+                    </Link>
                     {el.status === 'draft' && (
                       <button onClick={() => handleStatusUpdate(el.id, 'live')} disabled={isPending} style={{ background: 'var(--green)', color: '#fff', border: 'none', padding: '5px 14px', borderRadius: 6, fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>Go Live</button>
                     )}
@@ -219,6 +224,11 @@ export function ElectionConfigClient({ initialElections, stats }: { initialElect
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Description</label>
                 <textarea name="description" rows={3} placeholder="Optional description..." style={{ marginTop: 6, width: '100%', padding: '12px 16px', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, color: 'var(--text-1)', outline: 'none', resize: 'vertical' }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Election Banner</label>
+                <input name="banner" type="file" accept="image/jpeg,image/png,image/webp,image/avif" style={{ display: 'block', marginTop: 8, width: '100%', color: 'var(--text-2)', fontSize: 13 }} />
+                <p style={{ margin: '6px 0 0', color: 'var(--text-3)', fontSize: 12 }}>JPG, PNG, WebP, or AVIF. Maximum 4 MB. You can replace it later.</p>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                 <div>

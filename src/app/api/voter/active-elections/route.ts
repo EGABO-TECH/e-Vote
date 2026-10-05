@@ -53,7 +53,7 @@ export async function GET() {
 
   const { data: elections, error: electionsError } = await supabaseAdmin
     .from('elections')
-    .select('id, title, description, status, starts_at, ends_at')
+    .select('id, title, description, banner_url, status, starts_at, ends_at')
     .in('status', ['active', 'live'])
     .order('starts_at', { ascending: false });
 
@@ -65,7 +65,7 @@ export async function GET() {
 
   const { data: candidatesData, error: candidatesError } = await supabaseAdmin
     .from('candidates')
-    .select('id, election_id, name, manifesto, photo_url')
+    .select('id, election_id, name, category, slogan, manifesto, photo_url')
     .in('election_id', electionIds)
     .eq('status', 'approved');
 
@@ -91,6 +91,7 @@ export async function GET() {
     id: election.id,
     title: election.title,
     description: election.description,
+    banner_url: election.banner_url,
     status: election.status === 'live' ? 'Open' : 'Open',
     starts_at: election.starts_at,
     ends_at: election.ends_at,
@@ -99,7 +100,8 @@ export async function GET() {
       .map((candidate) => ({
         id: candidate.id,
         name: candidate.name,
-        slogan: candidate.manifesto || 'Committed to student leadership.',
+        slogan: candidate.slogan || 'Committed to student leadership.',
+        category: candidate.category || 'Candidate',
         manifesto: candidate.manifesto || 'No manifesto provided yet.',
         image_url: candidate.photo_url || '/logo.jpeg',
       })),

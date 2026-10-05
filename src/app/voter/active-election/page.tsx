@@ -7,12 +7,15 @@ type ElectionListItem = {
   id: string;
   title: string;
   description: string | null;
+  banner_url: string | null;
   status: string;
   starts_at: string | null;
   ends_at: string | null;
   hasVoted: boolean;
   candidateCount: number;
 };
+
+type ElectionResponse = Omit<ElectionListItem, 'candidateCount'> & { candidates?: unknown[] };
 
 export default function ActiveElectionList() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,7 +30,7 @@ export default function ActiveElectionList() {
       setLoadError(null);
       try {
         const response = await fetch('/api/voter/active-elections', { cache: 'no-store' });
-        const payload = await response.json();
+        const payload: { error?: string; elections?: ElectionResponse[] } = await response.json();
 
         if (!response.ok || payload?.error) {
           setLoadError(payload?.error || 'Unable to load elections.');
@@ -36,7 +39,7 @@ export default function ActiveElectionList() {
           return;
         }
 
-        const formatted = (payload.elections || []).map((e: any) => ({
+        const formatted = (payload.elections || []).map((e) => ({
           ...e,
           candidateCount: e.candidates?.length ?? 0,
         }));
@@ -143,7 +146,7 @@ export default function ActiveElectionList() {
             <h4 style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)', margin: '0 0 8px 0' }}>No elections found</h4>
             <p style={{ fontSize: 14, color: 'var(--text-2)', margin: 0 }}>
               {searchQuery
-                ? <>No elections match "{searchQuery}". <button onClick={() => { setSearchQuery(""); setFilterStatus("All"); }} style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Clear filters</button></>
+                ? <>No elections match &quot;{searchQuery}&quot;. <button onClick={() => { setSearchQuery(""); setFilterStatus("All"); }} style={{ background: 'none', border: 'none', color: 'var(--blue)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Clear filters</button></>
                 : 'There are no active elections at this time. Check back later.'}
             </p>
           </div>
@@ -159,10 +162,11 @@ export default function ActiveElectionList() {
                 border: '1px solid var(--border)',
                 borderRadius: 20,
                 boxShadow: 'var(--sh-sm)',
-                padding: 24,
+                padding: 0,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 16,
+                gap: 0,
+                overflow: 'hidden',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 height: '100%',
@@ -178,8 +182,10 @@ export default function ActiveElectionList() {
                   (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)';
                 }}
               >
-                {/* Status badge + voted indicator */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                <div style={{ position: 'relative', height: 154, overflow: 'hidden', background: 'linear-gradient(125deg, #142448 0%, #2453a6 58%, #22a39a 100%)' }}>
+                  {election.banner_url && <img src={election.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(9,18,38,0.78), rgba(9,18,38,0.08))' }} />
+                  <div style={{ position: 'absolute', inset: '14px 16px auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                   <span style={{
                     padding: '5px 12px',
                     borderRadius: 999,
@@ -199,10 +205,12 @@ export default function ActiveElectionList() {
                       Voted
                     </span>
                   )}
+                  </div>
+                  <div style={{ position: 'absolute', left: 18, right: 18, bottom: 16, color: '#fff', fontSize: 12, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Official election</div>
                 </div>
 
                 {/* Title & Description */}
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, padding: '20px 20px 16px' }}>
                   <h2 style={{ fontSize: '1.375rem', fontWeight: 800, color: 'var(--text-1)', margin: '0 0 8px', lineHeight: 1.2 }}>
                     {election.title}
                   </h2>
@@ -212,7 +220,7 @@ export default function ActiveElectionList() {
                 </div>
 
                 {/* Meta info */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px 18px', borderTop: '1px solid var(--border)' }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text-3)', fontSize: 13, fontWeight: 600 }}>
                     <span className="material-symbols-outlined" style={{ fontSize: 18 }}>groups</span>
                     {election.candidateCount} approved candidate{election.candidateCount !== 1 ? 's' : ''}

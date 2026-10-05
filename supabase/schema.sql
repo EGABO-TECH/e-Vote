@@ -33,6 +33,7 @@ create table if not exists elections (
   id           uuid primary key default gen_random_uuid(),
   title        text not null,
   description  text,
+  banner_url   text,
   scope        text,
   eligibility  text,
   biometric    boolean default false,
@@ -43,6 +44,8 @@ create table if not exists elections (
   created_by   uuid references voters(id) on delete set null,
   created_at   timestamptz default now()
 );
+
+alter table elections add column if not exists banner_url text;
 
 -- ── candidates ────────────────────────────────────────────────────────────────
 drop table if exists candidates cascade;
@@ -198,6 +201,25 @@ create policy "voter_registry_upsert_own" on voter_registry
       where clerk_id = (current_setting('request.jwt.claims', true)::json->>'sub')
     )
   );
+
+-- Public election and candidate artwork; uploads are performed by the server-side service role.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'election-media',
+  'election-media',
+  true,
+  4194304,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif']
+)
+on conflict (id) do update set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Election media is publicly readable" on storage.objects;
+create policy "Election media is publicly readable" on storage.objects
+  for select to anon, authenticated
+  using (bucket_id = 'election-media');
 
 
 -- ── support tickets ────────────────────────────────────────────────────────

@@ -27,6 +27,7 @@ export type Election = {
   id: string;
   title: string;
   description: string | null;
+  banner_url: string | null;
   starts_at: string;
   ends_at: string;
   status: 'draft' | 'active' | 'live' | 'closed';

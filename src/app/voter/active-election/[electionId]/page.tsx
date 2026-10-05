@@ -15,7 +15,7 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
   // Fetch election details
   const { data: election, error: electionError } = await supabaseAdmin
     .from('elections')
-    .select('id, title, description, status, starts_at, ends_at')
+    .select('id, title, description, banner_url, status, starts_at, ends_at')
     .eq('id', electionId)
     .single();
 
@@ -36,13 +36,14 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
   // Fetch only APPROVED candidates for this election
   const { data: candidatesData } = await supabaseAdmin
     .from('candidates')
-    .select('id, name, slogan, manifesto, photo_url')
+    .select('id, name, category, slogan, manifesto, photo_url')
     .eq('election_id', electionId)
     .eq('status', 'approved');
 
   const candidates = (candidatesData || []).map((c) => ({
     id: c.id,
     name: c.name,
+    position: c.category || 'Candidate',
     slogan: c.slogan || 'Committed to student leadership.',
     manifesto: c.manifesto || 'No manifesto provided.',
     image_url: c.photo_url || '/logo.jpeg',
@@ -130,6 +131,7 @@ export default async function ElectionVotingPage({ params }: { params: Promise<{
           electionId={election.id}
           title={election.title}
           description={election.description}
+          bannerUrl={election.banner_url}
           candidates={candidates}
           hasVoted={hasVoted}
         />

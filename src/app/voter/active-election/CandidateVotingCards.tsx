@@ -6,6 +6,7 @@ import { castVoteAction } from '@/app/election/[id]/vote/actions';
 export type CandidateCardData = {
   id: string;
   name: string;
+  position: string;
   slogan: string;
   manifesto: string;
   image_url: string;
@@ -15,12 +16,14 @@ export function CandidateVotingCards({
   electionId,
   title,
   description,
+  bannerUrl,
   candidates,
   hasVoted,
 }: {
   electionId: string;
   title: string;
   description: string | null;
+  bannerUrl: string | null;
   candidates: CandidateCardData[];
   hasVoted: boolean;
 }) {
@@ -58,22 +61,19 @@ export function CandidateVotingCards({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 20, boxShadow: 'var(--sh-sm)', padding: 28 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 12 }}>
-          <div>
-            <p style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', color: 'var(--text-3)', textTransform: 'uppercase', margin: '0 0 8px' }}>
-              Active election
-            </p>
-            <h2 style={{ fontSize: '2rem', fontWeight: 900, margin: 0, lineHeight: 1.1 }}>{title}</h2>
+      <div style={{ position: 'relative', minHeight: 300, overflow: 'hidden', borderRadius: 20, background: 'linear-gradient(125deg, #142448 0%, #2453a6 58%, #22a39a 100%)', boxShadow: 'var(--sh-md)' }}>
+        {bannerUrl && <img src={bannerUrl} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(9,18,38,0.88) 0%, rgba(9,18,38,0.62) 52%, rgba(9,18,38,0.15) 100%)' }} />
+        <div style={{ position: 'relative', zIndex: 1, minHeight: 300, padding: '30px clamp(22px, 5vw, 52px)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', color: '#fff' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginBottom: 24 }}>
+            <span style={{ padding: '7px 11px', border: '1px solid rgba(255,255,255,0.32)', borderRadius: 999, background: 'rgba(255,255,255,0.13)', fontWeight: 800, fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Active election</span>
+            <span style={{ color: 'rgba(255,255,255,0.82)', fontSize: 13, fontWeight: 650 }}>{totalCandidates} candidates</span>
           </div>
-          <span style={{ padding: '8px 14px', background: 'var(--green-bg)', color: 'var(--green)', borderRadius: 999, fontWeight: 700, fontSize: 12, border: '1px solid var(--green-bdr)' }}>
+          <h2 style={{ maxWidth: 760, margin: 0, fontSize: 40, fontWeight: 900, lineHeight: 1.05 }}>{title}</h2>
+          {description && <p style={{ maxWidth: 680, color: 'rgba(255,255,255,0.88)', fontSize: 15, lineHeight: 1.7, margin: '16px 0 0' }}>{description}</p>}
+          <div style={{ marginTop: 22, padding: '8px 12px', borderRadius: 6, background: hasVoted ? 'rgba(255,255,255,0.2)' : '#d9f99d', color: hasVoted ? '#fff' : '#244315', fontSize: 12, fontWeight: 800 }}>
             {hasVoted ? 'Ballot cast' : 'Open for voting'}
-          </span>
-        </div>
-        <p style={{ color: 'var(--text-2)', fontSize: 15, lineHeight: 1.7, marginBottom: 20 }}>{description}</p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--text-3)', fontSize: 13, fontWeight: 700 }}>
-          <span className="material-symbols-outlined">groups</span>
-          <span>{totalCandidates} candidates in this race</span>
+          </div>
         </div>
       </div>
 
@@ -129,6 +129,7 @@ export function CandidateVotingCards({
 
                 <div>
                   <h3 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 8px', color: 'var(--text-1)' }}>{candidate.name}</h3>
+                  <p style={{ fontSize: 12, fontWeight: 750, color: 'var(--text-3)', margin: '0 0 8px', textTransform: 'uppercase' }}>{candidate.position}</p>
                   <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--blue)', margin: '0 0 12px' }}>
                     “{candidate.slogan}”
                   </p>
