@@ -172,7 +172,11 @@ export default async function VoterDashboard() {
           position: "relative",
         }}
       >
-        {activeElection?.banner_url && <img className="voter-featured-election__image" src={activeElection.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />}
+        {activeElection?.banner_url && (
+          <div className="voter-featured-election__media" aria-hidden="true">
+            <img className="voter-featured-election__image" src={activeElection.banner_url} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        )}
         <div className="voter-featured-election__overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(7,16,40,0.94) 0%, rgba(7,16,40,0.78) 55%, rgba(7,16,40,0.2) 100%)' }} />
         <div className="voter-featured-election__content" style={{ position: 'relative', zIndex: 1 }}>
           {activeElection ? (
