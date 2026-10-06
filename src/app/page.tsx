@@ -4,9 +4,9 @@ import { redirect } from 'next/navigation';
 import LandingPage from '@/components/LandingPage';
 
 export const metadata: Metadata = {
-  title: 'e-Vote | Secure & Transparent Electronic Voting',
+  title: 'e-Vote | Your Secure Online Voting Partner',
   description:
-    'An offline-first electronic voting platform for academic and institutional elections at Cavendish University Uganda.',
+    'An offline-first electronic voting platform built specifically for academic and institutional elections at Cavendish University Uganda.',
 };
 
 export default async function Home() {
