@@ -20,21 +20,21 @@ const navConfig = {
   ],
   candidate: [
     { name: "Home", shortLabel: "Home", href: "/candidate", icon: "dashboard" },
-    { name: "Profile", shortLabel: "Profile", href: "/candidate/profile", icon: "person" },
-    { name: "Campaign", shortLabel: "Campaign", href: "/candidate/campaign", icon: "campaign" },
-    { name: "Results", shortLabel: "Results", href: "/candidate/results", icon: "bar_chart" },
+    { name: "Profile", shortLabel: "Profile", href: "/candidate/preview", icon: "person" },
+    { name: "Manifesto", shortLabel: "Manifesto", href: "/candidate/manifesto", icon: "campaign" },
+    { name: "Support", shortLabel: "Support", href: "/candidate/support", icon: "help" },
+    { name: "Settings", shortLabel: "Settings", href: "/candidate/settings", icon: "settings" },
   ],
   ec: [
     { name: "Home", shortLabel: "Home", href: "/ec", icon: "dashboard" },
     { name: "Elections", shortLabel: "Elections", href: "/ec/elections", icon: "how_to_vote" },
-    { name: "Reports", shortLabel: "Reports", href: "/ec/reports", icon: "bar_chart" },
+    { name: "Candidates", shortLabel: "Candidates", href: "/ec/candidates", icon: "how_to_reg" },
+    { name: "Results", shortLabel: "Results", href: "/ec/results", icon: "bar_chart" },
     { name: "Support", shortLabel: "Support", href: "/ec/support", icon: "help" },
   ],
   auditor: [
     { name: "Dashboard", shortLabel: "Home", href: "/auditor", icon: "dashboard" },
-    { name: "Logs", shortLabel: "Logs", href: "/auditor/logs", icon: "receipt_long" },
-    { name: "Reports", shortLabel: "Reports", href: "/auditor/reports", icon: "bar_chart" },
-    { name: "Settings", shortLabel: "Settings", href: "/auditor/settings", icon: "settings" },
+    { name: "Audit Trail", shortLabel: "Audit", href: "/auditor", icon: "receipt_long" },
   ],
 };
 
